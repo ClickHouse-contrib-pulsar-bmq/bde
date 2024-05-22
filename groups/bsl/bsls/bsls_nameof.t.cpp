@@ -13,7 +13,7 @@
 #endif
 
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR)
-# include <memory_resource>
+# include <experimental/memory_resource>
 #endif
 
 #include <stdio.h>       // sprintf()

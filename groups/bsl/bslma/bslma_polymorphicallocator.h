@@ -297,7 +297,7 @@ BSLS_IDENT("$Id: $")
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 // Use `polymorphic_allocator` from native C++17 library, if available.
 
-# include <memory_resource>
+# include <experimental/memory_resource>
 
 namespace bsl {
 

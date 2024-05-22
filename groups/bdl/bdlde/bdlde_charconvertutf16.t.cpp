@@ -36,7 +36,7 @@
 #include <bsl_iostream.h>
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-#include <memory_resource>
+#include <experimental/memory_resource>
 #endif
 
 using namespace BloombergLP;

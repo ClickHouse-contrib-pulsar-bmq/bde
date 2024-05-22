@@ -62,7 +62,7 @@
 //  #include <charconv>        // LIBRARYFEATURES_HAS_CPP17_CHARCONV
 //  #include <execution>       // LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS
 //  #include <filesystem>      // LIBRARYFEATURES_HAS_CPP17_FILESYSTEM
-//  #include <memory_resource> // LIBRARYFEATURES_HAS_CPP17_PMR
+//  #include <experimental/memory_resource> // LIBRARYFEATURES_HAS_CPP17_PMR
     #include <optional>
     #include <string_view>
     #include <variant>
@@ -84,9 +84,9 @@
     #include <filesystem>
 #endif
 
-// Verify assumption that <memory_resource> can be included.
+// Verify assumption that <experimental/memory_resource> can be included.
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    #include <memory_resource>
+    #include <experimental/memory_resource>
 #endif
 
 // Verify assumption that <ctime> can be included.

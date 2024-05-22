@@ -40,7 +40,7 @@ BSLS_IDENT("$Id: $")
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV: full '<charconv'> support w floats
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM: '<filesystem>'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS: '<execution>'
-//  BSLS_LIBRARYFEATURES_HAS_CPP17_PMR: '<memory_resource>'
+//  BSLS_LIBRARYFEATURES_HAS_CPP17_PMR: '<experimental/memory_resource>'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING: 'pmr::string'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET: '<ctime>'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_ALIGNED_ALLOC: '<cstdlib>'
@@ -960,7 +960,7 @@ BSLS_IDENT("$Id: $")
 ///'BSLS_LIBRARYFEATURES_HAS_CPP17_PMR'
 ///------------------------------------
 // The 'BSLS_LIBRARYFEATURES_HAS_CPP17_PMR' macro is defined if the
-// native standard library provides the '<memory_resource>' header and
+// native standard library provides the '<experimental/memory_resource>' header and
 // implements all required content with no major issues.
 //
 // This macro is defined first for the following stdlib versions:
