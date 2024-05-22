@@ -1,8 +1,8 @@
 // baltzo_datafileloader.t.cpp                                        -*-C++-*-
 #include <baltzo_datafileloader.h>
 
-#include <baltzo_errorcode.h>
 #include <baltzo_zoneinfo.h>
+#include <baltzo_errorcode.h>
 
 #include <bdlsb_fixedmemoutstreambuf.h>
 
@@ -34,17 +34,17 @@
 #include <bsl_ostream.h> // for 'operator<<'
 
 #if BSLS_PLATFORM_OS_UNIX
-#include <unistd.h> // sleep
+# include <unistd.h>        // sleep
 #else
-#include <windows.h> // Sleep
+# include <windows.h>       // Sleep
 #endif
 
 using namespace BloombergLP;
-using bsl::cerr;
 using bsl::cout;
+using bsl::cerr;
 using bsl::endl;
-using bsl::ends;
 using bsl::flush;
+using bsl::ends;
 
 // ============================================================================
 //                              TEST PLAN
@@ -86,27 +86,28 @@ namespace {
 
 int testStatus = 0;
 
-void aSsErT(bool condition, const char *message, int line) {
-  if (condition) {
-    cout << "Error " __FILE__ "(" << line << "): " << message << "    (failed)"
-         << endl;
+void aSsErT(bool condition, const char *message, int line)
+{
+    if (condition) {
+        cout << "Error " __FILE__ "(" << line << "): " << message
+             << "    (failed)" << endl;
 
-    if (0 <= testStatus && testStatus <= 100) {
-      ++testStatus;
+        if (0 <= testStatus && testStatus <= 100) {
+            ++testStatus;
+        }
     }
-  }
 }
 
-} // namespace
+}  // close unnamed namespace
 
 // ============================================================================
 //               STANDARD BDE TEST DRIVER MACRO ABBREVIATIONS
 // ----------------------------------------------------------------------------
 
-#define ASSERT BSLIM_TESTUTIL_ASSERT
-#define ASSERTV BSLIM_TESTUTIL_ASSERTV
+#define ASSERT       BSLIM_TESTUTIL_ASSERT
+#define ASSERTV      BSLIM_TESTUTIL_ASSERTV
 
-#define LOOP_ASSERT BSLIM_TESTUTIL_LOOP_ASSERT
+#define LOOP_ASSERT  BSLIM_TESTUTIL_LOOP_ASSERT
 #define LOOP0_ASSERT BSLIM_TESTUTIL_LOOP0_ASSERT
 #define LOOP1_ASSERT BSLIM_TESTUTIL_LOOP1_ASSERT
 #define LOOP2_ASSERT BSLIM_TESTUTIL_LOOP2_ASSERT
@@ -115,11 +116,11 @@ void aSsErT(bool condition, const char *message, int line) {
 #define LOOP5_ASSERT BSLIM_TESTUTIL_LOOP5_ASSERT
 #define LOOP6_ASSERT BSLIM_TESTUTIL_LOOP6_ASSERT
 
-#define Q BSLIM_TESTUTIL_Q   // Quote identifier literally.
-#define P BSLIM_TESTUTIL_P   // Print identifier and value.
-#define P_ BSLIM_TESTUTIL_P_ // P(X) without '\n'.
-#define T_ BSLIM_TESTUTIL_T_ // Print a tab (w/o newline).
-#define L_ BSLIM_TESTUTIL_L_ // current Line number
+#define Q            BSLIM_TESTUTIL_Q   // Quote identifier literally.
+#define P            BSLIM_TESTUTIL_P   // Print identifier and value.
+#define P_           BSLIM_TESTUTIL_P_  // P(X) without '\n'.
+#define T_           BSLIM_TESTUTIL_T_  // Print a tab (w/o newline).
+#define L_           BSLIM_TESTUTIL_L_  // current Line number
 
 // ============================================================================
 //                     NEGATIVE-TEST MACRO ABBREVIATIONS
@@ -139,15 +140,15 @@ void aSsErT(bool condition, const char *message, int line) {
 // ----------------------------------------------------------------------------
 
 typedef baltzo::DataFileLoader Obj;
-typedef Obj::allocator_type AllocType; // Test 'allocator_type' exists
-typedef bdls::FilesystemUtil FUtil;
+typedef Obj::allocator_type    AllocType; // Test 'allocator_type' exists
+typedef bdls::FilesystemUtil   FUtil;
 
 // ============================================================================
 //                                TYPE TRAITS
 // ----------------------------------------------------------------------------
 
 BSLMF_ASSERT(bslma::UsesBslmaAllocator<Obj>::value);
-BSLMF_ASSERT((bsl::uses_allocator<Obj, bsl::allocator<char>>::value));
+BSLMF_ASSERT((bsl::uses_allocator<Obj, bsl::allocator<char> >::value));
 
 // ============================================================================
 //                   GLOBAL TEST DATA
@@ -160,12 +161,12 @@ static const char *TEST_DIRECTORY = TEST_DIRECTORY_NAME;
 
 #ifdef BSLS_PLATFORM_OS_WINDOWS
 static const char *TEST_GMT_FILE = TEST_DIRECTORY_NAME "\\GMT";
-static const char *AMERICA_NEW_YORK_FILE =
-    TEST_DIRECTORY_NAME "\\America\\New_York";
+static const char *AMERICA_NEW_YORK_FILE
+                                   = TEST_DIRECTORY_NAME "\\America\\New_York";
 #else
 static const char *TEST_GMT_FILE = TEST_DIRECTORY_NAME "/GMT";
 static const char *AMERICA_NEW_YORK_FILE =
-    TEST_DIRECTORY_NAME "/America/New_York";
+                                   TEST_DIRECTORY_NAME "/America/New_York";
 #endif
 
 static const char *AMERICA_NEW_YORK_ID = "America/New_York";
@@ -191,7 +192,8 @@ BSLA_MAYBE_UNUSED static const unsigned char ASIA_BANGKOK_DATA[] = {
     0xc4, 0x01, 0x02, 0x00, 0x00, 0x5e, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x5e,
     0x3c, 0x00, 0x04, 0x00, 0x00, 0x62, 0x70, 0x00, 0x08, 0x4c, 0x4d, 0x54,
     0x00, 0x42, 0x4d, 0x54, 0x00, 0x49, 0x43, 0x54, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x0a, 0x49, 0x43, 0x54, 0x2d, 0x37, 0x0a};
+    0x00, 0x00, 0x00, 0x0a, 0x49, 0x43, 0x54, 0x2d, 0x37, 0x0a
+};
 
 static const unsigned char AMERICA_NEW_YORK_DATA[] = {
     0x54, 0x5a, 0x69, 0x66, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -487,177 +489,179 @@ static const unsigned char AMERICA_NEW_YORK_DATA[] = {
     0x00, 0x45, 0x50, 0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
     0x00, 0x00, 0x01, 0x0a, 0x45, 0x53, 0x54, 0x35, 0x45, 0x44, 0x54, 0x2c,
     0x4d, 0x33, 0x2e, 0x32, 0x2e, 0x30, 0x2c, 0x4d, 0x31, 0x31, 0x2e, 0x31,
-    0x2e, 0x30, 0x0a};
+    0x2e, 0x30, 0x0a
+};
 
-static void writeData(const char *fileName, const char *data, int numBytes) {
-  int rc = bdls::FilesystemUtil::createDirectories(fileName, false);
+static void writeData(const char *fileName, const char *data, int numBytes)
+{
+    int rc = bdls::FilesystemUtil::createDirectories(fileName, false);
 
-  if (rc != 0) {
-    // If this test-driver is being run in parallel, its possible for two
-    // instances to attempt to create the directory simultaneously, and
-    // for one of them to fail.  But the directory should still exist.
+    if (rc != 0) {
+        // If this test-driver is being run in parallel, its possible for two
+        // instances to attempt to create the directory simultaneously, and
+        // for one of them to fail.  But the directory should still exist.
 
-    bslmt::ThreadUtil::microSleep(0, 1);
-    bsl::string path(fileName);
-    bdls::PathUtil::popLeaf(&path);
-    ASSERT(bdls::FilesystemUtil::exists(path));
-  }
-  //..
-  // Then we create a file for Bangkok and write the binary time zone data to
-  // that file.
-  //..
-  bsl::ofstream outputFile(fileName, bsl::ofstream::binary);
-  ASSERT(outputFile.is_open());
-  outputFile.write(data, numBytes);
-  outputFile.close();
+        bslmt::ThreadUtil::microSleep(0,1);
+        bsl::string path(fileName);
+        bdls::PathUtil::popLeaf(&path);
+        ASSERT(bdls::FilesystemUtil::exists(path));
+    }
+//..
+// Then we create a file for Bangkok and write the binary time zone data to
+// that file.
+//..
+    bsl::ofstream outputFile(fileName, bsl::ofstream::binary);
+    ASSERT(outputFile.is_open());
+    outputFile.write(data, numBytes);
+    outputFile.close();
 }
 
 namespace {
 namespace u {
 
-inline void sleep(int seconds) {
+inline
+void sleep(int seconds)
+{
 #ifdef BSLS_PLATFORM_OS_UNIX
-  ::sleep(seconds);
+    ::sleep(seconds);
 #else
-  ::Sleep(seconds * 1000);
+    ::Sleep(seconds * 1000);
 #endif
 }
 
-} // namespace u
-} // namespace
+}  // close namespace u
+}  // close unnamed namespace
 
 // ============================================================================
 //                               MAIN PROGRAM
 // ----------------------------------------------------------------------------
 
-int main(int argc, char *argv[]) {
-  int test = argc > 1 ? atoi(argv[1]) : 0;
-  int verbose = argc > 2;
-  int veryVerbose = argc > 3;
-  int veryVeryVerbose = argc > 4;
-  int veryVeryVeryVerbose = argc > 5;
+int main(int argc, char *argv[])
+{
+    int                test = argc > 1 ? atoi(argv[1]) : 0;
+    int             verbose = argc > 2;
+    int         veryVerbose = argc > 3;
+    int     veryVeryVerbose = argc > 4;
+    int veryVeryVeryVerbose = argc > 5;
 
-  cout << "TEST " << __FILE__ << " CASE " << test << endl;
+    cout << "TEST " << __FILE__ << " CASE " << test << endl;
 
-  bslma::TestAllocator allocator;
-  bslma::TestAllocator *Z = &allocator;
-  static bslma::TestAllocator defaultAllocator;
-  static bslma::TestAllocator globalAllocator("gta", veryVeryVerbose);
-  ;
+    bslma::TestAllocator allocator; bslma::TestAllocator *Z = &allocator;
+    static bslma::TestAllocator defaultAllocator;
+    static bslma::TestAllocator globalAllocator( "gta", veryVeryVerbose);;
 
-  bslma::Default::setGlobalAllocator(&globalAllocator);
+    bslma::Default::setGlobalAllocator(&globalAllocator);
 
-  bslma::DefaultAllocatorGuard guard(&defaultAllocator);
-  if (veryVeryVerbose) {
-    defaultAllocator.setVerbose(true);
-  }
-  bsl::string origWorkingDirectory(&globalAllocator);
-  ASSERT(0 == FUtil::getWorkingDirectory(&origWorkingDirectory));
+    bslma::DefaultAllocatorGuard guard(&defaultAllocator);
+    if (veryVeryVerbose) {
+        defaultAllocator.setVerbose(true);
+    }
+    bsl::string origWorkingDirectory(&globalAllocator);
+    ASSERT(0 == FUtil::getWorkingDirectory(&origWorkingDirectory));
 
-  char tmpWorkingDir[256];
-  {
+    char tmpWorkingDir[256];
+    {
 #ifdef BSLS_PLATFORM_OS_UNIX
-    char host[80];
-    ASSERT(0 == ::gethostname(host, sizeof(host)));
+        char host[80];
+        ASSERT(0 == ::gethostname(host, sizeof(host)));
 #else
-    const char *host = "win"; // 'gethostname' is difficult on
-                              // Windows, and we usually aren't using
-                              // nfs there anyway.
+        const char *host = "win";     // 'gethostname' is difficult on
+                                      // Windows, and we usually aren't using
+                                      // nfs there anyway.
 #endif
 
-    bdlsb::FixedMemOutStreamBuf sb(tmpWorkingDir, sizeof(tmpWorkingDir));
-    bsl::ostream os(&sb);
+        bdlsb::FixedMemOutStreamBuf sb(tmpWorkingDir, sizeof(tmpWorkingDir));
+        bsl::ostream                os(&sb);
 
-    os << "tmp.workingDir.baltzo_defaultzoneinfocache." << test << '.' << host
-       << '.' << bdls::ProcessUtil::getProcessId() << ends;
-  }
-  if (veryVerbose)
-    P(tmpWorkingDir);
+        os << "tmp.workingDir.baltzo_defaultzoneinfocache." << test << '.' <<
+               host << '.' << bdls::ProcessUtil::getProcessId() << ends;
+    }
+    if (veryVerbose) P(tmpWorkingDir);
 
-  if (FUtil::exists(tmpWorkingDir)) {
-    // Sometimes the cleanup at the end of this program is unable to clean
-    // up files, so we might encounter leftovers from a previous run, but
-    // these can usually be deleted if sufficient time has elapsed.  If
-    // we're not able to clean it up now, old files may prevent the test
-    // case we're running this time from working.  So we want this assert
-    // to fail to give the tester a 'heads-up' as to what went wrong.
+    if (FUtil::exists(tmpWorkingDir)) {
+        // Sometimes the cleanup at the end of this program is unable to clean
+        // up files, so we might encounter leftovers from a previous run, but
+        // these can usually be deleted if sufficient time has elapsed.  If
+        // we're not able to clean it up now, old files may prevent the test
+        // case we're running this time from working.  So we want this assert
+        // to fail to give the tester a 'heads-up' as to what went wrong.
 
-    ASSERTV(tmpWorkingDir, 0 == FUtil::remove(tmpWorkingDir, true));
-  }
-  ASSERT(0 == FUtil::createDirectories(tmpWorkingDir, true));
-  ASSERT(0 == FUtil::setWorkingDirectory(tmpWorkingDir));
+        ASSERTV(tmpWorkingDir, 0 == FUtil::remove(tmpWorkingDir, true));
+    }
+    ASSERT(0 == FUtil::createDirectories(  tmpWorkingDir, true));
+    ASSERT(0 == FUtil::setWorkingDirectory(tmpWorkingDir));
 
-  if (!bdls::FilesystemUtil::exists(TEST_DIRECTORY)) {
-    bdls::FilesystemUtil::createDirectories(TEST_DIRECTORY, true);
-  }
+    if (!bdls::FilesystemUtil::exists(TEST_DIRECTORY)) {
+        bdls::FilesystemUtil::createDirectories(TEST_DIRECTORY, true);
+    }
 
-  if (!bdls::FilesystemUtil::exists(TEST_GMT_FILE)) {
-    bsl::ofstream outputFile(TEST_GMT_FILE, bsl::ofstream::binary);
-    ASSERT(outputFile.is_open());
-    outputFile.close();
-  }
+    if (!bdls::FilesystemUtil::exists(TEST_GMT_FILE)) {
+        bsl::ofstream outputFile(TEST_GMT_FILE, bsl::ofstream::binary);
+        ASSERT(outputFile.is_open());
+        outputFile.close();
+    }
 
-  if (!bdls::FilesystemUtil::exists(AMERICA_NEW_YORK_FILE)) {
-    writeData(AMERICA_NEW_YORK_FILE,
-              reinterpret_cast<const char *>(AMERICA_NEW_YORK_DATA),
-              sizeof(AMERICA_NEW_YORK_DATA));
-  }
+    if (!bdls::FilesystemUtil::exists(AMERICA_NEW_YORK_FILE)) {
+        writeData(AMERICA_NEW_YORK_FILE,
+                  reinterpret_cast<const char  *>(AMERICA_NEW_YORK_DATA),
+                  sizeof(AMERICA_NEW_YORK_DATA));
+    }
 
-  switch (test) {
-  case 0:
-  case 7: {
-    // --------------------------------------------------------------------
-    // TESTING USAGE EXAMPLE
-    //
-    // Concerns:
-    //   The usage example provided in the component header file must
-    //   compile, link, and run on all platforms as shown.
-    //
-    // Plan:
-    //   Incorporate usage example from header into driver, remove leading
-    //   comment characters, and replace 'assert' with 'ASSERT'.
-    //
-    // Testing:
-    //   USAGE EXAMPLE
-    // --------------------------------------------------------------------
+    switch (test) { case 0:
+      case 7: {
+        // --------------------------------------------------------------------
+        // TESTING USAGE EXAMPLE
+        //
+        // Concerns:
+        //   The usage example provided in the component header file must
+        //   compile, link, and run on all platforms as shown.
+        //
+        // Plan:
+        //   Incorporate usage example from header into driver, remove leading
+        //   comment characters, and replace 'assert' with 'ASSERT'.
+        //
+        // Testing:
+        //   USAGE EXAMPLE
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << "\nTesting Usage Example" << "\n=====================" << endl;
+        if (verbose) cout << "\nTesting Usage Example"
+                          << "\n=====================" << endl;
 
-    /// Usage
-    ///-----
-    // The following example illustrates how to use a 'baltzo::DataFileLoader'
-    // to load the Zoneinfo time zone data for a time zone.
-    //
-    /// Prologue: Create a Example Data File
-    ///  - - - - - - - - - - - - - - - - - -
-    // We need to create one time zone data file on which to operate in the
-    // remainder of the example.  In practice, clients should *not* generate
-    // data files in this manner.  Data files are typically created using the
-    // 'zic' compiler -- a publicly available tool provided as part of the
-    // standard Zoneinfo distribution (see
-    // 'http://www.twinsun.com/tz/tz-link.htm') -- and deployed in a standard
-    // directory location (see 'baltzo_defaultzoneinfocache').
-    //
-    // First we define static binary data for "Asia/Bangkok" (chosen because it
-    // is relatively small):
-    //..
+///Usage
+///-----
+// The following example illustrates how to use a 'baltzo::DataFileLoader' to
+// load the Zoneinfo time zone data for a time zone.
+//
+///Prologue: Create a Example Data File
+/// - - - - - - - - - - - - - - - - - -
+// We need to create one time zone data file on which to operate in the
+// remainder of the example.  In practice, clients should *not* generate data
+// files in this manner.  Data files are typically created using the 'zic'
+// compiler -- a publicly available tool provided as part of the standard
+// Zoneinfo distribution (see 'http://www.twinsun.com/tz/tz-link.htm') -- and
+// deployed in a standard directory location (see
+// 'baltzo_defaultzoneinfocache').
+//
+// First we define static binary data for "Asia/Bangkok" (chosen because it is
+// relatively small):
+//..
     const unsigned char ASIA_BANGKOK_DATA[] = {
-        0x54, 0x5a, 0x69, 0x66, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,
-        0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-        0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x08, 0xa2, 0x6a, 0x67, 0xc4,
-        0x01, 0x00, 0x00, 0x5e, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x62, 0x70, 0x00,
-        0x04, 0x42, 0x4d, 0x54, 0x00, 0x49, 0x43, 0x54, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x54, 0x5a, 0x69, 0x66, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c, 0xff, 0xff, 0xff,
-        0xff, 0x56, 0xb6, 0x85, 0xc4, 0xff, 0xff, 0xff, 0xff, 0xa2, 0x6a, 0x67,
-        0xc4, 0x01, 0x02, 0x00, 0x00, 0x5e, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x5e,
-        0x3c, 0x00, 0x04, 0x00, 0x00, 0x62, 0x70, 0x00, 0x08, 0x4c, 0x4d, 0x54,
-        0x00, 0x42, 0x4d, 0x54, 0x00, 0x49, 0x43, 0x54, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x0a, 0x49, 0x43, 0x54, 0x2d, 0x37, 0x0a};
+      0x54, 0x5a, 0x69, 0x66, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,
+      0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+      0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x08, 0xa2, 0x6a, 0x67, 0xc4,
+      0x01, 0x00, 0x00, 0x5e, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x62, 0x70, 0x00,
+      0x04, 0x42, 0x4d, 0x54, 0x00, 0x49, 0x43, 0x54, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x54, 0x5a, 0x69, 0x66, 0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x03, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0c, 0xff, 0xff, 0xff,
+      0xff, 0x56, 0xb6, 0x85, 0xc4, 0xff, 0xff, 0xff, 0xff, 0xa2, 0x6a, 0x67,
+      0xc4, 0x01, 0x02, 0x00, 0x00, 0x5e, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x5e,
+      0x3c, 0x00, 0x04, 0x00, 0x00, 0x62, 0x70, 0x00, 0x08, 0x4c, 0x4d, 0x54,
+      0x00, 0x42, 0x4d, 0x54, 0x00, 0x49, 0x43, 0x54, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x0a, 0x49, 0x43, 0x54, 0x2d, 0x37, 0x0a
+    };
 //..
 // Then we create a testing sub-directory "test/Asia" that will hold the
 // data file for Bangkok.  Note that "Asia/Bangkok" is the Olson time zone
@@ -666,65 +670,66 @@ int main(int argc, char *argv[]) {
 //..
 #ifdef BSLS_PLATFORM_OS_WINDOWS
     const char *TIME_ZONE_DIRECTORY = "test\\Asia";
-    const char *TIME_ZONE_FILE = "test\\Asia\\Bangkok";
+    const char *TIME_ZONE_FILE      = "test\\Asia\\Bangkok";
 #else
     const char *TIME_ZONE_DIRECTORY = "test/Asia";
-    const char *TIME_ZONE_FILE = "test/Asia/Bangkok";
+    const char *TIME_ZONE_FILE      = "test/Asia/Bangkok";
 #endif
-    int rc = bdls::FilesystemUtil::createDirectories(TIME_ZONE_DIRECTORY, true);
+    int rc =
+            bdls::FilesystemUtil::createDirectories(TIME_ZONE_DIRECTORY, true);
     ASSERT(0 == rc);
-    //..
-    // Finally we create a file for Bangkok and write the binary time zone data
-    // to that file.
-    //..
+//..
+// Finally we create a file for Bangkok and write the binary time zone data to
+// that file.
+//..
     bsl::ofstream outputFile(TIME_ZONE_FILE, bsl::ofstream::binary);
     ASSERT(outputFile.is_open());
     outputFile.write(reinterpret_cast<const char *>(ASIA_BANGKOK_DATA),
                      sizeof(ASIA_BANGKOK_DATA));
     outputFile.close();
-    //..
-    //
-    /// Example 1: Using a 'baltzo::DataFileLoader' to Load a Zoneinfo File
-    ///  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    // In this example we demonstrate how to use a 'baltzo::DataFileLoader' to
-    // load a time zone data file into a 'baltzo::Zoneinfo' object.  First we
-    // create a 'baltzo::DataFileLoader' object, and configure it with the
-    // relative path "test" which we created in the prologue example.
-    //..
+//..
+//
+///Example 1: Using a 'baltzo::DataFileLoader' to Load a Zoneinfo File
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// In this example we demonstrate how to use a 'baltzo::DataFileLoader' to load
+// a time zone data file into a 'baltzo::Zoneinfo' object.  First we create
+// a 'baltzo::DataFileLoader' object, and configure it with the relative path
+// "test" which we created in the prologue example.
+//..
     baltzo::DataFileLoader loader;
     loader.configureRootPath("test");
-    //..
-    // Note that 'isRootPathPlausible' will return 'false' for the relative path
-    // "test" since it does not contain data for the time zone "GMT" so it is
-    // (correctly) assumed that "test" does not contain a (reasonably complete)
-    // set of time zone data:
-    //..
+//..
+// Note that 'isRootPathPlausible' will return 'false' for the relative path
+// "test" since it does not contain data for the time zone "GMT" so it is
+// (correctly) assumed that "test" does not contain a (reasonably complete)
+// set of time zone data:
+//..
     ASSERT(!loader.isRootPathPlausible());
-    //..
-    // Next we use the 'dataFilePath' method to verify that 'loader' will
-    // correctly locate the test data file we've created:
-    //..
+//..
+// Next we use the 'dataFilePath' method to verify that 'loader' will
+// correctly locate the test data file we've created:
+//..
     const char *BANGKOK_ID = "Asia/Bangkok";
     bsl::string bangkokDataPath;
     rc = loader.loadTimeZoneFilePath(&bangkokDataPath, BANGKOK_ID);
 
-    ASSERT(0 == rc);
+    ASSERT(0              == rc);
     ASSERT(TIME_ZONE_FILE == bangkokDataPath);
-    //..
-    // Then we create a 'baltzo::Zoneinfo' and load it using 'loader':
-    //..
+//..
+// Then we create a 'baltzo::Zoneinfo' and load it using 'loader':
+//..
     baltzo::Zoneinfo timeZone;
     rc = loader.loadTimeZone(&timeZone, BANGKOK_ID);
     ASSERT(0 == rc);
-    //..
-    // Finally we verify several properties of the timezone: (1) That its
-    // identifier is "Asia/Bangkok", and (2) it contains two transitions
-    // referring to three local time descriptors, "LMT" (Local Mean Time), "BMT"
-    // (Bangkok Mean Time), and "ICT" (Indochina Time):
-    //..
+//..
+// Finally we verify several properties of the timezone: (1) That its
+// identifier is "Asia/Bangkok", and (2) it contains two transitions referring
+// to three local time descriptors, "LMT" (Local Mean Time), "BMT" (Bangkok
+// Mean Time), and "ICT" (Indochina Time):
+//..
     ASSERT(BANGKOK_ID == timeZone.identifier());
     baltzo::Zoneinfo::TransitionConstIterator iterator =
-        timeZone.beginTransitions();
+                                                   timeZone.beginTransitions();
     ASSERT("LMT" == iterator->descriptor().description());
     ++iterator;
     ASSERT("BMT" == iterator->descriptor().description());
@@ -732,808 +737,801 @@ int main(int argc, char *argv[]) {
     ASSERT("ICT" == iterator->descriptor().description());
     ++iterator;
     ASSERT(timeZone.endTransitions() == iterator);
-    //..
+//..
     if (verbose) {
-      timeZone.print(bsl::cout, 1, 3);
+        timeZone.print(bsl::cout, 1, 3);
     }
 
     bdls::FilesystemUtil::remove("test", true);
-    // TIME_ZONE_DIRECTORY/.. i.e. "test"
+                                          // TIME_ZONE_DIRECTORY/.. i.e. "test"
 
-  } break;
-  case 6: {
-    // --------------------------------------------------------------------
-    // TESTING 'loadTimeZone'
-    //
-    // Concerns:
-    //: 1 'loadTimeZone' correctly loads time-zone information when a valid
-    //:   time zone identifier is specified.
-    //:
-    //: 2 'loadTimeZone' returns 'k_UNSUPPORTED_ID' if the specified time
-    //:   zone identifier is invalid.
-    //:
-    //: 3 'loadTimeZone' returns a non-zero value different from
-    //:   'k_UNSUPPORTED_ID' on error reading the specified time-zone file.
-    //
-    // Plan:
-    //: 1 Test that 'loadTimeZone' returns time-zone information when give
-    //:   a valid time zone identifier.
-    //:
-    //: 2 Test that 'loadTimeZone' returns 'k_UNSUPPORTED_ID' when
-    //:   'rootPath' is a plausible directory, but the time zone identifier
-    //:   is invalid.
-    //:
-    //: 3 Test that 'loadTimeZone' returns a non-zero return code other
-    //:   than 'k_UNSUPPORTED_ID' if 'rootPath' is not plausible.
-    //
-    // Testing:
-    //   int loadTimeZone(Zoneinfo *result, const char *timeZoneId);
-    // --------------------------------------------------------------------
+      } break;
+      case 6: {
+        // --------------------------------------------------------------------
+        // TESTING 'loadTimeZone'
+        //
+        // Concerns:
+        //: 1 'loadTimeZone' correctly loads time-zone information when a valid
+        //:   time zone identifier is specified.
+        //:
+        //: 2 'loadTimeZone' returns 'k_UNSUPPORTED_ID' if the specified time
+        //:   zone identifier is invalid.
+        //:
+        //: 3 'loadTimeZone' returns a non-zero value different from
+        //:   'k_UNSUPPORTED_ID' on error reading the specified time-zone file.
+        //
+        // Plan:
+        //: 1 Test that 'loadTimeZone' returns time-zone information when give
+        //:   a valid time zone identifier.
+        //:
+        //: 2 Test that 'loadTimeZone' returns 'k_UNSUPPORTED_ID' when
+        //:   'rootPath' is a plausible directory, but the time zone identifier
+        //:   is invalid.
+        //:
+        //: 3 Test that 'loadTimeZone' returns a non-zero return code other
+        //:   than 'k_UNSUPPORTED_ID' if 'rootPath' is not plausible.
+        //
+        // Testing:
+        //   int loadTimeZone(Zoneinfo *result, const char *timeZoneId);
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << endl
-           << "TESTING 'loadTimeZone'" << endl
-           << "======================" << endl;
+        if (verbose) cout << endl
+                          << "TESTING 'loadTimeZone'" << endl
+                          << "======================" << endl;
 
-    if (verbose)
-      cout << "\nSetup plausible directory" << endl;
+        if (verbose) cout << "\nSetup plausible directory" << endl;
 
-    ASSERT(true == Obj::isPlausibleZoneinfoRootPath(TEST_DIRECTORY));
+        ASSERT(true == Obj::isPlausibleZoneinfoRootPath(TEST_DIRECTORY));
 
-    if (verbose)
-      cout << "\nTest non-plausible directory" << endl;
-    {
-      Obj mX;
-      baltzo::Zoneinfo timeZone;
+        if (verbose) cout << "\nTest non-plausible directory" << endl;
+        {
+            Obj mX;
+            baltzo::Zoneinfo timeZone;
 
-      mX.configureRootPath("NotPlausibleDirectory");
+            mX.configureRootPath("NotPlausibleDirectory");
 
-      int rc = mX.loadTimeZone(&timeZone, "A");
-      ASSERT(0 != rc);
-      ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID != rc);
-    }
+            int rc = mX.loadTimeZone(&timeZone, "A");
+            ASSERT(0 != rc);
+            ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID != rc);
+        }
 
-    if (verbose)
-      cout << "\nTest with plausible directory" << endl;
-    {
-      Obj mX;
-      baltzo::Zoneinfo timeZone;
+        if (verbose) cout << "\nTest with plausible directory" << endl;
+        {
+            Obj mX;
+            baltzo::Zoneinfo timeZone;
 
-      ASSERT(0 == mX.configureRootPathIfPlausible(TEST_DIRECTORY));
+            ASSERT(0 == mX.configureRootPathIfPlausible(TEST_DIRECTORY));
 
-      if (verbose)
-        cout << "\n\tTest invalid identifier" << endl;
+            if (verbose) cout << "\n\tTest invalid identifier" << endl;
 
-      ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID ==
-             mX.loadTimeZone(&timeZone, "/"));
+            ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID ==
+                                              mX.loadTimeZone(&timeZone, "/"));
 
-      if (verbose)
-        cout << "\n\tTest non-existent identifier" << endl;
+            if (verbose) cout << "\n\tTest non-existent identifier" << endl;
 
-      ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID ==
-             mX.loadTimeZone(&timeZone, "Non/Existent/Identifier"));
+            ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID ==
+                        mX.loadTimeZone(&timeZone, "Non/Existent/Identifier"));
 
-      ASSERT(0 == mX.loadTimeZone(&timeZone, AMERICA_NEW_YORK_ID));
+            ASSERT(0 == mX.loadTimeZone(&timeZone, AMERICA_NEW_YORK_ID));
 
-      ASSERT(AMERICA_NEW_YORK_ID == timeZone.identifier());
-    }
+            ASSERT(AMERICA_NEW_YORK_ID == timeZone.identifier());
+        }
 
 #ifndef BDE_OMIT_INTERNAL_DEPRECATED
-    ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID ==
-           baltzo::ErrorCode::k_UNSUPPORTED_ID);
-#endif // BDE_OMIT_INTERNAL_DEPRECATED
+        ASSERT(baltzo::ErrorCode::k_UNSUPPORTED_ID ==
+               baltzo::ErrorCode::k_UNSUPPORTED_ID);
+#endif  // BDE_OMIT_INTERNAL_DEPRECATED
 
-  } break;
-  case 5: {
-    // --------------------------------------------------------------------
-    // TESTING 'loadTimeZoneFilePath'
-    //
-    // Concerns:
-    //: 1 All invalid characters cause 'loadTimeZoneFilePath' to return a
-    //:   non-zero value.
-    //:
-    //: 2 'loadTimeZoneFilePath' accepts all valid characters in the
-    //:   'timeZoneId'.
-    //:
-    //: 3 'loadTimeZoneFilePath' returns the expected result as specified
-    //:   in the contract.
-    //:
-    //: 4 'loadTimeZoneFilePath' accepts all current time zone identifiers.
-    //
-    // Plan:
-    //: 1 Create a list of invalid character and test that
-    //:   'loadTimeZoneFilePath' returns a non-zero value for each one of
-    //:   them.
-    //:
-    //: 2 Test that 'loadTimeZoneFilePath' succeed when given a time zone
-    //:   identifier that contains only valid character.
-    //:
-    //: 3 Test that 'loadTimeZoneFilePath' produce expected results at the
-    //:   documented boundaries.
-    //:
-    //: 4 Create a list of sample time zone identifiers and test that the
-    //:   the correct file path is returned.
-    //
-    // Testing:
-    //   int loadTimeZoneFilePath(bsl::string *r, const char  *id) const;
-    // --------------------------------------------------------------------
+      } break;
+      case 5: {
+        // --------------------------------------------------------------------
+        // TESTING 'loadTimeZoneFilePath'
+        //
+        // Concerns:
+        //: 1 All invalid characters cause 'loadTimeZoneFilePath' to return a
+        //:   non-zero value.
+        //:
+        //: 2 'loadTimeZoneFilePath' accepts all valid characters in the
+        //:   'timeZoneId'.
+        //:
+        //: 3 'loadTimeZoneFilePath' returns the expected result as specified
+        //:   in the contract.
+        //:
+        //: 4 'loadTimeZoneFilePath' accepts all current time zone identifiers.
+        //
+        // Plan:
+        //: 1 Create a list of invalid character and test that
+        //:   'loadTimeZoneFilePath' returns a non-zero value for each one of
+        //:   them.
+        //:
+        //: 2 Test that 'loadTimeZoneFilePath' succeed when given a time zone
+        //:   identifier that contains only valid character.
+        //:
+        //: 3 Test that 'loadTimeZoneFilePath' produce expected results at the
+        //:   documented boundaries.
+        //:
+        //: 4 Create a list of sample time zone identifiers and test that the
+        //:   the correct file path is returned.
+        //
+        // Testing:
+        //   int loadTimeZoneFilePath(bsl::string *r, const char  *id) const;
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << endl
-           << "TESTING 'loadTimeZoneFilePath'" << endl
-           << "==============================" << endl;
+        if (verbose) cout << endl
+                          << "TESTING 'loadTimeZoneFilePath'" << endl
+                          << "==============================" << endl;
 
-    if (verbose)
-      cout << "\nTesting invalid characters." << endl;
-    {
-      const char *INVALID_CHAR = "`~!@#$%^&*()=,./;'[]\\<>?:\"{}|";
-      const bsl::size_t NUM_INVALID_CHAR = strlen(INVALID_CHAR);
+        if (verbose) cout << "\nTesting invalid characters." << endl;
+        {
+            const char *INVALID_CHAR = "`~!@#$%^&*()=,./;'[]\\<>?:\"{}|";
+            const bsl::size_t NUM_INVALID_CHAR = strlen(INVALID_CHAR);
 
-      Obj mX;
-      const Obj &X = mX;
-      mX.configureRootPath(".");
+            Obj mX; const Obj& X = mX;
+            mX.configureRootPath(".");
 
-      char TZ_ID[2];
-      TZ_ID[1] = '\0';
+            char TZ_ID[2];
+            TZ_ID[1] = '\0';
 
-      for (bsl::size_t ti = 0; ti < NUM_INVALID_CHAR; ++ti) {
-        TZ_ID[0] = INVALID_CHAR[ti];
+            for (bsl::size_t ti = 0; ti < NUM_INVALID_CHAR; ++ti) {
+                TZ_ID[0] = INVALID_CHAR[ti];
 
-        if (veryVerbose) {
-          T_ P_(ti) P_(TZ_ID)
-        };
+                if (veryVerbose) { T_ P_(ti) P_(TZ_ID) };
 
-        bsl::string bslResult;
-        LOOP2_ASSERT(ti, TZ_ID, 0 != X.loadTimeZoneFilePath(&bslResult, TZ_ID));
+                bsl::string bslResult;
+                LOOP2_ASSERT(ti, TZ_ID,
+                             0 != X.loadTimeZoneFilePath(&bslResult, TZ_ID));
 
-        std::string stdResult;
-        LOOP2_ASSERT(ti, TZ_ID, 0 != X.loadTimeZoneFilePath(&stdResult, TZ_ID));
+                std::string stdResult;
+                LOOP2_ASSERT(ti, TZ_ID,
+                             0 != X.loadTimeZoneFilePath(&stdResult, TZ_ID));
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        std::experimental::pmr::string pmrResult;
-        LOOP2_ASSERT(ti, TZ_ID, 0 != X.loadTimeZoneFilePath(&pmrResult, TZ_ID));
+                std::pmr::string pmrResult;
+                LOOP2_ASSERT(ti, TZ_ID,
+                             0 != X.loadTimeZoneFilePath(&pmrResult, TZ_ID));
 #endif
-      }
-    }
+            }
+        }
 
-    if (verbose)
-      cout << "\nTesting valid characters." << endl;
-    {
-      const char *VALID_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                               "abcdefghijklmnopqrstuvwxyz"
-                               "1234567890_+-";
-      const bsl::size_t NUM_VALID_CHAR = strlen(VALID_CHAR);
+        if (verbose) cout << "\nTesting valid characters." << endl;
+        {
+            const char *VALID_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                     "abcdefghijklmnopqrstuvwxyz"
+                                     "1234567890_+-";
+            const bsl::size_t NUM_VALID_CHAR = strlen(VALID_CHAR);
 
-      Obj mX;
-      const Obj &X = mX;
-      mX.configureRootPath(".");
+            Obj mX; const Obj& X = mX;
+            mX.configureRootPath(".");
 
-      char TZ_ID[2];
-      TZ_ID[1] = '\0';
+            char TZ_ID[2];
+            TZ_ID[1] = '\0';
 
-      for (bsl::size_t ti = 0; ti < NUM_VALID_CHAR; ++ti) {
-        TZ_ID[0] = VALID_CHAR[ti];
+            for (bsl::size_t ti = 0; ti < NUM_VALID_CHAR; ++ti) {
+                TZ_ID[0] = VALID_CHAR[ti];
 
-        if (veryVerbose) {
-          T_ P_(ti) P_(TZ_ID)
-        };
+                if (veryVerbose) { T_ P_(ti) P_(TZ_ID) };
 
-        bsl::string bslResult;
-        LOOP2_ASSERT(ti, TZ_ID, 0 == X.loadTimeZoneFilePath(&bslResult, TZ_ID));
+                bsl::string bslResult;
+                LOOP2_ASSERT(ti, TZ_ID,
+                             0 == X.loadTimeZoneFilePath(&bslResult, TZ_ID));
 
-        std::string stdResult;
-        LOOP2_ASSERT(ti, TZ_ID, 0 == X.loadTimeZoneFilePath(&stdResult, TZ_ID));
+                std::string stdResult;
+                LOOP2_ASSERT(ti, TZ_ID,
+                             0 == X.loadTimeZoneFilePath(&stdResult, TZ_ID));
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        std::experimental::pmr::string pmrResult;
-        LOOP2_ASSERT(ti, TZ_ID, 0 == X.loadTimeZoneFilePath(&pmrResult, TZ_ID));
+                std::pmr::string pmrResult;
+                LOOP2_ASSERT(ti, TZ_ID,
+                             0 == X.loadTimeZoneFilePath(&pmrResult, TZ_ID));
 #endif
-      }
-    }
+            }
+        }
 
-    if (verbose)
-      cout << "\nTesting '/' characters." << endl;
-    {
-      Obj mX;
-      const Obj &X = mX;
-      mX.configureRootPath(".");
+        if (verbose) cout << "\nTesting '/' characters." << endl;
+        {
+            Obj mX; const Obj& X = mX;
+            mX.configureRootPath(".");
 
-      bsl::string bslResult;
+            bsl::string bslResult;
 
-      ASSERT(0 != X.loadTimeZoneFilePath(&bslResult, "/"));
-      ASSERT(0 != X.loadTimeZoneFilePath(&bslResult, "/A"));
-      ASSERT(0 == X.loadTimeZoneFilePath(&bslResult, "A/"));
-      ASSERT(0 == X.loadTimeZoneFilePath(&bslResult, "A/B"));
+            ASSERT(0 != X.loadTimeZoneFilePath(&bslResult, "/"));
+            ASSERT(0 != X.loadTimeZoneFilePath(&bslResult, "/A"));
+            ASSERT(0 == X.loadTimeZoneFilePath(&bslResult, "A/"));
+            ASSERT(0 == X.loadTimeZoneFilePath(&bslResult, "A/B"));
 
-      std::string stdResult;
+            std::string stdResult;
 
-      ASSERT(0 != X.loadTimeZoneFilePath(&stdResult, "/"));
-      ASSERT(0 != X.loadTimeZoneFilePath(&stdResult, "/A"));
-      ASSERT(0 == X.loadTimeZoneFilePath(&stdResult, "A/"));
-      ASSERT(0 == X.loadTimeZoneFilePath(&stdResult, "A/B"));
+            ASSERT(0 != X.loadTimeZoneFilePath(&stdResult, "/"));
+            ASSERT(0 != X.loadTimeZoneFilePath(&stdResult, "/A"));
+            ASSERT(0 == X.loadTimeZoneFilePath(&stdResult, "A/"));
+            ASSERT(0 == X.loadTimeZoneFilePath(&stdResult, "A/B"));
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-      std::experimental::pmr::string pmrResult;
+            std::pmr::string pmrResult;
 
-      ASSERT(0 != X.loadTimeZoneFilePath(&pmrResult, "/"));
-      ASSERT(0 != X.loadTimeZoneFilePath(&pmrResult, "/A"));
-      ASSERT(0 == X.loadTimeZoneFilePath(&pmrResult, "A/"));
-      ASSERT(0 == X.loadTimeZoneFilePath(&pmrResult, "A/B"));
-#endif
-    }
-
-    if (verbose)
-      cout << "\nCreate a table of distinct object values." << endl;
-    {
-      static const struct {
-        int d_line;
-        const char *d_root;
-        const char *d_tzId;
-        const char *d_result;
-      } DATA[] = {
-
-      // LINE  ROOT    TZ_ID   RESULT
-      //----  ----    -----   ------
-
-#ifdef BSLS_PLATFORM_OS_WINDOWS
-          {L_, "", "", ""},
-          {L_, "", "C", "C"},
-          {L_, "A", "C/D", "A\\C\\D"},
-          {L_, "A\\B", "C/D", "A\\B\\C\\D"},
-#else
-          {L_, "", "", ""},
-          {L_, "", "C", "C"},
-          {L_, "A", "C/D", "A/C/D"},
-          {L_, "A/B", "C/D", "A/B/C/D"},
-#endif
-
-      };
-      const int NUM_DATA = sizeof DATA / sizeof *DATA;
-
-      if (verbose)
-        cout << "\nTesting with various path." << endl;
-      {
-        for (int ti = 0; ti < NUM_DATA; ++ti) {
-          const int LINE = DATA[ti].d_line;
-          const char *ROOT = DATA[ti].d_root;
-          const char *TZ_ID = DATA[ti].d_tzId;
-          const bsl::string EXP = DATA[ti].d_result;
-
-          Obj mX;
-          const Obj &X = mX;
-
-          mX.configureRootPath(ROOT);
-
-          bsl::string bslResult;
-          LOOP_ASSERT(LINE, 0 == X.loadTimeZoneFilePath(&bslResult, TZ_ID));
-          LOOP3_ASSERT(LINE, EXP, bslResult, EXP == bslResult);
-
-          std::string stdResult;
-          LOOP_ASSERT(LINE, 0 == X.loadTimeZoneFilePath(&stdResult, TZ_ID));
-          LOOP3_ASSERT(LINE, EXP, stdResult, EXP == stdResult);
-
-#ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-          std::experimental::pmr::string pmrResult;
-          LOOP_ASSERT(LINE, 0 == X.loadTimeZoneFilePath(&pmrResult, TZ_ID));
-          LOOP3_ASSERT(LINE, EXP, pmrResult, EXP == pmrResult);
+            ASSERT(0 != X.loadTimeZoneFilePath(&pmrResult, "/"));
+            ASSERT(0 != X.loadTimeZoneFilePath(&pmrResult, "/A"));
+            ASSERT(0 == X.loadTimeZoneFilePath(&pmrResult, "A/"));
+            ASSERT(0 == X.loadTimeZoneFilePath(&pmrResult, "A/B"));
 #endif
         }
-      }
-    }
 
-    if (verbose)
-      cout << "\nCreate a table of time zones." << endl;
-    {
+        if (verbose) cout <<
+                         "\nCreate a table of distinct object values." << endl;
+        {
+            static const struct {
+                int         d_line;
+                const char *d_root;
+                const char *d_tzId;
+                const char *d_result;
+            } DATA [] = {
+
+            //LINE  ROOT    TZ_ID   RESULT
+            //----  ----    -----   ------
+
+#ifdef BSLS_PLATFORM_OS_WINDOWS
+            { L_,   "",     "",     "" },
+            { L_,   "",     "C",    "C" },
+            { L_,   "A",    "C/D",  "A\\C\\D" },
+            { L_,   "A\\B", "C/D",  "A\\B\\C\\D" },
+#else
+            { L_,   "",     "",     "" },
+            { L_,   "",     "C",    "C" },
+            { L_,   "A",    "C/D",  "A/C/D" },
+            { L_,   "A/B",  "C/D",  "A/B/C/D" },
+#endif
+
+            };
+            const int NUM_DATA = sizeof DATA / sizeof *DATA;
+
+            if (verbose) cout << "\nTesting with various path." << endl;
+            {
+                for (int ti = 0; ti < NUM_DATA; ++ti) {
+                    const int          LINE   = DATA[ti].d_line;
+                    const char        *ROOT   = DATA[ti].d_root;
+                    const char        *TZ_ID  = DATA[ti].d_tzId;
+                    const bsl::string  EXP    = DATA[ti].d_result;
+
+                    Obj mX; const Obj& X = mX;
+
+                    mX.configureRootPath(ROOT);
+
+                    bsl::string bslResult;
+                    LOOP_ASSERT(LINE,
+                                0 == X.loadTimeZoneFilePath(&bslResult,
+                                                            TZ_ID));
+                    LOOP3_ASSERT(LINE, EXP, bslResult, EXP == bslResult);
+
+                    std::string stdResult;
+                    LOOP_ASSERT(LINE,
+                                0 == X.loadTimeZoneFilePath(&stdResult,
+                                                            TZ_ID));
+                    LOOP3_ASSERT(LINE, EXP, stdResult, EXP == stdResult);
+
+#ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
+                    std::pmr::string pmrResult;
+                    LOOP_ASSERT(LINE,
+                                0 == X.loadTimeZoneFilePath(&pmrResult,
+                                                            TZ_ID));
+                    LOOP3_ASSERT(LINE, EXP, pmrResult, EXP == pmrResult);
+#endif
+                }
+            }
+        }
+
+        if (verbose) cout <<
+                         "\nCreate a table of time zones." << endl;
+        {
 #define ROOT "root"
-      static const struct {
-        int d_line;
-        const char *d_tzId;
-        const char *d_result;
-      } DATA[] = {
+            static const struct {
+                int         d_line;
+                const char *d_tzId;
+                const char *d_result;
+            } DATA [] = {
 
 #ifdef BSLS_PLATFORM_OS_WINDOWS
-          {L_, "Africa/Cairo", ROOT "\\Africa\\Cairo"},
-          {L_, "Africa/Johannesburg", ROOT "\\Africa\\Johannesburg"},
-          {L_, "Atlantic/South_Georgia", ROOT "\\Atlantic\\South_Georgia"},
-          {L_, "Indian/Christmas", ROOT "\\Indian\\Christmas"},
-          {L_, "Antarctica/South_Pole", ROOT "\\Antarctica\\South_Pole"},
-          {L_, "Asia/Tokyo", ROOT "\\Asia\\Tokyo"},
-          {L_, "Asia/Ulaanbaatar", ROOT "\\Asia\\Ulaanbaatar"},
-          {L_, "Asia/Riyadh87", ROOT "\\Asia\\Riyadh87"},
-          {L_, "Australia/Darwin", ROOT "\\Australia\\Darwin"},
-          {L_, "Pacific/Honolulu", ROOT "\\Pacific\\Honolulu"},
-          {L_, "Europe/London", ROOT "\\Europe\\London"},
-          {L_, "Europe/Isle_of_Man", ROOT "\\Europe\\Isle_of_Man"},
-          {L_, "America/New_York", ROOT "\\America\\New_York"},
-          {L_, "America/Indiana/Indianapolis",
-           ROOT "\\America\\Indiana\\Indianapolis"},
-          {L_, "America/Blanc-Sablon", ROOT "\\America\\Blanc-Sablon"},
-          {L_, "America/Port-au-Prince", ROOT "\\America\\Port-au-Prince"},
-          {L_, "America/Argentina/Buenos_Aires",
-           ROOT "\\America\\Argentina\\Buenos_Aires"},
-          {L_, "EET", ROOT "\\EET"},
-          {L_, "EST5EDT", ROOT "\\EST5EDT"},
-          {L_, "Etc/GMT-14", ROOT "\\Etc\\GMT-14"},
-          {L_, "Etc/GMT+12", ROOT "\\Etc\\GMT+12"},
-          {L_, "Etc/GMT-0", ROOT "\\Etc\\GMT-0"},
-          {L_, "Etc/GMT+0", ROOT "\\Etc\\GMT+0"},
-          {L_, "Etc/GMT0", ROOT "\\Etc\\GMT0"},
-          {L_, "Etc/UTC", ROOT "\\Etc\\UTC"},
-          {L_, "Arctic/Longyearbyen", ROOT "\\Arctic\\Longyearbyen"},
-          {L_, "UTC", ROOT "\\UTC"},
+            { L_, "Africa/Cairo",           ROOT "\\Africa\\Cairo" },
+            { L_, "Africa/Johannesburg",    ROOT "\\Africa\\Johannesburg" },
+            { L_, "Atlantic/South_Georgia", ROOT "\\Atlantic\\South_Georgia" },
+            { L_, "Indian/Christmas",       ROOT "\\Indian\\Christmas" },
+            { L_, "Antarctica/South_Pole",  ROOT "\\Antarctica\\South_Pole" },
+            { L_, "Asia/Tokyo",             ROOT "\\Asia\\Tokyo" },
+            { L_, "Asia/Ulaanbaatar",       ROOT "\\Asia\\Ulaanbaatar" },
+            { L_, "Asia/Riyadh87",          ROOT "\\Asia\\Riyadh87" },
+            { L_, "Australia/Darwin",       ROOT "\\Australia\\Darwin" },
+            { L_, "Pacific/Honolulu",       ROOT "\\Pacific\\Honolulu" },
+            { L_, "Europe/London",          ROOT "\\Europe\\London" },
+            { L_, "Europe/Isle_of_Man",     ROOT "\\Europe\\Isle_of_Man" },
+            { L_, "America/New_York",       ROOT "\\America\\New_York" },
+            { L_, "America/Indiana/Indianapolis",
+                                   ROOT "\\America\\Indiana\\Indianapolis" },
+            { L_, "America/Blanc-Sablon",   ROOT "\\America\\Blanc-Sablon" },
+            { L_, "America/Port-au-Prince", ROOT "\\America\\Port-au-Prince" },
+            { L_, "America/Argentina/Buenos_Aires",
+                                   ROOT "\\America\\Argentina\\Buenos_Aires" },
+            { L_, "EET",                    ROOT "\\EET" },
+            { L_, "EST5EDT",                ROOT "\\EST5EDT" },
+            { L_, "Etc/GMT-14",             ROOT "\\Etc\\GMT-14" },
+            { L_, "Etc/GMT+12",             ROOT "\\Etc\\GMT+12" },
+            { L_, "Etc/GMT-0",              ROOT "\\Etc\\GMT-0" },
+            { L_, "Etc/GMT+0",              ROOT "\\Etc\\GMT+0" },
+            { L_, "Etc/GMT0",               ROOT "\\Etc\\GMT0" },
+            { L_, "Etc/UTC",                ROOT "\\Etc\\UTC" },
+            { L_, "Arctic/Longyearbyen",    ROOT "\\Arctic\\Longyearbyen" },
+            { L_, "UTC",                    ROOT "\\UTC" },
 #else
-          {L_, "Africa/Cairo", ROOT "/Africa/Cairo"},
-          {L_, "Africa/Johannesburg", ROOT "/Africa/Johannesburg"},
-          {L_, "Atlantic/South_Georgia", ROOT "/Atlantic/South_Georgia"},
-          {L_, "Indian/Christmas", ROOT "/Indian/Christmas"},
-          {L_, "Antarctica/South_Pole", ROOT "/Antarctica/South_Pole"},
-          {L_, "Asia/Tokyo", ROOT "/Asia/Tokyo"},
-          {L_, "Asia/Ulaanbaatar", ROOT "/Asia/Ulaanbaatar"},
-          {L_, "Asia/Riyadh87", ROOT "/Asia/Riyadh87"},
-          {L_, "Australia/Darwin", ROOT "/Australia/Darwin"},
-          {L_, "Pacific/Honolulu", ROOT "/Pacific/Honolulu"},
-          {L_, "Europe/London", ROOT "/Europe/London"},
-          {L_, "Europe/Isle_of_Man", ROOT "/Europe/Isle_of_Man"},
-          {L_, "America/New_York", ROOT "/America/New_York"},
-          {L_, "America/Indiana/Indianapolis",
-           ROOT "/America/Indiana/Indianapolis"},
-          {L_, "America/Blanc-Sablon", ROOT "/America/Blanc-Sablon"},
-          {L_, "America/Port-au-Prince", ROOT "/America/Port-au-Prince"},
-          {L_, "America/Argentina/Buenos_Aires",
-           ROOT "/America/Argentina/Buenos_Aires"},
-          {L_, "EET", ROOT "/EET"},
-          {L_, "EST5EDT", ROOT "/EST5EDT"},
-          {L_, "Etc/GMT-14", ROOT "/Etc/GMT-14"},
-          {L_, "Etc/GMT+12", ROOT "/Etc/GMT+12"},
-          {L_, "Etc/GMT-0", ROOT "/Etc/GMT-0"},
-          {L_, "Etc/GMT+0", ROOT "/Etc/GMT+0"},
-          {L_, "Etc/GMT0", ROOT "/Etc/GMT0"},
-          {L_, "Etc/UTC", ROOT "/Etc/UTC"},
-          {L_, "Arctic/Longyearbyen", ROOT "/Arctic/Longyearbyen"},
-          {L_, "UTC", ROOT "/UTC"},
+            { L_, "Africa/Cairo",           ROOT "/Africa/Cairo" },
+            { L_, "Africa/Johannesburg",    ROOT "/Africa/Johannesburg" },
+            { L_, "Atlantic/South_Georgia", ROOT "/Atlantic/South_Georgia" },
+            { L_, "Indian/Christmas",       ROOT "/Indian/Christmas" },
+            { L_, "Antarctica/South_Pole",  ROOT "/Antarctica/South_Pole" },
+            { L_, "Asia/Tokyo",             ROOT "/Asia/Tokyo" },
+            { L_, "Asia/Ulaanbaatar",       ROOT "/Asia/Ulaanbaatar" },
+            { L_, "Asia/Riyadh87",          ROOT "/Asia/Riyadh87" },
+            { L_, "Australia/Darwin",       ROOT "/Australia/Darwin" },
+            { L_, "Pacific/Honolulu",       ROOT "/Pacific/Honolulu" },
+            { L_, "Europe/London",          ROOT "/Europe/London" },
+            { L_, "Europe/Isle_of_Man",     ROOT "/Europe/Isle_of_Man" },
+            { L_, "America/New_York",       ROOT "/America/New_York" },
+            { L_, "America/Indiana/Indianapolis",
+                                      ROOT "/America/Indiana/Indianapolis" },
+            { L_, "America/Blanc-Sablon",   ROOT "/America/Blanc-Sablon" },
+            { L_, "America/Port-au-Prince", ROOT "/America/Port-au-Prince" },
+            { L_, "America/Argentina/Buenos_Aires",
+                                      ROOT "/America/Argentina/Buenos_Aires" },
+            { L_, "EET",                    ROOT "/EET" },
+            { L_, "EST5EDT",                ROOT "/EST5EDT" },
+            { L_, "Etc/GMT-14",             ROOT "/Etc/GMT-14" },
+            { L_, "Etc/GMT+12",             ROOT "/Etc/GMT+12" },
+            { L_, "Etc/GMT-0",              ROOT "/Etc/GMT-0" },
+            { L_, "Etc/GMT+0",              ROOT "/Etc/GMT+0" },
+            { L_, "Etc/GMT0",               ROOT "/Etc/GMT0" },
+            { L_, "Etc/UTC",                ROOT "/Etc/UTC" },
+            { L_, "Arctic/Longyearbyen",    ROOT "/Arctic/Longyearbyen" },
+            { L_, "UTC",                    ROOT "/UTC" },
 #endif
-      };
-      const int NUM_DATA = sizeof DATA / sizeof *DATA;
+            };
+            const int NUM_DATA = sizeof DATA / sizeof *DATA;
 
-      if (verbose)
-        cout << "\nTesting with various time zone identifier." << endl;
-      {
-        for (int ti = 0; ti < NUM_DATA; ++ti) {
-          const int LINE = DATA[ti].d_line;
-          const char *TZ_ID = DATA[ti].d_tzId;
-          const bsl::string EXP = DATA[ti].d_result;
+            if (verbose) cout <<
+                        "\nTesting with various time zone identifier." << endl;
+            {
+                for (int ti = 0; ti < NUM_DATA; ++ti) {
+                    const int          LINE   = DATA[ti].d_line;
+                    const char        *TZ_ID  = DATA[ti].d_tzId;
+                    const bsl::string  EXP    = DATA[ti].d_result;
 
-          Obj mX;
-          const Obj &X = mX;
+                    Obj mX; const Obj& X = mX;
 
-          mX.configureRootPath(ROOT);
+                    mX.configureRootPath(ROOT);
 
-          bsl::string bslResult;
-          LOOP_ASSERT(LINE, 0 == X.loadTimeZoneFilePath(&bslResult, TZ_ID));
-          LOOP3_ASSERT(LINE, EXP, bslResult, EXP == bslResult);
+                    bsl::string bslResult;
+                    LOOP_ASSERT(LINE,
+                                0 == X.loadTimeZoneFilePath(&bslResult,
+                                                            TZ_ID));
+                    LOOP3_ASSERT(LINE, EXP, bslResult, EXP == bslResult);
 
-          std::string stdResult;
-          LOOP_ASSERT(LINE, 0 == X.loadTimeZoneFilePath(&stdResult, TZ_ID));
-          LOOP3_ASSERT(LINE, EXP, stdResult, EXP == stdResult);
+                    std::string stdResult;
+                    LOOP_ASSERT(LINE,
+                                0 == X.loadTimeZoneFilePath(&stdResult,
+                                                            TZ_ID));
+                    LOOP3_ASSERT(LINE, EXP, stdResult, EXP == stdResult);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-          std::experimental::pmr::string pmrResult;
-          LOOP_ASSERT(LINE, 0 == X.loadTimeZoneFilePath(&pmrResult, TZ_ID));
-          LOOP3_ASSERT(LINE, EXP, pmrResult, EXP == pmrResult);
+                    std::pmr::string pmrResult;
+                    LOOP_ASSERT(LINE,
+                                0 == X.loadTimeZoneFilePath(&pmrResult,
+                                                            TZ_ID));
+                    LOOP3_ASSERT(LINE, EXP, pmrResult, EXP == pmrResult);
 #endif
-        }
-      }
+                }
+            }
 #undef ROOT
-    }
-  } break;
-  case 4: {
-    // --------------------------------------------------------------------
-    // BASIC ACCESSORS
-    //
-    // Concerns:
-    //: 1 'rootPath' returns the value of the root path stored in the
-    //:   object.
-    //:
-    //: 2 'isRootPathPlausible' returns 'true' if the specified root path
-    //:   is a valid directory and contains a file name 'GMT, and false
-    //:   otherwise.
-    //:
-    //: 3 Each accessor is declared 'const'.
-    //
-    // Plan:
-    //: 1 Use primary manipulators to set the root path to various values.
-    //:
-    //: 2 Verify that each basic accessor, invoked on a reference to the
-    //:   non-modifiable object created in P1 returns the expected value.
-    //
-    // Testing:
-    //   const bsl::string& rootPath() const;
-    //   bool isRootPathPlausible() const;
-    // --------------------------------------------------------------------
+        }
+      } break;
+      case 4: {
+        // --------------------------------------------------------------------
+        // BASIC ACCESSORS
+        //
+        // Concerns:
+        //: 1 'rootPath' returns the value of the root path stored in the
+        //:   object.
+        //:
+        //: 2 'isRootPathPlausible' returns 'true' if the specified root path
+        //:   is a valid directory and contains a file name 'GMT, and false
+        //:   otherwise.
+        //:
+        //: 3 Each accessor is declared 'const'.
+        //
+        // Plan:
+        //: 1 Use primary manipulators to set the root path to various values.
+        //:
+        //: 2 Verify that each basic accessor, invoked on a reference to the
+        //:   non-modifiable object created in P1 returns the expected value.
+        //
+        // Testing:
+        //   const bsl::string& rootPath() const;
+        //   bool isRootPathPlausible() const;
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << endl << "BASIC ACCESSORS" << endl << "===============" << endl;
+        if (verbose) cout << endl
+                          << "BASIC ACCESSORS" << endl
+                          << "===============" << endl;
 
-    if (verbose)
-      cout << "\nSetup plausible directory" << endl;
+        if (verbose) cout << "\nSetup plausible directory" << endl;
 
-    ASSERT(true == Obj::isPlausibleZoneinfoRootPath(TEST_DIRECTORY));
+        ASSERT(true == Obj::isPlausibleZoneinfoRootPath(TEST_DIRECTORY));
 
-    static const struct {
-      int d_line;
-      const char *d_path;
-      int d_isPlausible;
-    } DATA[] = {
+        static const struct {
+            int         d_line;
+            const char *d_path;
+            int         d_isPlausible;
+        } DATA [] = {
 
-        // LINE  PATH             IS_PLAUSIBLE
+        //LINE  PATH             IS_PLAUSIBLE
         //----  ----             ------------
 
-        {L_, "", false},
-        {L_, "Nonexistent", false},
-        {L_, ".", false},
-        {L_, TEST_DIRECTORY, true},
+        { L_,   "",                     false},
+        { L_,   "Nonexistent",          false},
+        { L_,   ".",                    false},
+        { L_,   TEST_DIRECTORY,          true},
 
-    };
-    const int NUM_DATA = sizeof DATA / sizeof *DATA;
+        };
+        const int NUM_DATA = sizeof DATA / sizeof *DATA;
 
-    if (verbose)
-      cout << "\nTesting with various path." << endl;
-    {
-      for (int ti = 0; ti < NUM_DATA; ++ti) {
-        const int LINE = DATA[ti].d_line;
-        const char *PATH = DATA[ti].d_path;
-        const bool IS_PLAUSIBLE = DATA[ti].d_isPlausible;
+        if (verbose) cout << "\nTesting with various path." << endl;
+        {
+            for (int ti = 0; ti < NUM_DATA; ++ti) {
+                const int   LINE         = DATA[ti].d_line;
+                const char *PATH         = DATA[ti].d_path;
+                const bool  IS_PLAUSIBLE = DATA[ti].d_isPlausible;
 
-        Obj mX;
-        const Obj &X = mX;
+                Obj mX; const Obj& X = mX;
 
-        if (veryVerbose) {
-          T_ P_(PATH) P(IS_PLAUSIBLE)
+                if (veryVerbose) { T_ P_(PATH) P(IS_PLAUSIBLE) }
+
+                mX.configureRootPath(PATH);
+
+                LOOP3_ASSERT(LINE, PATH, X.rootPath(), PATH == X.rootPath());
+                LOOP3_ASSERT(LINE, IS_PLAUSIBLE, X.isRootPathPlausible(),
+                             IS_PLAUSIBLE == X.isRootPathPlausible());
+            }
         }
 
-        mX.configureRootPath(PATH);
-
-        LOOP3_ASSERT(LINE, PATH, X.rootPath(), PATH == X.rootPath());
-        LOOP3_ASSERT(LINE, IS_PLAUSIBLE, X.isRootPathPlausible(),
-                     IS_PLAUSIBLE == X.isRootPathPlausible());
-      }
-    }
-
-  } break;
-  case 3: {
-    // --------------------------------------------------------------------
-    // TESTING 'isPlausibleZoneinfoRootPath'
-    //
-    // Concerns:
-    //: 1 'isPlausibleZoneinfoRootPath' returns value returns 'true' if
-    //:   the specified 'path' is a valid directory and contains a file
-    //:   name 'GMT, and false otherwise.
-    //:
-    //: 2 'configureRootPathIfPlausible' will only set the root path if the
-    //:   parameter is a plausible Zoneinfo data path.
-    //
-    // Plan:
-    //: 1 Test that 'isPlausibleZoneinfoRootPath' produce expected results
-    //:   at the documented boundaries.
-    //:
-    //: 2 Test that 'configureRootPathIfPlausible' set the 'rootPath' and
-    //:   returns 0 for a plausible path, and returns false otherwise.
-    //
-    // Testing:
-    //   bool isPlausibleZoneinfoRootPath(const char *path);
-    //   int configureRootPathIfPlausible(const char *path);
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "TESTING 'isPlausibleZoneinfoRootPath'" << endl
-           << "=====================================" << endl;
-
-    {
-      Obj mX;
-
-      if (veryVerbose)
-        cout << "\tNon-existent directory" << endl;
-      {
-        ASSERT(false ==
-               Obj::isPlausibleZoneinfoRootPath("NonExistentDirectory"));
-        ASSERT(0 != mX.configureRootPathIfPlausible("NonExistentDirectory"));
-      }
-
-      if (veryVerbose)
-        cout << "\tMissing GMT file" << endl;
-      {
-        ASSERT(false == Obj::isPlausibleZoneinfoRootPath("."));
-        ASSERT(0 != mX.configureRootPathIfPlausible("."));
-      }
-
-      if (veryVerbose)
-        cout << "\tPlausible root path" << endl;
-      {
-        ASSERT(true == Obj::isPlausibleZoneinfoRootPath(TEST_DIRECTORY));
-        ASSERT(0 == mX.configureRootPathIfPlausible(TEST_DIRECTORY));
-        ASSERT(TEST_DIRECTORY == mX.rootPath());
-      }
-    }
-  } break;
-  case 2: {
-    // --------------------------------------------------------------------
-    // DEFAULT CTOR & PRIMARY MANIPULATORS
-    //
-    // Concerns:
-    //: 1 Default constructor creates an object with an invalid root path.
-    //:
-    //: 2 If an allocator is *not* supplied to the default constructor, the
-    //:   default allocator in effect at the time of construction becomes
-    //:   the object allocator for the resulting object.
-    //:
-    //: 3 If an allocator is supplied to the default constructor, that
-    //:   allocator becomes the object allocator for the resulting object.
-    //:
-    //: 4 Supplying a default-constructed allocator address has the same
-    //:   effect as not supplying an allocator.
-    //:
-    //: 5 Supplying an allocator to the default constructor has no effect
-    //:   on subsequent object values.
-    //:
-    //: 6 Any memory allocation is from the object allocator, which is
-    //:   returned by the 'get_allocator' accessor method.
-    //:
-    //: 7 Every object releases any allocated memory at destruction.
-    //:
-    //: 8 'configureRootPath' is able to set the root path to any string
-    //:   value.
-    //
-    // Plan:
-    //: 1 Default construct four objects, in turn, with different allocator
-    //:   configurations:
-    //:   1 without passing an allocator,
-    //:   2 passing a default-constructed allocator explicitly,
-    //:   3 passing the address of a test allocator distinct from the
-    //:     default, and
-    //:   4 passing in an allocator constructed from the address of a test
-    //:     allocator distinct from the default.
-    //:
-    //: 2 Use the primary manipulators with boundary values and verify the
-    //:   object's value.
-    //:
-    //: 3 Verify the correct memory allocator is used.
-    //
-    // Testing:
-    //   baltzo::DataFileLoader();
-    //   baltzo::DataFileLoader(const allocator_type& a);
-    //   ~baltzo::DataFileLoader();
-    //   void configureRootPath(const char *path);
-    //   allocator_type get_allocator() const;
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "DEFAULT CTOR & PRIMARY MANIPULATORS" << endl
-           << "===================================" << endl;
-
-    const char *D1 = INVALID_PATH; // rootPath
-
-    const char *A1 = "";
-
-    const char *B1 = "a_" SUFFICIENTLY_LONG_STRING;
-
-    if (verbose)
-      cout << "\nTesting with various allocator configurations." << endl;
-
-    for (char cfg = 'a'; cfg <= 'd'; ++cfg) {
-      bsls::AssertTestHandlerGuard hG;
-
-      const char CONFIG = cfg; // (how we specify the allocator)
-
-      bslma::TestAllocator fa("footprint", veryVeryVeryVerbose);
-      bslma::TestAllocator da("default", veryVeryVeryVerbose);
-      bslma::TestAllocator sa("supplied", veryVeryVeryVerbose);
-
-      bslma::DefaultAllocatorGuard dag(&da);
-
-      Obj *objPtr = 0;
-      bslma::TestAllocator *objAllocatorPtr = 0;
-
-      switch (CONFIG) {
-      case 'a': {
-        objPtr = new (fa) Obj();
-        objAllocatorPtr = &da;
       } break;
-      case 'b': {
-        objPtr = new (fa) Obj(Obj::allocator_type());
-        objAllocatorPtr = &da;
+      case 3: {
+        // --------------------------------------------------------------------
+        // TESTING 'isPlausibleZoneinfoRootPath'
+        //
+        // Concerns:
+        //: 1 'isPlausibleZoneinfoRootPath' returns value returns 'true' if
+        //:   the specified 'path' is a valid directory and contains a file
+        //:   name 'GMT, and false otherwise.
+        //:
+        //: 2 'configureRootPathIfPlausible' will only set the root path if the
+        //:   parameter is a plausible Zoneinfo data path.
+        //
+        // Plan:
+        //: 1 Test that 'isPlausibleZoneinfoRootPath' produce expected results
+        //:   at the documented boundaries.
+        //:
+        //: 2 Test that 'configureRootPathIfPlausible' set the 'rootPath' and
+        //:   returns 0 for a plausible path, and returns false otherwise.
+        //
+        // Testing:
+        //   bool isPlausibleZoneinfoRootPath(const char *path);
+        //   int configureRootPathIfPlausible(const char *path);
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "TESTING 'isPlausibleZoneinfoRootPath'" << endl
+                          << "=====================================" << endl;
+
+        {
+            Obj mX;
+
+            if (veryVerbose) cout << "\tNon-existent directory" << endl;
+            {
+                ASSERT(false ==
+                     Obj::isPlausibleZoneinfoRootPath("NonExistentDirectory"));
+                ASSERT(0 !=
+                      mX.configureRootPathIfPlausible("NonExistentDirectory"));
+            }
+
+            if (veryVerbose) cout << "\tMissing GMT file" << endl;
+            {
+                ASSERT(false ==
+                             Obj::isPlausibleZoneinfoRootPath("."));
+                ASSERT(0 != mX.configureRootPathIfPlausible("."));
+            }
+
+            if (veryVerbose) cout << "\tPlausible root path" << endl;
+            {
+                ASSERT(true ==
+                             Obj::isPlausibleZoneinfoRootPath(TEST_DIRECTORY));
+                ASSERT(0 == mX.configureRootPathIfPlausible(TEST_DIRECTORY));
+                ASSERT(TEST_DIRECTORY == mX.rootPath());
+            }
+        }
       } break;
-      case 'c': {
-        objPtr = new (fa) Obj(&sa);
-        objAllocatorPtr = &sa;
+      case 2: {
+        // --------------------------------------------------------------------
+        // DEFAULT CTOR & PRIMARY MANIPULATORS
+        //
+        // Concerns:
+        //: 1 Default constructor creates an object with an invalid root path.
+        //:
+        //: 2 If an allocator is *not* supplied to the default constructor, the
+        //:   default allocator in effect at the time of construction becomes
+        //:   the object allocator for the resulting object.
+        //:
+        //: 3 If an allocator is supplied to the default constructor, that
+        //:   allocator becomes the object allocator for the resulting object.
+        //:
+        //: 4 Supplying a default-constructed allocator address has the same
+        //:   effect as not supplying an allocator.
+        //:
+        //: 5 Supplying an allocator to the default constructor has no effect
+        //:   on subsequent object values.
+        //:
+        //: 6 Any memory allocation is from the object allocator, which is
+        //:   returned by the 'get_allocator' accessor method.
+        //:
+        //: 7 Every object releases any allocated memory at destruction.
+        //:
+        //: 8 'configureRootPath' is able to set the root path to any string
+        //:   value.
+        //
+        // Plan:
+        //: 1 Default construct four objects, in turn, with different allocator
+        //:   configurations:
+        //:   1 without passing an allocator,
+        //:   2 passing a default-constructed allocator explicitly,
+        //:   3 passing the address of a test allocator distinct from the
+        //:     default, and
+        //:   4 passing in an allocator constructed from the address of a test
+        //:     allocator distinct from the default.
+        //:
+        //: 2 Use the primary manipulators with boundary values and verify the
+        //:   object's value.
+        //:
+        //: 3 Verify the correct memory allocator is used.
+        //
+        // Testing:
+        //   baltzo::DataFileLoader();
+        //   baltzo::DataFileLoader(const allocator_type& a);
+        //   ~baltzo::DataFileLoader();
+        //   void configureRootPath(const char *path);
+        //   allocator_type get_allocator() const;
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "DEFAULT CTOR & PRIMARY MANIPULATORS" << endl
+                          << "===================================" << endl;
+
+        const char *D1 = INVALID_PATH;  // rootPath
+
+        const char *A1 = "";
+
+        const char *B1 = "a_" SUFFICIENTLY_LONG_STRING;
+
+        if (verbose) cout << "\nTesting with various allocator configurations."
+                          << endl;
+
+        for (char cfg = 'a'; cfg <= 'd'; ++cfg) {
+            bsls::AssertTestHandlerGuard hG;
+
+            const char CONFIG = cfg;  // (how we specify the allocator)
+
+            bslma::TestAllocator fa("footprint", veryVeryVeryVerbose);
+            bslma::TestAllocator da("default",   veryVeryVeryVerbose);
+            bslma::TestAllocator sa("supplied",  veryVeryVeryVerbose);
+
+            bslma::DefaultAllocatorGuard dag(&da);
+
+            Obj                  *objPtr          = 0;
+            bslma::TestAllocator *objAllocatorPtr = 0;
+
+            switch (CONFIG) {
+              case 'a': {
+                objPtr = new (fa) Obj();
+                objAllocatorPtr = &da;
+              } break;
+              case 'b': {
+                objPtr = new (fa) Obj(Obj::allocator_type());
+                objAllocatorPtr = &da;
+              } break;
+              case 'c': {
+                objPtr = new (fa) Obj(&sa);
+                objAllocatorPtr = &sa;
+              } break;
+              case 'd': {
+                objPtr = new (fa) Obj(Obj::allocator_type(&sa));
+                objAllocatorPtr = &sa;
+              } break;
+              default: {
+                LOOP_ASSERT(CONFIG, !"Bad allocator Config.");
+              } break;
+            }
+
+            Obj& mX = *objPtr; const Obj& X = mX;
+            bslma::TestAllocator&  oa = *objAllocatorPtr;
+            bslma::TestAllocator& noa = &da == &oa ? sa : da;
+
+            // -------------------------------------
+            // Verify the object's attribute values.
+            // -------------------------------------
+
+            ASSERT_FAIL(X.rootPath());
+            ASSERT_FAIL(X.isRootPathPlausible());
+
+            LOOP3_ASSERT(CONFIG, &oa, ALLOC_OF(X), &oa == X.get_allocator());
+
+            // Verify that no memory is allocate by from the non-object
+            // allocator.
+
+            LOOP_ASSERT(noa.numBlocksTotal(), 0 == noa.numBlocksTotal());
+
+            // -----------------------------------------------------
+            // Verify that each attribute is independently settable.
+            // -----------------------------------------------------
+
+            // rootPath
+            {
+                BSLMA_TESTALLOCATOR_EXCEPTION_TEST_BEGIN(sa){
+                    mX.configureRootPath(A1);
+                } BSLMA_TESTALLOCATOR_EXCEPTION_TEST_END
+                LOOP_ASSERT(CONFIG, A1 == X.rootPath());
+
+                mX.configureRootPath(B1);
+                LOOP_ASSERT(CONFIG, B1 == X.rootPath());
+
+                mX.configureRootPath(D1);
+            }
+
+            // Reclaim dynamically allocated object under test.
+
+            fa.deleteObject(objPtr);
+
+            // Verify that there is no longer any memory allocated.
+
+            LOOP2_ASSERT(CONFIG, fa.numBlocksInUse(),
+                         0 == fa.numBlocksInUse());
+            LOOP2_ASSERT(CONFIG, oa.numBlocksInUse(),
+                         0 == oa.numBlocksInUse());
+
+            // Temporary string is created for comparison in assertion, so some
+            // memory is allocated by default allocator, but it should be
+            // released correctly at this point.
+
+            LOOP2_ASSERT(CONFIG, noa.numBlocksInUse(),
+                         0 == noa.numBlocksInUse());
+
+            // Double check that at least some object memory got allocated.
+
+            LOOP_ASSERT(CONFIG, 1 <= oa.numBlocksTotal());
+
+            // Note that memory should be independently allocated for each
+            // attribute capable of allocating memory.
+        }
       } break;
-      case 'd': {
-        objPtr = new (fa) Obj(Obj::allocator_type(&sa));
-        objAllocatorPtr = &sa;
+      case 1: {
+        // --------------------------------------------------------------------
+        // BREATHING TEST:
+        //   Developers' Sandbox.
+        //
+        // Plan:
+        //   Perform and ad-hoc test of the primary modifiers and accessors.
+        //
+        // Testing:
+        //   This "test" *exercises* basic functionality, but *tests* nothing.
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl << "BREATHING TEST" << endl
+                                  << "==============" << endl;
+
+        {
+            if (veryVerbose) {
+                cout << "\tTesting 'construction'." << endl;
+            }
+
+            Obj mX(Z);
+            ASSERT(0 != mX.configureRootPathIfPlausible("junk"));
+            ASSERT(0 != mX.configureRootPathIfPlausible("."));
+            bsl::string temp(Z);
+            ASSERT(0 == defaultAllocator.numBytesInUse());
+        }
+        ASSERT(0 == defaultAllocator.numBytesInUse());
+        {
+            if (veryVerbose) {
+                cout << "\tTesting 'loadTimeZoneFilePath' & 'rootPath'."
+                     << endl;
+            }
+            Obj mX(Z); const Obj& X = mX;
+            ASSERT(0 != mX.configureRootPathIfPlausible("."));
+            mX.configureRootPath(".");
+            ASSERT(!X.isRootPathPlausible());
+
+            bsl::string path(Z);
+            ASSERT(0 == X.loadTimeZoneFilePath(&path, "America/New_York"));
+#ifndef BSLS_PLATFORM_OS_WINDOWS
+            ASSERTV(path, path == "./America/New_York");
+#else
+            ASSERTV(path, path == ".\\America\\New_York");
+#endif
+
+            ASSERT(0 == X.loadTimeZoneFilePath(&path, "Pacific/Fiji"));
+#ifndef BSLS_PLATFORM_OS_WINDOWS
+            ASSERTV(path, path == "./Pacific/Fiji");
+#else
+            ASSERTV(path, path == ".\\Pacific\\Fiji");
+#endif
+            ASSERT(0 == defaultAllocator.numBytesInUse());
+        }
+        {
+            if (veryVerbose) {
+                cout << "\tTesting 'loadTimeZone'." << endl;
+            }
+            Obj mX(Z);
+            mX.configureRootPath(TEST_DIRECTORY);
+
+            bsl::string path(Z);
+            baltzo::Zoneinfo tz(Z); const baltzo::Zoneinfo& TZ = tz;
+
+            ASSERT(0 != mX.loadTimeZone(&tz, "FOO"));
+            ASSERT(0 == mX.loadTimeZone(&tz, "America/New_York"));
+            ASSERT("America/New_York" == TZ.identifier());
+
+            if (veryVeryVerbose) {
+                TZ.print(bsl::cout, 1, 3);
+            }
+        }
+
       } break;
       default: {
-        LOOP_ASSERT(CONFIG, !"Bad allocator Config.");
-      } break;
+        cerr << "WARNING: CASE `" << test << "' NOT FOUND." << endl;
+        testStatus = -1;
       }
+    }
 
-      Obj &mX = *objPtr;
-      const Obj &X = mX;
-      bslma::TestAllocator &oa = *objAllocatorPtr;
-      bslma::TestAllocator &noa = &da == &oa ? sa : da;
+    if (testStatus > 0) {
+        cerr << "Error, non-zero test status = " << testStatus << "." << endl;
+    }
 
-      // -------------------------------------
-      // Verify the object's attribute values.
-      // -------------------------------------
+    ASSERT(0 == FUtil::setWorkingDirectory(origWorkingDirectory));
+    LOOP_ASSERT(tmpWorkingDir, FUtil::exists(tmpWorkingDir));
 
-      ASSERT_FAIL(X.rootPath());
-      ASSERT_FAIL(X.isRootPathPlausible());
+    // Sometimes this delete won't work because of '.nfs*' gremlin files that
+    // mysteriously get created in the directory.  Seems to especially happen
+    // in TC 5 for some reason.  Leave the directory behind and move on.  Also
+    // remove twice, because sometimes the first 'remove' 'sorta' fails -- it
+    // returns a negative status after successfully killing the gremlin file.
+    // Worst case, leave the file there to be cleaned up in a sweep later.
 
-      LOOP3_ASSERT(CONFIG, &oa, ALLOC_OF(X), &oa == X.get_allocator());
-
-      // Verify that no memory is allocate by from the non-object
-      // allocator.
-
-      LOOP_ASSERT(noa.numBlocksTotal(), 0 == noa.numBlocksTotal());
-
-      // -----------------------------------------------------
-      // Verify that each attribute is independently settable.
-      // -----------------------------------------------------
-
-      // rootPath
-      {
-        BSLMA_TESTALLOCATOR_EXCEPTION_TEST_BEGIN(sa) {
-          mX.configureRootPath(A1);
+    int ii;
+    for (ii = 1; ii < 12; ++ii) {
+        if (veryVerbose) {
+            cout << "Cleaning up " << tmpWorkingDir << " (attempt " << ii <<
+                     ")" << endl;
         }
-        BSLMA_TESTALLOCATOR_EXCEPTION_TEST_END
-        LOOP_ASSERT(CONFIG, A1 == X.rootPath());
 
-        mX.configureRootPath(B1);
-        LOOP_ASSERT(CONFIG, B1 == X.rootPath());
+        FUtil::remove(tmpWorkingDir, true);
 
-        mX.configureRootPath(D1);
-      }
+        if (!FUtil::exists(tmpWorkingDir)) {
+            if (veryVerbose) {
+                cout << "Clean up of " << tmpWorkingDir << " succeeded"
+                     << endl;
+            }
 
-      // Reclaim dynamically allocated object under test.
+            break;
+        }
 
-      fa.deleteObject(objPtr);
-
-      // Verify that there is no longer any memory allocated.
-
-      LOOP2_ASSERT(CONFIG, fa.numBlocksInUse(), 0 == fa.numBlocksInUse());
-      LOOP2_ASSERT(CONFIG, oa.numBlocksInUse(), 0 == oa.numBlocksInUse());
-
-      // Temporary string is created for comparison in assertion, so some
-      // memory is allocated by default allocator, but it should be
-      // released correctly at this point.
-
-      LOOP2_ASSERT(CONFIG, noa.numBlocksInUse(), 0 == noa.numBlocksInUse());
-
-      // Double check that at least some object memory got allocated.
-
-      LOOP_ASSERT(CONFIG, 1 <= oa.numBlocksTotal());
-
-      // Note that memory should be independently allocated for each
-      // attribute capable of allocating memory.
+        u::sleep(10);
     }
-  } break;
-  case 1: {
-    // --------------------------------------------------------------------
-    // BREATHING TEST:
-    //   Developers' Sandbox.
-    //
-    // Plan:
-    //   Perform and ad-hoc test of the primary modifiers and accessors.
-    //
-    // Testing:
-    //   This "test" *exercises* basic functionality, but *tests* nothing.
-    // --------------------------------------------------------------------
+    ASSERTV(tmpWorkingDir, !FUtil::exists(tmpWorkingDir) &&
+                                            "unable to clean 'tmpWorkingDir'");
 
-    if (verbose)
-      cout << endl << "BREATHING TEST" << endl << "==============" << endl;
-
-    {
-      if (veryVerbose) {
-        cout << "\tTesting 'construction'." << endl;
-      }
-
-      Obj mX(Z);
-      ASSERT(0 != mX.configureRootPathIfPlausible("junk"));
-      ASSERT(0 != mX.configureRootPathIfPlausible("."));
-      bsl::string temp(Z);
-      ASSERT(0 == defaultAllocator.numBytesInUse());
-    }
-    ASSERT(0 == defaultAllocator.numBytesInUse());
-    {
-      if (veryVerbose) {
-        cout << "\tTesting 'loadTimeZoneFilePath' & 'rootPath'." << endl;
-      }
-      Obj mX(Z);
-      const Obj &X = mX;
-      ASSERT(0 != mX.configureRootPathIfPlausible("."));
-      mX.configureRootPath(".");
-      ASSERT(!X.isRootPathPlausible());
-
-      bsl::string path(Z);
-      ASSERT(0 == X.loadTimeZoneFilePath(&path, "America/New_York"));
-#ifndef BSLS_PLATFORM_OS_WINDOWS
-      ASSERTV(path, path == "./America/New_York");
-#else
-      ASSERTV(path, path == ".\\America\\New_York");
-#endif
-
-      ASSERT(0 == X.loadTimeZoneFilePath(&path, "Pacific/Fiji"));
-#ifndef BSLS_PLATFORM_OS_WINDOWS
-      ASSERTV(path, path == "./Pacific/Fiji");
-#else
-      ASSERTV(path, path == ".\\Pacific\\Fiji");
-#endif
-      ASSERT(0 == defaultAllocator.numBytesInUse());
-    }
-    {
-      if (veryVerbose) {
-        cout << "\tTesting 'loadTimeZone'." << endl;
-      }
-      Obj mX(Z);
-      mX.configureRootPath(TEST_DIRECTORY);
-
-      bsl::string path(Z);
-      baltzo::Zoneinfo tz(Z);
-      const baltzo::Zoneinfo &TZ = tz;
-
-      ASSERT(0 != mX.loadTimeZone(&tz, "FOO"));
-      ASSERT(0 == mX.loadTimeZone(&tz, "America/New_York"));
-      ASSERT("America/New_York" == TZ.identifier());
-
-      if (veryVeryVerbose) {
-        TZ.print(bsl::cout, 1, 3);
-      }
-    }
-
-  } break;
-  default: {
-    cerr << "WARNING: CASE `" << test << "' NOT FOUND." << endl;
-    testStatus = -1;
-  }
-  }
-
-  if (testStatus > 0) {
-    cerr << "Error, non-zero test status = " << testStatus << "." << endl;
-  }
-
-  ASSERT(0 == FUtil::setWorkingDirectory(origWorkingDirectory));
-  LOOP_ASSERT(tmpWorkingDir, FUtil::exists(tmpWorkingDir));
-
-  // Sometimes this delete won't work because of '.nfs*' gremlin files that
-  // mysteriously get created in the directory.  Seems to especially happen
-  // in TC 5 for some reason.  Leave the directory behind and move on.  Also
-  // remove twice, because sometimes the first 'remove' 'sorta' fails -- it
-  // returns a negative status after successfully killing the gremlin file.
-  // Worst case, leave the file there to be cleaned up in a sweep later.
-
-  int ii;
-  for (ii = 1; ii < 12; ++ii) {
-    if (veryVerbose) {
-      cout << "Cleaning up " << tmpWorkingDir << " (attempt " << ii << ")"
-           << endl;
-    }
-
-    FUtil::remove(tmpWorkingDir, true);
-
-    if (!FUtil::exists(tmpWorkingDir)) {
-      if (veryVerbose) {
-        cout << "Clean up of " << tmpWorkingDir << " succeeded" << endl;
-      }
-
-      break;
-    }
-
-    u::sleep(10);
-  }
-  ASSERTV(tmpWorkingDir,
-          !FUtil::exists(tmpWorkingDir) && "unable to clean 'tmpWorkingDir'");
-
-  return testStatus;
+    return testStatus;
 }
 
 // ----------------------------------------------------------------------------

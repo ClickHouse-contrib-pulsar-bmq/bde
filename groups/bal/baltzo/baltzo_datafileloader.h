@@ -44,7 +44,7 @@ BSLS_IDENT("$Id: $")
 // root directory tree supplied at construction), and load, into a
 // 'baltzo::Zoneinfo' object, the data from that file.
 //
-/// Zoneinfo (TZ Database) Files
+///Zoneinfo (TZ Database) Files
 ///----------------------------
 // The Zoneinfo database, also referred to as either the TZ database or the
 // Olson database (after its creator, Arthur Olson), is a standard
@@ -57,7 +57,7 @@ BSLS_IDENT("$Id: $")
 // component).  See 'baltzo_zoneinfobinaryreader' for more information about
 // the binary file format.
 //
-/// Directory Hierarchy
+///Directory Hierarchy
 ///- - - - - - - - - -
 // Zoneinfo database files are typically held in a standard file-system
 // directory hierarchy.  Zoneinfo time-zone identifiers (e.g.,
@@ -67,19 +67,19 @@ BSLS_IDENT("$Id: $")
 // time-zone data file for "America/New_York" will be located in
 // "/etc/time_zones/America/New_York".
 //
-/// Thread Safety
+///Thread Safety
 ///-------------
 // 'baltzo::DataFileLoader' is *const* *thread-safe*, meaning that accessors
 // may be invoked concurrently from different threads, but it is not safe to
 // access or modify a 'baltzo::DataFileLoader' in one thread while another
 // thread modifies the same object.
 //
-/// Usage
+///Usage
 ///-----
 // The following examples illustrate how to use a 'baltzo::DataFileLoader' to
 // load the Zoneinfo time-zone data for a time zone.
 //
-/// Example 1: Prologue: Creating a Example Data File
+///Example 1: Prologue: Creating a Example Data File
 ///- - - - - - - - - - - - - - - - - - - - - - - - -
 // First we need to create one time-zone data file on which to operate.  In
 // practice, clients should *not* generate data files in this manner.  Data
@@ -136,7 +136,7 @@ BSLS_IDENT("$Id: $")
 // The file 'Bangkok' should now appear in the 'Asia' sub-directory, under out
 // 'test' directory.
 //
-/// Example 2: Using a 'baltzo::DataFileLoader' to Load a Zoneinfo File
+///Example 2: Using a 'baltzo::DataFileLoader' to Load a Zoneinfo File
 ///- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // In this example we demonstrate how to use a 'baltzo::DataFileLoader' to load
 // a time-zone data file into a 'baltzo::Zoneinfo' object.  We start by
@@ -181,8 +181,8 @@ BSLS_IDENT("$Id: $")
 // The 'timeZone' object can now be use for time-zone calculations.  See
 // 'baltzo_zoneinfoutil'.
 //
-/// Epilogue: Removing the Created Files
-///   -  -  -  -  -  -  -  -  -  -  -  -
+///Epilogue: Removing the Created Files
+///  -  -  -  -  -  -  -  -  -  -  -  -
 // The file hierarchy we created Example 1 solely for Example 2, is no longer
 // needed, and is removed by:
 //..
@@ -205,7 +205,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_string.h>
 
 #ifndef BDE_DONT_ALLOW_TRANSITIVE_INCLUDES
-#include <bslalg_typetraits.h>
+# include <bslalg_typetraits.h>
 #endif // BDE_DONT_ALLOW_TRANSITIVE_INCLUDES
 
 namespace BloombergLP {
@@ -213,131 +213,138 @@ namespace baltzo {
 
 class Zoneinfo;
 
-// ====================
-// class DataFileLoader
-// ====================
+                            // ====================
+                            // class DataFileLoader
+                            // ====================
 
 class DataFileLoader : public Loader {
-  // This component provides a concrete implementation of the 'DataLoader'
-  // protocol for loading, into a 'Zoneinfo', the properties of a time zone
-  // defined by an Zoneinfo (TZ Database) binary file located on the file
-  // system.
+    // This component provides a concrete implementation of the 'DataLoader'
+    // protocol for loading, into a 'Zoneinfo', the properties of a time zone
+    // defined by an Zoneinfo (TZ Database) binary file located on the file
+    // system.
 
-  // DATA
-  bsl::string d_rootPath; // root path for time-zone data file
+    // DATA
+    bsl::string d_rootPath;  // root path for time-zone data file
 
-private:
-  // NOT IMPLEMENTED
-  DataFileLoader(const DataFileLoader &);
-  DataFileLoader &operator=(const DataFileLoader &);
+  private:
+    // NOT IMPLEMENTED
+    DataFileLoader(const DataFileLoader&);
+    DataFileLoader& operator=(const DataFileLoader&);
 
-public:
-  // TYPES
-  typedef bsl::allocator<char> allocator_type;
+  public:
+    // TYPES
+    typedef bsl::allocator<char> allocator_type;
 
-  // TRAITS
-  BSLMF_NESTED_TRAIT_DECLARATION(DataFileLoader, bslma::UsesBslmaAllocator);
+    // TRAITS
+    BSLMF_NESTED_TRAIT_DECLARATION(DataFileLoader,
+                                   bslma::UsesBslmaAllocator);
 
-  // CLASS METHODS
-  static bool isPlausibleZoneinfoRootPath(const char *path);
-  // Return 'true' if there currently exists a directory at the specified
-  // file-system 'path' that appears to contain Zoneinfo time-zone
-  // information files.  This method verifies (at a minimum) that 'path'
-  // is a valid directory, and contains files for a subset of common
-  // time-zone identifiers, but does not *guarantee* 'path' is currently
-  // (or will remain) a correctly configured Zoneinfo database containing
-  // a complete set of time-zone data.
+    // CLASS METHODS
+    static bool isPlausibleZoneinfoRootPath(const char *path);
+        // Return 'true' if there currently exists a directory at the specified
+        // file-system 'path' that appears to contain Zoneinfo time-zone
+        // information files.  This method verifies (at a minimum) that 'path'
+        // is a valid directory, and contains files for a subset of common
+        // time-zone identifiers, but does not *guarantee* 'path' is currently
+        // (or will remain) a correctly configured Zoneinfo database containing
+        // a complete set of time-zone data.
 
-  // CREATORS
-  DataFileLoader();
-  explicit DataFileLoader(const allocator_type &allocator);
-  // Create an unconfigured data-file loader.  Optionally specify an
-  // 'allocator' (e.g., the address of a 'bslma::Allocator' object) to
-  // supply memory; otherwise, the default allocator is used.
+    // CREATORS
+    DataFileLoader();
+    explicit DataFileLoader(const allocator_type& allocator);
+        // Create an unconfigured data-file loader.  Optionally specify an
+        // 'allocator' (e.g., the address of a 'bslma::Allocator' object) to
+        // supply memory; otherwise, the default allocator is used.
 
-  virtual ~DataFileLoader();
-  // Destroy this data-file loader.
+    virtual ~DataFileLoader();
+        // Destroy this data-file loader.
 
-  // MANIPULATORS
-  void configureRootPath(const char *path);
-  // Unconditionally set, to the specified 'path', the root of the
-  // file-system directory hierarchy from which this loader will read
-  // Zoneinfo binary time-zone information files.
+    // MANIPULATORS
+    void configureRootPath(const char *path);
+        // Unconditionally set, to the specified 'path', the root of the
+        // file-system directory hierarchy from which this loader will read
+        // Zoneinfo binary time-zone information files.
 
-  int configureRootPathIfPlausible(const char *path);
-  // Set, to the specified 'path', the root of the file-system directory
-  // hierarchy from which this loader will read Zoneinfo binary time-zone
-  // information files.  Return 0 on success, and a non-zero value
-  // (without no effect) if 'path' is not a directory that appears to
-  // contain valid Zoneinfo data, as determined by calling
-  // 'isPlausibleZoneinfoRootPath' on 'path'.
+    int configureRootPathIfPlausible(const char *path);
+        // Set, to the specified 'path', the root of the file-system directory
+        // hierarchy from which this loader will read Zoneinfo binary time-zone
+        // information files.  Return 0 on success, and a non-zero value
+        // (without no effect) if 'path' is not a directory that appears to
+        // contain valid Zoneinfo data, as determined by calling
+        // 'isPlausibleZoneinfoRootPath' on 'path'.
 
-  virtual int loadTimeZone(Zoneinfo *result, const char *timeZoneId);
-  // Load into the specified 'result' the time-zone information for the
-  // time zone identified by the specified 'timeZoneId'.  Return 0 on
-  // success, and a non-zero value otherwise.  A return status of
-  // 'ErrorCode::k_UNSUPPORTED_ID' indicates that 'timeZoneId' is not
-  // recognized.  If an error occurs during this operation, 'result' will
-  // be left in a valid, but unspecified state.
+    virtual int loadTimeZone(Zoneinfo *result, const char *timeZoneId);
+        // Load into the specified 'result' the time-zone information for the
+        // time zone identified by the specified 'timeZoneId'.  Return 0 on
+        // success, and a non-zero value otherwise.  A return status of
+        // 'ErrorCode::k_UNSUPPORTED_ID' indicates that 'timeZoneId' is not
+        // recognized.  If an error occurs during this operation, 'result' will
+        // be left in a valid, but unspecified state.
 
-  // ACCESSORS
-  int loadTimeZoneFilePath(bsl::string *result, const char *timeZoneId) const;
-  int loadTimeZoneFilePath(std::string *result, const char *timeZoneId) const;
+    // ACCESSORS
+    int loadTimeZoneFilePath(bsl::string      *result,
+                             const char       *timeZoneId) const;
+    int loadTimeZoneFilePath(std::string      *result,
+                             const char       *timeZoneId) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  int loadTimeZoneFilePath(std::experimental::pmr::string *result,
-                           const char *timeZoneId) const;
+    int loadTimeZoneFilePath(std::pmr::string *result,
+                             const char       *timeZoneId) const;
 #endif
-  // Load into the specified 'result' the file-system path to the
-  // Zoneinfo binary data file corresponding to the specified
-  // 'timeZoneId' relative to the configured 'rootPath'.  Return 0 on
-  // success, and a non-zero value otherwise.  On error, 'result' is left
-  // in a valid, but unspecified state.  The behavior is undefined unless
-  // either 'configureRootPath' or 'configureRootPathIfValid' has been
-  // called successfully.  Note that this operation does not verify
-  // 'result' refers to a valid file on the file system, or whether the
-  // file (if it exists) contains valid Zoneinfo data.
+        // Load into the specified 'result' the file-system path to the
+        // Zoneinfo binary data file corresponding to the specified
+        // 'timeZoneId' relative to the configured 'rootPath'.  Return 0 on
+        // success, and a non-zero value otherwise.  On error, 'result' is left
+        // in a valid, but unspecified state.  The behavior is undefined unless
+        // either 'configureRootPath' or 'configureRootPathIfValid' has been
+        // called successfully.  Note that this operation does not verify
+        // 'result' refers to a valid file on the file system, or whether the
+        // file (if it exists) contains valid Zoneinfo data.
 
-  const bsl::string &rootPath() const;
-  // Return the root of the directory hierarchy from which this loader
-  // will attempt to load Zoneinfo binary data files.  The behavior is
-  // undefined unless either 'configureRootPath' has been called or
-  // 'configureRootPathIfValid' has been called successfully.
+    const bsl::string& rootPath() const;
+        // Return the root of the directory hierarchy from which this loader
+        // will attempt to load Zoneinfo binary data files.  The behavior is
+        // undefined unless either 'configureRootPath' has been called or
+        // 'configureRootPathIfValid' has been called successfully.
 
-  bool isRootPathPlausible() const;
-  // Return 'true' if the directory returned by the 'rootPath' method
-  // exists and appears to contain valid Zoneinfo time-zone information
-  // files, as determined by calling 'isPlausibleZoneinfoRootPath' on the
-  // value returned by the 'rootPath' method.
+    bool isRootPathPlausible() const;
+        // Return 'true' if the directory returned by the 'rootPath' method
+        // exists and appears to contain valid Zoneinfo time-zone information
+        // files, as determined by calling 'isPlausibleZoneinfoRootPath' on the
+        // value returned by the 'rootPath' method.
 
-  // Aspects
+                        // Aspects
 
-  allocator_type get_allocator() const;
-  // Return the allocator used by this object to supply memory.  Note
-  // that if no allocator was supplied at construction the default
-  // allocator in effect at construction is used.
+    allocator_type get_allocator() const;
+        // Return the allocator used by this object to supply memory.  Note
+        // that if no allocator was supplied at construction the default
+        // allocator in effect at construction is used.
 };
 
 // ============================================================================
 //                            INLINE DEFINITIONS
 // ============================================================================
 
-// --------------------
-// class DataFileLoader
-// --------------------
+                            // --------------------
+                            // class DataFileLoader
+                            // --------------------
 
 // ACCESSORS
-inline bool DataFileLoader::isRootPathPlausible() const {
-  return isPlausibleZoneinfoRootPath(rootPath().c_str());
+inline
+bool DataFileLoader::isRootPathPlausible() const
+{
+    return isPlausibleZoneinfoRootPath(rootPath().c_str());
 }
 
-// Aspects
+                        // Aspects
 
-inline DataFileLoader::allocator_type DataFileLoader::get_allocator() const {
-  return d_rootPath.get_allocator();
+inline
+DataFileLoader::allocator_type DataFileLoader::get_allocator() const
+{
+    return d_rootPath.get_allocator();
 }
 
-} // namespace baltzo
-} // namespace BloombergLP
+}  // close package namespace
+}  // close enterprise namespace
 
 #endif
 

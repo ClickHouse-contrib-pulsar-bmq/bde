@@ -35,7 +35,7 @@ BSLS_IDENT("$Id: $")
 // The following two subsections supply further details, in turn, on the
 // methods that pertain to the default and global allocators.
 //
-/// Default Allocator
+///Default Allocator
 ///-----------------
 // Two methods provide access to the default allocator,
 // 'bslma::Default::defaultAllocator' and 'bslma::Default::allocator' (the
@@ -62,8 +62,7 @@ BSLS_IDENT("$Id: $")
 // method will unconditionally set the default allocator regardless of whether
 // it is locked.  When the C++17 'pmr' library is available, setting the
 // default allocator by any of these methods also sets the default memory
-// resource to the same value by invoking
-// 'std::experimental::pmr::set_default_resource'.
+// resource to the same value by invoking 'std::pmr::set_default_resource'.
 //
 // A well-behaved program should call 'bslma::Default::setDefaultAllocator'
 // *once*.  It should be invoked in 'main' before starting any threads, and be
@@ -73,14 +72,12 @@ BSLS_IDENT("$Id: $")
 //
 // When using a platform library that supports the C++17 PMR interface, a
 // successful change to the default allocator will also result in changing the
-// default *memory* *resource* returned by
-// 'std::experimental::pmr::get_default_resource' to the same value.  This
-// automatic syncronization can be broken by deliberately calling
-// 'std::experimental::pmr::set_default_resource', which will change the default
+// default *memory* *resource* returned by 'std::pmr::get_default_resource' to
+// the same value.  This automatic syncronization can be broken by deliberately
+// calling 'std::pmr::set_default_resource', which will change the default
 // memory resource without also changing the default allocator.  Note that
-// 'std::experimental::pmr::get_default_resource' does not lock the default
-// memory resource the way 'bslma::Default::defaultAllocator' locks the default
-// allocator.
+// 'std::pmr::get_default_resource' does not lock the default memory resource
+// the way 'bslma::Default::defaultAllocator' locks the default allocator.
 //
 // *WARNING*: Note that the default allocator can become locked prior to
 // entering 'main' as a side-effect of initializing a file-scope static object.
@@ -91,7 +88,7 @@ BSLS_IDENT("$Id: $")
 // libraries that are on the link line.  *AVOID* file-scope static objects that
 // require runtime initialization, *especially* those that take an allocator.
 //
-/// Global Allocator
+///Global Allocator
 ///----------------
 // The interface pertaining to the global allocator is comparatively much
 // simpler, consisting of just two methods.  The
@@ -112,7 +109,7 @@ BSLS_IDENT("$Id: $")
 // at most once.  If called, it should be invoked in 'main' before starting any
 // threads and before initializing singletons.
 //
-/// Usage
+///Usage
 ///-----
 // The following sequence of usage examples illustrate recommended use of the
 // default and global allocators.  The examples employ the following simple
@@ -219,8 +216,8 @@ BSLS_IDENT("$Id: $")
 //  }
 //..
 //
-/// Example 1: Basic Default Allocator Use
-///  - - - - - - - - - - - - - - - - - - -
+///Example 1: Basic Default Allocator Use
+/// - - - - - - - - - - - - - - - - - - -
 // This usage example illustrates the basics of class design that relate to
 // proper use of the default allocator, and introduces the standard pattern to
 // apply when setting (and *locking*) the default allocator.  First we define a
@@ -361,7 +358,7 @@ BSLS_IDENT("$Id: $")
 //  assert(1 == defaultCountingAllocator.numBlocksTotal());
 //..
 //
-/// Example 2: Detecting Allocator Propagation Bugs
+///Example 2: Detecting Allocator Propagation Bugs
 ///- - - - - - - - - - - - - - - - - - - - - - - -
 // This example demonstrates how the default allocator is used to detect a very
 // common programming error pertaining to allocator usage.  First we define the
@@ -511,7 +508,7 @@ BSLS_IDENT("$Id: $")
 // 'defaultCountingAllocator.numBlocksTotal()' *can* differ across function
 // invocations (i.e., even in correct code).
 //
-/// Example 3: Basic Global Allocator Use
+///Example 3: Basic Global Allocator Use
 ///- - - - - - - - - - - - - - - - - - -
 // Next we define a simple singleton class, 'my_Singleton', that defaults to
 // using the global allocator if one is not explicitly specified when the
@@ -662,239 +659,248 @@ namespace BloombergLP {
 
 namespace bslma {
 
-// ==============
-// struct Default
-// ==============
+                        // ==============
+                        // struct Default
+                        // ==============
 
 struct Default {
-  // This struct is a mechanism with global state, i.e., all state is held in
-  // global variables and all functions are class methods.  The state
-  // consists of two distinct parts that don't influence one another: the
-  // default allocator and the global allocator.  All addresses are stored
-  // without assuming ownership.
-  //
-  // The 'setDefaultAllocator' method will only modify the default allocator
-  // prior to the default allocator being accessed (by either 'allocator',
-  // 'defaultAllocator', or 'lockDefaultAllocator'). The global allocator may
-  // be freely modified.
-  //
-  // Note that *only* the *owner* of 'main' (or in *testing*), where the
-  // caller affirmatively takes responsibility for the behavior of all
-  // clients of the global allocator, is intended to change the global
-  // allocator.
+    // This struct is a mechanism with global state, i.e., all state is held in
+    // global variables and all functions are class methods.  The state
+    // consists of two distinct parts that don't influence one another: the
+    // default allocator and the global allocator.  All addresses are stored
+    // without assuming ownership.
+    //
+    // The 'setDefaultAllocator' method will only modify the default allocator
+    // prior to the default allocator being accessed (by either 'allocator',
+    // 'defaultAllocator', or 'lockDefaultAllocator'). The global allocator may
+    // be freely modified.
+    //
+    // Note that *only* the *owner* of 'main' (or in *testing*), where the
+    // caller affirmatively takes responsibility for the behavior of all
+    // clients of the global allocator, is intended to change the global
+    // allocator.
 
-private:
-  // CLASS DATA
+  private:
+    // CLASS DATA
 
-  // *** default allocator ***
+                        // *** default allocator ***
 
-  static bsls::AtomicOperations::AtomicTypes::Pointer
-      s_requestedDefaultAllocator;
-  // The default allocator that is requested by the user and will be
-  // installed as the default allocator on the first attempt to access
-  // the default allocator (via 'allocator', 'defaultAllocator', or
-  // 'lockDefaultAllocator').  This value is initialized to '0',
-  // indicating the user hasn't made a choice yet.  In that case, when
-  // needed, the new-delete allocator will be used.  This value can be
-  // set (multiple times) by calling to 'setDefaultAllocator'.  Note that
-  // once changed this variable will not become '0' again.
+    static bsls::AtomicOperations::AtomicTypes::Pointer
+                                                   s_requestedDefaultAllocator;
+        // The default allocator that is requested by the user and will be
+        // installed as the default allocator on the first attempt to access
+        // the default allocator (via 'allocator', 'defaultAllocator', or
+        // 'lockDefaultAllocator').  This value is initialized to '0',
+        // indicating the user hasn't made a choice yet.  In that case, when
+        // needed, the new-delete allocator will be used.  This value can be
+        // set (multiple times) by calling to 'setDefaultAllocator'.  Note that
+        // once changed this variable will not become '0' again.
 
-  static bsls::AtomicOperations::AtomicTypes::Pointer s_defaultAllocator;
-  // The currently installed default allocator.  This variable must be
-  // set only once, when the default allocator is first accessed (via
-  // 'allocator', 'defaultAllocator', or 'lockDefaultAllocator') but may
-  // be '0' before it is accessed unless *for* *testing* *only*
-  // 'setDefaultAllocatorRaw' is used.
+    static bsls::AtomicOperations::AtomicTypes::Pointer s_defaultAllocator;
+        // The currently installed default allocator.  This variable must be
+        // set only once, when the default allocator is first accessed (via
+        // 'allocator', 'defaultAllocator', or 'lockDefaultAllocator') but may
+        // be '0' before it is accessed unless *for* *testing* *only*
+        // 'setDefaultAllocatorRaw' is used.
 
-  // *** global allocator ***
+                        // *** global allocator ***
 
-  static bsls::AtomicOperations::AtomicTypes::Pointer s_globalAllocator;
-  // The address of the global allocator to use.
+    static bsls::AtomicOperations::AtomicTypes::Pointer s_globalAllocator;
+        // The address of the global allocator to use.
 
-  // PRIVATE CLASS METHODS
-  static Allocator *determineAndReturnDefaultAllocator();
-  // Return the address of the default allocator and disable all
-  // subsequent calls to the 'setDefaultAllocator' method.  If
-  // 's_defaultAllocator' is 0 (meaning the default allocator has not yet
-  // been accessed), set it to the last value supplied to
-  // 'setDefaultAllocator' (stored in 's_requestedDefaultAllocator').  If
-  // 's_requestedDefaultAllocator' is 0 (meaning 'setDefaultAllocator'
-  // has not been called) set 's_defaultAllocator' and
-  // 's_requestedDefaultAllocator' to be the new-delete allocator.  Note
-  // that this operation performs the one and only assigment to
-  // 's_defaultAllocator' (unless 'setDefaultAllocatorRaw' is called).
-  // In C++, this function also ensures that the default
-  // 'std::experimental::pmr::memory_resource' is the same as the default
-  // 'Allocator'. Note also that this function has the same externally visible
-  // behavior as 'defaultAllocator', but forms the (thread-safe)
-  // "slow-path" for that function's implementation.
+    // PRIVATE CLASS METHODS
+    static Allocator *determineAndReturnDefaultAllocator();
+        // Return the address of the default allocator and disable all
+        // subsequent calls to the 'setDefaultAllocator' method.  If
+        // 's_defaultAllocator' is 0 (meaning the default allocator has not yet
+        // been accessed), set it to the last value supplied to
+        // 'setDefaultAllocator' (stored in 's_requestedDefaultAllocator').  If
+        // 's_requestedDefaultAllocator' is 0 (meaning 'setDefaultAllocator'
+        // has not been called) set 's_defaultAllocator' and
+        // 's_requestedDefaultAllocator' to be the new-delete allocator.  Note
+        // that this operation performs the one and only assigment to
+        // 's_defaultAllocator' (unless 'setDefaultAllocatorRaw' is called).
+        // In C++, this function also ensures that the default
+        // 'std::pmr::memory_resource' is the same as the default 'Allocator'.
+        // Note also that this function has the same externally visible
+        // behavior as 'defaultAllocator', but forms the (thread-safe)
+        // "slow-path" for that function's implementation.
 
-public:
-  // CLASS METHODS
+  public:
+    // CLASS METHODS
 
-  // *** default allocator ***
+                        // *** default allocator ***
 
-  static int setDefaultAllocator(Allocator *basicAllocator);
-  // Set the address of the default allocator to the specified
-  // 'basicAllocator' unless calls to this method have been disabled.
-  // Return 0 on success and a non-zero value otherwise.  This method
-  // will fail if either 'defaultAllocator', 'lockDefaultAllocator', or
-  // 'allocator' with argument 0 has been called previously in this
-  // process.  In C++17 and later, a successful call to this method will
-  // also set the default 'std::experimental::pmr::memory_resource'.  The
-  // behavior is undefined unless 'basicAllocator' is the address of an
-  // allocator with sufficient lifetime to satisfy all allocation requests
-  // within this process, and unless there is only one thread started within
-  // this process.  Note that this method is intended for use *only* by
-  // the *owner* of 'main' (or for use in *testing*) where the caller
-  // affirmatively takes responsibility for the behavior of all clients
-  // of the default allocator, and should *not* be used for any other
-  // purpose.
+    static int setDefaultAllocator(Allocator *basicAllocator);
+        // Set the address of the default allocator to the specified
+        // 'basicAllocator' unless calls to this method have been disabled.
+        // Return 0 on success and a non-zero value otherwise.  This method
+        // will fail if either 'defaultAllocator', 'lockDefaultAllocator', or
+        // 'allocator' with argument 0 has been called previously in this
+        // process.  In C++17 and later, a successful call to this method will
+        // also set the default 'std::pmr::memory_resource'.  The behavior is
+        // undefined unless 'basicAllocator' is the address of an allocator
+        // with sufficient lifetime to satisfy all allocation requests within
+        // this process, and unless there is only one thread started within
+        // this process.  Note that this method is intended for use *only* by
+        // the *owner* of 'main' (or for use in *testing*) where the caller
+        // affirmatively takes responsibility for the behavior of all clients
+        // of the default allocator, and should *not* be used for any other
+        // purpose.
 
-  static void setDefaultAllocatorRaw(Allocator *basicAllocator);
-  // Unconditionally set the address of the default allocator to the
-  // specified 'basicAllocator'.  In C++17 and later, a call to this
-  // method will also set the default 'std::experimental::pmr::memory_resource'.
-  // The behavior is undefined unless 'basicAllocator' is the address of an
-  // allocator with sufficient lifetime to satisfy all allocation
-  // requests within this process, and unless there is only one thread
-  // started within this process.  Note that this method is intended for
-  // use *only* in *testing* where the caller affirmatively takes
-  // responsibility for the behavior of all clients of the default
-  // allocator, and should *not* be used for any other purpose.
+    static void setDefaultAllocatorRaw(Allocator *basicAllocator);
+        // Unconditionally set the address of the default allocator to the
+        // specified 'basicAllocator'.  In C++17 and later, a call to this
+        // method will also set the default 'std::pmr::memory_resource'.  The
+        // behavior is undefined unless 'basicAllocator' is the address of an
+        // allocator with sufficient lifetime to satisfy all allocation
+        // requests within this process, and unless there is only one thread
+        // started within this process.  Note that this method is intended for
+        // use *only* in *testing* where the caller affirmatively takes
+        // responsibility for the behavior of all clients of the default
+        // allocator, and should *not* be used for any other purpose.
 
-  static void lockDefaultAllocator();
-  // Disable all subsequent calls to the 'setDefaultAllocator' method.
-  // Subsequent calls to this method have no effect.  Note that
-  // subsequent calls to the 'setDefaultAllocatorRaw' method are *not*
-  // disabled by this method.
+    static void lockDefaultAllocator();
+        // Disable all subsequent calls to the 'setDefaultAllocator' method.
+        // Subsequent calls to this method have no effect.  Note that
+        // subsequent calls to the 'setDefaultAllocatorRaw' method are *not*
+        // disabled by this method.
 
-  static Allocator *defaultAllocator();
-  // Return the address of the default allocator and disable all
-  // subsequent calls to the 'setDefaultAllocator' method.  Note that
-  // prior to the first call to 'setDefaultAllocator' or
-  // 'setDefaultAllocatorRaw' methods, the address of the default
-  // allocator is that of the 'NewDeleteAllocator' singleton.  Also note
-  // that subsequent calls to 'setDefaultAllocatorRaw' method are *not*
-  // disabled by this method.
+    static Allocator *defaultAllocator();
+        // Return the address of the default allocator and disable all
+        // subsequent calls to the 'setDefaultAllocator' method.  Note that
+        // prior to the first call to 'setDefaultAllocator' or
+        // 'setDefaultAllocatorRaw' methods, the address of the default
+        // allocator is that of the 'NewDeleteAllocator' singleton.  Also note
+        // that subsequent calls to 'setDefaultAllocatorRaw' method are *not*
+        // disabled by this method.
 
-  static Allocator *allocator(Allocator *basicAllocator = 0);
-  // Return the allocator returned by 'defaultAllocator' and disable all
-  // subsequent calls to the 'setDefaultAllocator' method if the
-  // optionally-specified 'basicAllocator' is 0; return 'basicAllocator'
-  // otherwise.
+    static Allocator *allocator(Allocator *basicAllocator = 0);
+        // Return the allocator returned by 'defaultAllocator' and disable all
+        // subsequent calls to the 'setDefaultAllocator' method if the
+        // optionally-specified 'basicAllocator' is 0; return 'basicAllocator'
+        // otherwise.
 
-  // *** global allocator ***
+                        // *** global allocator ***
 
-  static Allocator *globalAllocator(Allocator *basicAllocator = 0);
-  // Return the address of the global allocator if the optionally-
-  // specified 'basicAllocator' is 0, and 'basicAllocator' otherwise.
-  // Note that prior to the first call to the 'setGlobalAllocator'
-  // method, the address of the global allocator is that of the
-  // 'NewDeleteAllocator' singleton.
+    static Allocator *globalAllocator(Allocator *basicAllocator = 0);
+        // Return the address of the global allocator if the optionally-
+        // specified 'basicAllocator' is 0, and 'basicAllocator' otherwise.
+        // Note that prior to the first call to the 'setGlobalAllocator'
+        // method, the address of the global allocator is that of the
+        // 'NewDeleteAllocator' singleton.
 
-  static Allocator *setGlobalAllocator(Allocator *basicAllocator);
-  // Unconditionally set the address of the global allocator to the
-  // specified 'basicAllocator', or to the address of the
-  // 'NewDeleteAllocator' singleton if 'basicAllocator' is 0.  Return the
-  // address of the global allocator in effect immediately before calling
-  // this method.  The behavior is undefined unless 'basicAllocator' is 0
-  // or is the address of an allocator with sufficient lifetime to
-  // satisfy all global allocation requests within this process, and
-  // unless there is only one thread started within this process.  Note
-  // that prior to the first call to this method, the address of the
-  // global allocator is that of the 'NewDeleteAllocator' singleton.
-  // Also note that this method is intended for use *only* by the *owner*
-  // of 'main' (or for use in *testing*) where the caller affirmatively
-  // takes responsibility for the behavior of all clients of the global
-  // allocator, and should *not* be used for any other purpose.
+    static Allocator *setGlobalAllocator(Allocator *basicAllocator);
+        // Unconditionally set the address of the global allocator to the
+        // specified 'basicAllocator', or to the address of the
+        // 'NewDeleteAllocator' singleton if 'basicAllocator' is 0.  Return the
+        // address of the global allocator in effect immediately before calling
+        // this method.  The behavior is undefined unless 'basicAllocator' is 0
+        // or is the address of an allocator with sufficient lifetime to
+        // satisfy all global allocation requests within this process, and
+        // unless there is only one thread started within this process.  Note
+        // that prior to the first call to this method, the address of the
+        // global allocator is that of the 'NewDeleteAllocator' singleton.
+        // Also note that this method is intended for use *only* by the *owner*
+        // of 'main' (or for use in *testing*) where the caller affirmatively
+        // takes responsibility for the behavior of all clients of the global
+        // allocator, and should *not* be used for any other purpose.
 };
 
 // ============================================================================
 //                      INLINE FUNCTION DEFINITIONS
 // ============================================================================
 
-// --------------
-// struct Default
-// --------------
+                        // --------------
+                        // struct Default
+                        // --------------
 
 // CLASS METHODS
 
-// *** default allocator ***
+                        // *** default allocator ***
 
-inline void Default::lockDefaultAllocator() {
-  determineAndReturnDefaultAllocator();
+inline
+void Default::lockDefaultAllocator()
+{
+    determineAndReturnDefaultAllocator();
 }
 
-inline Allocator *Default::defaultAllocator() {
-  void *alloc = bsls::AtomicOperations::getPtrRelaxed(&s_defaultAllocator);
-  return alloc ? static_cast<Allocator *>(alloc)
-               : determineAndReturnDefaultAllocator();
+inline
+Allocator *Default::defaultAllocator()
+{
+    void *alloc = bsls::AtomicOperations::getPtrRelaxed(&s_defaultAllocator);
+    return alloc ? static_cast<Allocator *>(alloc)
+                 : determineAndReturnDefaultAllocator();
 }
 
-inline Allocator *Default::allocator(Allocator *basicAllocator) {
-  return basicAllocator ? basicAllocator : defaultAllocator();
+inline
+Allocator *Default::allocator(Allocator *basicAllocator)
+{
+    return basicAllocator ? basicAllocator : defaultAllocator();
 }
 
-// *** global allocator ***
+                        // *** global allocator ***
 
-inline Allocator *Default::globalAllocator(Allocator *basicAllocator) {
-  Allocator *globalAllocator = static_cast<Allocator *>(const_cast<void *>(
-      bsls::AtomicOperations::getPtrAcquire(&s_globalAllocator)));
+inline
+Allocator *Default::globalAllocator(Allocator *basicAllocator)
+{
+    Allocator *globalAllocator = static_cast<Allocator *>(const_cast<void *>(
+                   bsls::AtomicOperations::getPtrAcquire(&s_globalAllocator)));
 
-  return basicAllocator    ? basicAllocator
-         : globalAllocator ? globalAllocator
-                           : &NewDeleteAllocator::singleton();
+    return basicAllocator ? basicAllocator
+                          : globalAllocator
+                                      ? globalAllocator
+                                      : &NewDeleteAllocator::singleton();
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 
 struct Default_NewDeleteSetter {
-  // Stateless class to set the initial default resource to
-  // 'bslma::NewDeleteAllocator' automatically when using this component
-  // with a platform that supports C++17
-  // 'std::experimental::pmr::memory_resource'.
+    // Stateless class to set the initial default resource to
+    // 'bslma::NewDeleteAllocator' automatically when using this component
+    // with a platform that supports C++17 'std::pmr::memory_resource'.
 
-  Default_NewDeleteSetter();
-  // If 'std::experimental::pmr::set_default_resource' has not yet been invoked,
-  // call it with the address of the 'bslma::NewDeleteAllocator' singleton, thus
-  // ensuring that 'bslma::Default' and 'get_default_resource' are in sync.
+    Default_NewDeleteSetter();
+        // If 'std::pmr::set_default_resource' has not yet been invoked, call
+        // it with the address of the 'bslma::NewDeleteAllocator' singleton,
+        // thus ensuring that 'bslma::Default' and 'get_default_resource' are
+        // in sync.
 
-  Default_NewDeleteSetter(const Default_NewDeleteSetter &) = delete;
+    Default_NewDeleteSetter(const Default_NewDeleteSetter&) = delete;
 };
 
 static Default_NewDeleteSetter Default_NewDeleteSetterSingleton;
-// Static initialization of this variable ensures that the default resource
-// is set to 'NewDeleteAllocator' before it is read by other code.
+    // Static initialization of this variable ensures that the default resource
+    // is set to 'NewDeleteAllocator' before it is read by other code.
 
 #endif // BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 
-} // namespace bslma
+}  // close package namespace
 
-#ifndef BDE_OPENSOURCE_PUBLICATION // BACKWARD_COMPATIBILITY
+#ifndef BDE_OPENSOURCE_PUBLICATION  // BACKWARD_COMPATIBILITY
 
 // ============================================================================
 //                           BACKWARD COMPATIBILITY
 // ============================================================================
 
 #ifndef BDE_OMIT_INTERNAL_DEPRECATED
-  // ====================
-  // struct bdema_Default
-  // ====================
+                        // ====================
+                        // struct bdema_Default
+                        // ====================
 
 typedef bslma::Default bdema_Default;
-// This 'struct' is a namespace for functions that manipulate and access
-// the default and global allocator pointers.  This alias is defined for
-// backward compatibility.
+    // This 'struct' is a namespace for functions that manipulate and access
+    // the default and global allocator pointers.  This alias is defined for
+    // backward compatibility.
 
 #endif // BDE_OMIT_INTERNAL_DEPRECATED
 
 typedef bslma::Default bslma_Default;
-// This alias is defined for backward compatibility.
+    // This alias is defined for backward compatibility.
 
-#endif // BDE_OPENSOURCE_PUBLICATION -- BACKWARD_COMPATIBILITY
+#endif  // BDE_OPENSOURCE_PUBLICATION -- BACKWARD_COMPATIBILITY
 
-} // namespace BloombergLP
+}  // close enterprise namespace
 
 #endif
 

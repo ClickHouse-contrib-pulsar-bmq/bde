@@ -2456,29 +2456,29 @@ int main(int argc, char *argv[]) {
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     {
-      (void)(std::experimental::pmr::polymorphic_allocator<char> *)0;
-      (void)(std::experimental::pmr::memory_resource *)0;
-      (void)(std::experimental::pmr::pool_options *)0;
-      (void)(std::experimental::pmr::synchronized_pool_resource *)0;
-      (void)(std::experimental::pmr::unsynchronized_pool_resource *)0;
-      (void)(std::experimental::pmr::monotonic_buffer_resource *)0;
+      (void)(std::pmr::polymorphic_allocator<char> *)0;
+      (void)(std::pmr::memory_resource *)0;
+      (void)(std::pmr::pool_options *)0;
+      (void)(std::pmr::synchronized_pool_resource *)0;
+      (void)(std::pmr::unsynchronized_pool_resource *)0;
+      (void)(std::pmr::monotonic_buffer_resource *)0;
 
-      (void)std::experimental::pmr::new_delete_resource();
-      (void)std::experimental::pmr::null_memory_resource();
-      (void)std::experimental::pmr::get_default_resource();
-      (void)[](std::experimental::pmr::memory_resource * r) {
-        (void)std::experimental::pmr::set_default_resource(r);
+      (void)std::pmr::new_delete_resource();
+      (void)std::pmr::null_memory_resource();
+      (void)std::pmr::get_default_resource();
+      (void)[](std::pmr::memory_resource * r) {
+        (void)std::pmr::set_default_resource(r);
       };
     }
 #endif
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     {
-      (void)(std::experimental::pmr::basic_string<char> *)0;
-      (void)(std::experimental::pmr::string *)0;
-      (void)(std::experimental::pmr::wstring *)0;
-      (void)(std::experimental::pmr::u16string *)0;
-      (void)(std::experimental::pmr::u32string *)0;
+      (void)(std::pmr::basic_string<char> *)0;
+      (void)(std::pmr::string *)0;
+      (void)(std::pmr::wstring *)0;
+      (void)(std::pmr::u16string *)0;
+      (void)(std::pmr::u32string *)0;
     }
 #endif
   } break;

@@ -20,7 +20,7 @@ BSLS_IDENT("$Id: $")
 // pipe: it is specialized for the case that the messages to be read are
 // relatively short newline-terminated strings.
 //
-/// Thread Safety
+///Thread Safety
 ///-------------
 // This component is thread-safe but not thread-enabled, meaning that multiple
 // threads may safely use their own instances of PipeControlChannel, but may
@@ -29,8 +29,8 @@ BSLS_IDENT("$Id: $")
 // new thread which listens to the pipe for messages until 'shutdown' is
 // called.
 //
-/// Pipe Atomicity
-///  - - - - - - -
+///Pipe Atomicity
+/// - - - - - - -
 // Users that expect multiple concurrent writers to a single pipe must be aware
 // that the message content might be corrupted (interleaved) unless:
 //
@@ -54,18 +54,18 @@ BSLS_IDENT("$Id: $")
 // Also note that Linux allows the 'PIPE_BUF' size to be changed via the
 // 'fcntl' system call.
 //
-/// Pipe Names
+///Pipe Names
 ///----------
 // This component requires a fully-qualified native pipe name.
 // 'bdlsu::PipeUtil' provides a portable utility method to generate such names.
 //
-/// Message Format
+///Message Format
 ///--------------
 // This component requires a trailing newline ('\n') character at the end of
 // each message.  This trailing newline is stripped from the message before
 // the message is passed to the control callback.
 //
-/// Platform-Specific Pipe Name Encoding Caveats
+///Platform-Specific Pipe Name Encoding Caveats
 ///--------------------------------------------
 // Pipe-name encodings have the following caveats for the following operating
 // systems:
@@ -98,12 +98,12 @@ BSLS_IDENT("$Id: $")
 //:   this component's Windows API, best practice is to encode all pipe names
 //:   in UTF-8.
 //
-/// Usage
+///Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-/// Example 1: Controlling a Simple Server
-///  - - - - - - - - - - - - - - - - - - -
+///Example 1: Controlling a Simple Server
+/// - - - - - - - - - - - - - - - - - - -
 // This example illustrates how to construct a simple server that records
 // messages sent on a pipe control channel until "EXIT" is received, at which
 // point the channel is closed and the server stops.
@@ -231,283 +231,305 @@ BSLS_IDENT("$Id: $")
 #include <bslalg_typetraits.h>
 #endif // BDE_DONT_ALLOW_TRANSITIVE_INCLUDES
 
-#include <string> // 'std::string', 'std::experimental::pmr::string'
+#include <string>           // 'std::string', 'std::pmr::string'
 
 namespace BloombergLP {
 namespace balb {
-// ========================
-// class PipeControlChannel
-// ========================
+                          // ========================
+                          // class PipeControlChannel
+                          // ========================
 
 class PipeControlChannel {
-  // This class is a mechanism for reading control messages from a named
-  // pipe.  Use 'start' to spawn a thread that handles messages arriving at
-  // the pipe, and 'shutdown' to stop reading.  'stop'  blocks until the
-  // processing thread has been terminated by a call to 'shutdown' (either
-  // before 'stop' is called, or from some other thread).
+    // This class is a mechanism for reading control messages from a named
+    // pipe.  Use 'start' to spawn a thread that handles messages arriving at
+    // the pipe, and 'shutdown' to stop reading.  'stop'  blocks until the
+    // processing thread has been terminated by a call to 'shutdown' (either
+    // before 'stop' is called, or from some other thread).
 
-public:
-  // TYPES
-  typedef bsl::function<void(const bslstl::StringRef &message)> ControlCallback;
-  // This type of function is called to handle control messages received
-  // on the pipe.  The 'message' is one complete message read from the
-  // pipe, without the terminating newline character.
+  public:
+    // TYPES
+    typedef bsl::function<void(const bslstl::StringRef& message)>
+                                                               ControlCallback;
+        // This type of function is called to handle control messages received
+        // on the pipe.  The 'message' is one complete message read from the
+        // pipe, without the terminating newline character.
 
-private:
-  // TYPES
-  enum BackgroundThreadState {
-    e_STOPPED, // The background thread is not running or about to exit.
-    e_RUNNING, // The background thread is running normally.
-    e_STOPPING // The background thread is requested to stop.
-  };
+  private:
+    // TYPES
+    enum BackgroundThreadState {
+        e_STOPPED,  // The background thread is not running or about to exit.
+        e_RUNNING,  // The background thread is running normally.
+        e_STOPPING  // The background thread is requested to stop.
+    };
 
-  // INSTANCE DATA
-  ControlCallback d_callback;         // callback for control messages
-  bsl::string d_pipeName;             // full path name of pipe
-  bsl::vector<char> d_buffer;         // message buffer
-  bslmt::ThreadUtil::Handle d_thread; // background processing thread
-  bsls::AtomicInt d_backgroundState;  // the background thread state
-  bool d_isPipeOpen;                  // true if the pipe is still open
+    // INSTANCE DATA
+    ControlCallback           d_callback;     // callback for control messages
+    bsl::string               d_pipeName;     // full path name of pipe
+    bsl::vector<char>         d_buffer;       // message buffer
+    bslmt::ThreadUtil::Handle d_thread;       // background processing thread
+    bsls::AtomicInt           d_backgroundState; // the background thread state
+    bool                      d_isPipeOpen;   // true if the pipe is still open
 
-  union {
-    struct {
-      int d_readFd;  // fifo descriptor (read-only)
-      int d_writeFd; // fifo descriptor (write-only)
-    } d_unix;
+    union {
+        struct {
+            int              d_readFd;        // fifo descriptor (read-only)
+            int              d_writeFd;       // fifo descriptor (write-only)
+        } d_unix;
 
-    struct {
-      void *d_handle; // pipe handle
-    } d_windows;
+        struct {
+            void*            d_handle;        // pipe handle
+        } d_windows;
 
-  } d_impl; // platform-specific imp
+    } d_impl;                                 // platform-specific imp
 
-  // PRIVATE MANIPULATORS
-  void backgroundProcessor();
-  // Loop while d_isRunningFlag is true, reading and dispatching messages
-  // from the named pipe.
+    // PRIVATE MANIPULATORS
+    void backgroundProcessor();
+        // Loop while d_isRunningFlag is true, reading and dispatching messages
+        // from the named pipe.
 
-  int createNamedPipe(const char *pipeName);
-  // Open a named pipe having the specified 'pipeName'.  Return 0 on
-  // success, and a non-zero value otherwise.
+    int createNamedPipe(const char *pipeName);
+        // Open a named pipe having the specified 'pipeName'.  Return 0 on
+        // success, and a non-zero value otherwise.
 
-  void dispatchMessageUpTo(const bsl::vector<char>::iterator &iter);
-  // Dispatch the message that extends up to (but not including) the
-  // specified 'iter' (which is an iterator into 'd_buffer'), then erase
-  // the prefix that extends up to (and including) 'iter'.
+    void dispatchMessageUpTo(const bsl::vector<char>::iterator& iter);
+        // Dispatch the message that extends up to (but not including) the
+        // specified 'iter' (which is an iterator into 'd_buffer'), then erase
+        // the prefix that extends up to (and including) 'iter'.
 
-  bool dispatchLeftoverMessage();
-  // If there is a newline character in 'd_buffer', call
-  // 'dispatchMessageUpTo' with the location of that newline character
-  // and return 'true'; otherwise, return 'false'.
+    bool dispatchLeftoverMessage();
+        // If there is a newline character in 'd_buffer', call
+        // 'dispatchMessageUpTo' with the location of that newline character
+        // and return 'true'; otherwise, return 'false'.
 
-  void destroyNamedPipe();
-  // Close the named pipe.
+    void destroyNamedPipe();
+        // Close the named pipe.
 
-  int readNamedPipe();
-  // Block until bytes are available on the named pipe, and read them
-  // into the internal buffer.  If a message is encountered, dispatch it.
-  // Return 0 on success, and a non-zero value otherwise.
+    int readNamedPipe();
+        // Block until bytes are available on the named pipe, and read them
+        // into the internal buffer.  If a message is encountered, dispatch it.
+        // Return 0 on success, and a non-zero value otherwise.
 
-  int sendEmptyMessage();
-  // Writes a '\n' character, only, to the pipe.  Returns 0 on success, a
-  // value greater than 0 on error, and a value less than 0 in case of a
-  // timeout.  Used to unblock the reading thread so it can detect a
-  // shutdown condition.  Note that this method is not to be called
-  // anywhere except from 'shutdown'.
+    int sendEmptyMessage();
+        // Writes a '\n' character, only, to the pipe.  Returns 0 on success, a
+        // value greater than 0 on error, and a value less than 0 in case of a
+        // timeout.  Used to unblock the reading thread so it can detect a
+        // shutdown condition.  Note that this method is not to be called
+        // anywhere except from 'shutdown'.
 
-private:
-  // NOT IMPLEMENTED
-  PipeControlChannel(const PipeControlChannel &);
-  PipeControlChannel &operator=(const PipeControlChannel &);
+  private:
+    // NOT IMPLEMENTED
+    PipeControlChannel(const PipeControlChannel&);
+    PipeControlChannel& operator=(const PipeControlChannel&);
 
-public:
-  // CREATORS
-  explicit PipeControlChannel(const ControlCallback &callback,
-                              bslma::Allocator *basicAllocator = 0);
-  // Create a pipe control mechanism that dispatches messages to the
-  // specified 'callback'.  Optionally specify 'basicAllocator' to supply
-  // memory.  If 'basicAllocator' is zero, the currently installed
-  // default allocator is used.
+  public:
+    // CREATORS
+    explicit
+    PipeControlChannel(const ControlCallback&  callback,
+                       bslma::Allocator       *basicAllocator = 0);
+        // Create a pipe control mechanism that dispatches messages to the
+        // specified 'callback'.  Optionally specify 'basicAllocator' to supply
+        // memory.  If 'basicAllocator' is zero, the currently installed
+        // default allocator is used.
 
-  ~PipeControlChannel();
-  // Destroy this object.  Shut down the processing thread if it is still
-  // running and block until it terminates.  Close the named pipe and
-  // clean up any associated system resources.
+    ~PipeControlChannel();
+        // Destroy this object.  Shut down the processing thread if it is still
+        // running and block until it terminates.  Close the named pipe and
+        // clean up any associated system resources.
 
-  // MANIPULATORS
-  int start(const char *pipeName);
-  template <class STRING_TYPE> int start(const STRING_TYPE &pipeName);
-  int start(const char *pipeName, const bslmt::ThreadAttributes &attributes);
-  template <class STRING_TYPE>
-  int start(const STRING_TYPE &pipeName,
-            const bslmt::ThreadAttributes &attributes);
-  // Open a named pipe having the specified 'pipeName', and start a
-  // thread to read messages and dispatch them to the callback specified
-  // at construction.  Optionally specify 'attributes' of the background
-  // processing thread.  If 'attributes' is not supplied, a default
-  // constructed 'ThreadAttributes' object will be used.  Return 0 on
-  // success, and a non-zero value otherwise.  In particular, return a
-  // non-zero value if the pipe cannot be opened or if it is detected
-  // that another process is reading from the pipe.  'pipeName' must be
-  // of the types 'const char *', 'char *', 'bsl::string', 'std::string',
-  // 'std::experimental::pmr::string' (if supported), or 'bslstl::StringRef'.
+    // MANIPULATORS
+    int start(const char                     *pipeName);
+    template <class STRING_TYPE>
+    int start(const STRING_TYPE&              pipeName);
+    int start(const char                     *pipeName,
+              const bslmt::ThreadAttributes&  attributes);
+    template <class STRING_TYPE>
+    int start(const STRING_TYPE&              pipeName,
+              const bslmt::ThreadAttributes&  attributes);
+        // Open a named pipe having the specified 'pipeName', and start a
+        // thread to read messages and dispatch them to the callback specified
+        // at construction.  Optionally specify 'attributes' of the background
+        // processing thread.  If 'attributes' is not supplied, a default
+        // constructed 'ThreadAttributes' object will be used.  Return 0 on
+        // success, and a non-zero value otherwise.  In particular, return a
+        // non-zero value if the pipe cannot be opened or if it is detected
+        // that another process is reading from the pipe.  'pipeName' must be
+        // of the types 'const char *', 'char *', 'bsl::string', 'std::string',
+        // 'std::pmr::string' (if supported), or 'bslstl::StringRef'.
 
-  void shutdown();
-  // Stop reading from the pipe and dispatching messages.  If the
-  // background thread has begun processing a message, this method will
-  // block until a message that is currently being processed completes.
+    void shutdown();
+        // Stop reading from the pipe and dispatching messages.  If the
+        // background thread has begun processing a message, this method will
+        // block until a message that is currently being processed completes.
 
-  void stop();
-  // Block until the background thread has been terminated by a call to
-  // 'shutdown'.  Then close the pipe and clean up the associated file.
+    void stop();
+        // Block until the background thread has been terminated by a call to
+        // 'shutdown'.  Then close the pipe and clean up the associated file.
 
-  // ACCESSORS
-  const bsl::string &pipeName() const;
-  // Return the fully qualified system name of the pipe.
+    // ACCESSORS
+    const bsl::string& pipeName() const;
+        // Return the fully qualified system name of the pipe.
 
-  // Aspects
+                                  // Aspects
 
-  bslma::Allocator *allocator() const;
-  // Return the allocator used by this object to supply memory.  Note
-  // that if no allocator was supplied at construction the default
-  // allocator in effect at construction is used.
+    bslma::Allocator *allocator() const;
+        // Return the allocator used by this object to supply memory.  Note
+        // that if no allocator was supplied at construction the default
+        // allocator in effect at construction is used.
 };
 
-// ====================================
-// class PipeControlChannel_CStringUtil
-// ====================================
+                    // ====================================
+                    // class PipeControlChannel_CStringUtil
+                    // ====================================
 
 struct PipeControlChannel_CStringUtil {
-  // This component-private utility 'struct' provides a namespace for the
-  // 'flatten' overload set intended to be used in concert with an overload
-  // set consisting of a function template with a deduced argument and an
-  // non-template overload accepting a 'const char *'.  The actual
-  // implementation of the functionality would be in the 'const char *'
-  // overload whereas the purpose of the function template is to invoke the
-  // 'const char *' overload with a null-terminated string.
-  //
-  // The function template achieves null-termination by recursively calling
-  // the function and supplying it with the result of 'flatten' invoked on
-  // the deduced argument.  This 'flatten' invocation will call 'c_str()' on
-  // various supported 'string' types, will produce a temporary 'bsl::string'
-  // for possibly non-null-terminated 'bslstl::StringRef', and will result in
-  // a 'BSLMF_ASSERT' for any unsupported type.  Calling the function with
-  // the temporary 'bsl::string' produced from 'bslstl::StringRef' will
-  // result in a second invocation of 'flatten', this time producing
-  // 'const char *', and finally calling the function with a null-terminated
-  // string.
-  //
-  // Note that the 'bslstl::StringRef' overload for 'flatten' is provided for
-  // backwards compatibility.  Without it, the 'bsl::string' and
-  // 'std::string' overloads would be ambiguous.  In new code, it is
-  // preferable to not provide 'bslstl::StringRef' overload in a similar
-  // facility and require the clients to explicitly state the string type in
-  // their code, making a potential allocation obvious.  The
-  // 'bsl::string_view' overload is not provided for the same reason.
-  //
-  // Also note that since the constructor for 'string' types from
-  // 'bsl::string_view' is explicit, it is not necessary to support
-  // 'bsl::string_view' for backwards compatibility, and it is not supported.
+    // This component-private utility 'struct' provides a namespace for the
+    // 'flatten' overload set intended to be used in concert with an overload
+    // set consisting of a function template with a deduced argument and an
+    // non-template overload accepting a 'const char *'.  The actual
+    // implementation of the functionality would be in the 'const char *'
+    // overload whereas the purpose of the function template is to invoke the
+    // 'const char *' overload with a null-terminated string.
+    //
+    // The function template achieves null-termination by recursively calling
+    // the function and supplying it with the result of 'flatten' invoked on
+    // the deduced argument.  This 'flatten' invocation will call 'c_str()' on
+    // various supported 'string' types, will produce a temporary 'bsl::string'
+    // for possibly non-null-terminated 'bslstl::StringRef', and will result in
+    // a 'BSLMF_ASSERT' for any unsupported type.  Calling the function with
+    // the temporary 'bsl::string' produced from 'bslstl::StringRef' will
+    // result in a second invocation of 'flatten', this time producing
+    // 'const char *', and finally calling the function with a null-terminated
+    // string.
+    //
+    // Note that the 'bslstl::StringRef' overload for 'flatten' is provided for
+    // backwards compatibility.  Without it, the 'bsl::string' and
+    // 'std::string' overloads would be ambiguous.  In new code, it is
+    // preferable to not provide 'bslstl::StringRef' overload in a similar
+    // facility and require the clients to explicitly state the string type in
+    // their code, making a potential allocation obvious.  The
+    // 'bsl::string_view' overload is not provided for the same reason.
+    //
+    // Also note that since the constructor for 'string' types from
+    // 'bsl::string_view' is explicit, it is not necessary to support
+    // 'bsl::string_view' for backwards compatibility, and it is not supported.
 
-  // CLASS METHODS
+    // CLASS METHODS
 
-  static const char *flatten(char *cString);
-  static const char *flatten(const char *cString);
-  // Return the specified 'cString'.
+    static const char *flatten(char *cString);
+    static const char *flatten(const char *cString);
+        // Return the specified 'cString'.
 
-  static const char *flatten(const bsl::string &string);
-  static const char *flatten(const std::string &string);
+    static const char *flatten(const bsl::string& string);
+    static const char *flatten(const std::string& string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static const char *flatten(const std::experimental::pmr::string &string);
+    static const char *flatten(const std::pmr::string& string);
 #endif
-  // Return the result of invoking 'c_str()' on the specified 'string'.
+        // Return the result of invoking 'c_str()' on the specified 'string'.
 
-  static bsl::string flatten(const bslstl::StringRef &stringRef);
-  // Return a temporary 'bsl::string' constructed from the specified
-  // 'stringRef'.
+    static bsl::string flatten(const bslstl::StringRef& stringRef);
+        // Return a temporary 'bsl::string' constructed from the specified
+        // 'stringRef'.
 
-  template <class TYPE> static const char *flatten(const TYPE &);
-  // Produce a compile-time error informing the caller that the
-  // parameterized 'TYPE' is not supported as the parameter for the call.
+    template <class TYPE>
+    static const char *flatten(const TYPE&);
+        // Produce a compile-time error informing the caller that the
+        // parameterized 'TYPE' is not supported as the parameter for the call.
 };
 
 // ============================================================================
 //                            INLINE DEFINITIONS
 // ============================================================================
 
-// ------------------------
-// class PipeControlChannel
-// ------------------------
+                          // ------------------------
+                          // class PipeControlChannel
+                          // ------------------------
 
 // MANIPULATORS
 template <class STRING_TYPE>
-int PipeControlChannel::start(const STRING_TYPE &pipeName) {
-  return start(PipeControlChannel_CStringUtil::flatten(pipeName),
-               bslmt::ThreadAttributes());
+int PipeControlChannel::start(const STRING_TYPE& pipeName)
+{
+    return start(PipeControlChannel_CStringUtil::flatten(pipeName),
+                 bslmt::ThreadAttributes());
 }
 
 template <class STRING_TYPE>
-int PipeControlChannel::start(const STRING_TYPE &pipeName,
-                              const bslmt::ThreadAttributes &threadAttributes) {
-  return start(PipeControlChannel_CStringUtil::flatten(pipeName),
-               threadAttributes);
+int PipeControlChannel::start(const STRING_TYPE&             pipeName,
+                              const bslmt::ThreadAttributes& threadAttributes)
+{
+    return start(PipeControlChannel_CStringUtil::flatten(pipeName),
+                 threadAttributes);
 }
 
 // ACCESSORS
-inline const bsl::string &PipeControlChannel::pipeName() const {
-  return d_pipeName;
+inline
+const bsl::string& PipeControlChannel::pipeName() const
+{
+    return d_pipeName;
 }
 
-// Aspects
+                    // Aspects
 
-inline bslma::Allocator *PipeControlChannel::allocator() const {
-  return d_pipeName.get_allocator().mechanism();
+inline
+bslma::Allocator *PipeControlChannel::allocator() const
+{
+    return d_pipeName.get_allocator().mechanism();
 }
 
-// ------------------------------------
-// class PipeControlChannel_CStringUtil
-// ------------------------------------
+                    // ------------------------------------
+                    // class PipeControlChannel_CStringUtil
+                    // ------------------------------------
 
 // CLASS METHODS
-inline const char *PipeControlChannel_CStringUtil::flatten(char *cString) {
-  return cString;
+inline
+const char *PipeControlChannel_CStringUtil::flatten(char *cString)
+{
+    return cString;
 }
 
-inline const char *
-PipeControlChannel_CStringUtil::flatten(const char *cString) {
-  return cString;
+inline
+const char *PipeControlChannel_CStringUtil::flatten(const char *cString)
+{
+    return cString;
 }
 
-inline const char *
-PipeControlChannel_CStringUtil::flatten(const bsl::string &string) {
-  return string.c_str();
+inline
+const char *PipeControlChannel_CStringUtil::flatten(const bsl::string& string)
+{
+    return string.c_str();
 }
 
-inline const char *
-PipeControlChannel_CStringUtil::flatten(const std::string &string) {
-  return string.c_str();
+inline
+const char *PipeControlChannel_CStringUtil::flatten(const std::string& string)
+{
+    return string.c_str();
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-inline const char *PipeControlChannel_CStringUtil::flatten(
-    const std::experimental::pmr::string &string) {
-  return string.c_str();
+inline
+const char *PipeControlChannel_CStringUtil::flatten(
+                                                const std::pmr::string& string)
+{
+    return string.c_str();
 }
 #endif
 
-inline bsl::string
-PipeControlChannel_CStringUtil::flatten(const bslstl::StringRef &stringRef) {
-  return stringRef;
+inline
+bsl::string PipeControlChannel_CStringUtil::flatten(
+                                            const bslstl::StringRef& stringRef)
+{
+    return stringRef;
 }
 
 template <class TYPE>
-inline const char *PipeControlChannel_CStringUtil::flatten(const TYPE &) {
-  BSLMF_ASSERT(("Unsupported parameter type." && !sizeof(TYPE)));
-  return 0;
+inline
+const char *PipeControlChannel_CStringUtil::flatten(const TYPE&)
+{
+    BSLMF_ASSERT(("Unsupported parameter type." && !sizeof(TYPE)));
+    return 0;
 }
 
-} // namespace balb
-} // namespace BloombergLP
+}  // close package namespace
+}  // close enterprise namespace
 #endif
 
 // ----------------------------------------------------------------------------
