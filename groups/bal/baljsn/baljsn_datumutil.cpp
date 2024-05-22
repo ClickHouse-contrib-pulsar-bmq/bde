@@ -536,7 +536,7 @@ int DatumUtil::encode(std::string                *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int DatumUtil::encode(std::pmr::string           *result,
+int DatumUtil::encode(std::experimental::pmr::string           *result,
                       const bdld::Datum&          datum,
                       const DatumEncoderOptions&  options)
 {

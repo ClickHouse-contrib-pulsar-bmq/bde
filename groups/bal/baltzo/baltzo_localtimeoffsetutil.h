@@ -245,7 +245,7 @@ struct LocalTimeOffsetUtil {
     static void loadTimezone(bsl::string      *timezone);
     static void loadTimezone(std::string      *timezone);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void loadTimezone(std::pmr::string *timezone);
+    static void loadTimezone(std::experimental::pmr::string *timezone);
 #endif
         // Load to the specified 'timezone' time zone identifier used to
         // determine the local time offset from UTC.  This method *is* not

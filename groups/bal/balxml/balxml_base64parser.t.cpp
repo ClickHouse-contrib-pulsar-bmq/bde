@@ -769,7 +769,7 @@ int main(int argc, char *argv[])
             u::test2<bsl::vector<char> >(data);
             u::test2<std::vector<char> >(data);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            u::test2<std::pmr::vector<char>>(data);
+            u::test2<std::experimental::pmr::vector<char>>(data);
 #endif
         }
       } break;

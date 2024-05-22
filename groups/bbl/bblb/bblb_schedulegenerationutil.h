@@ -123,7 +123,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsl_vector.h>
 
-#include <vector>                   // 'std::vector', 'std::pmr::vector'
+#include <vector>                   // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 namespace bblb {
@@ -151,7 +151,7 @@ struct ScheduleGenerationUtil {
                                  int                           intervalInDays);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static void generateFromDayInterval(
-                                 std::pmr::vector<bdlt::Date> *schedule,
+                                 std::experimental::pmr::vector<bdlt::Date> *schedule,
                                  const bdlt::Date&             earliest,
                                  const bdlt::Date&             latest,
                                  const bdlt::Date&             example,
@@ -184,7 +184,7 @@ struct ScheduleGenerationUtil {
                              int                           targetDayOfFeb = 0);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static void generateFromDayOfMonth(
-                             std::pmr::vector<bdlt::Date> *schedule,
+                             std::experimental::pmr::vector<bdlt::Date> *schedule,
                              const bdlt::Date&             earliest,
                              const bdlt::Date&             latest,
                              int                           exampleYear,
@@ -226,7 +226,7 @@ struct ScheduleGenerationUtil {
                        int                           targetBusinessDayOfMonth);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static void generateFromBusinessDayOfMonth(
-                       std::pmr::vector<bdlt::Date> *schedule,
+                       std::experimental::pmr::vector<bdlt::Date> *schedule,
                        const bdlt::Date&             earliest,
                        const bdlt::Date&             latest,
                        int                           exampleYear,
@@ -274,7 +274,7 @@ struct ScheduleGenerationUtil {
                                 int                           dayOfMonth);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static void generateFromDayOfWeekAfterDayOfMonth(
-                                std::pmr::vector<bdlt::Date> *schedule,
+                                std::experimental::pmr::vector<bdlt::Date> *schedule,
                                 const bdlt::Date&             earliest,
                                 const bdlt::Date&             latest,
                                 int                           exampleYear,
@@ -314,7 +314,7 @@ struct ScheduleGenerationUtil {
                                 int                           occurrenceWeek);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static void generateFromDayOfWeekInMonth(
-                                std::pmr::vector<bdlt::Date> *schedule,
+                                std::experimental::pmr::vector<bdlt::Date> *schedule,
                                 const bdlt::Date&             earliest,
                                 const bdlt::Date&             latest,
                                 int                           exampleYear,

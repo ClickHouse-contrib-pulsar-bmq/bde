@@ -424,8 +424,8 @@ int main(int argc, char *argv[]) {
         testCase1_makeCanonicalName<std::string>(
             "std::string", test, verbose);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        testCase1_makeCanonicalName<std::pmr::string>(
-            "std::pmr::string", test, verbose);
+        testCase1_makeCanonicalName<std::experimental::pmr::string>(
+            "std::experimental::pmr::string", test, verbose);
 #endif
       } break;
       default: {

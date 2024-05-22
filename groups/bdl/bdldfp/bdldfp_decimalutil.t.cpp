@@ -3552,7 +3552,7 @@ int main(int argc, char* argv[])
                 Type      valuePmrStr = ERROR_VALUE;
                 const int rcPmrStr = Util::parseDecimal32(
                                                   &valuePmrStr,
-                                                  std::pmr::string(INPUT, pa));
+                                                  std::experimental::pmr::string(INPUT, pa));
 #endif
                 if (IS_VALID) {
                     LOOP2_ASSERT(LINE, rcCStr,   0 == rcCStr  );

@@ -97,7 +97,7 @@ typedef bbldc::DayCountConvention::Enum Enum;
 typedef bsl::vector<bdlt::Date>      BslVector;
 typedef std::vector<bdlt::Date>      StdVector;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-typedef std::pmr::vector<bdlt::Date> PmrVector;
+typedef std::experimental::pmr::vector<bdlt::Date> PmrVector;
 #endif
 
 const Enum PERIOD_ICMA_ACTUAL_ACTUAL =

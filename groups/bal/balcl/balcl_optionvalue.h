@@ -684,7 +684,7 @@ OptionValue::OptionValue(const bsl::string&  value,
     // be a constructive change, because 'bdlb::NullableValue<bsl::string>' is
     // not constructible from a string view.  Note that 'value', as a
     // 'bsl::string', is constructible from 'const char *', an 'std::string',
-    // or an 'std::pmr::string'.
+    // or an 'std::experimental::pmr::string'.
 }
 
 inline

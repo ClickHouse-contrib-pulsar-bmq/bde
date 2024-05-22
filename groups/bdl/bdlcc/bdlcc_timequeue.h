@@ -942,7 +942,7 @@ class TimeQueue {
                bsls::TimeInterval                     *newMinTime = 0);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     void popLE(const bsls::TimeInterval&               time,
-               std::pmr::vector<TimeQueueItem<DATA> > *buffer,
+               std::experimental::pmr::vector<TimeQueueItem<DATA> > *buffer,
                int                                    *newLength = 0,
                bsls::TimeInterval                     *newMinTime = 0);
 #endif
@@ -975,7 +975,7 @@ class TimeQueue {
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     void popLE(const bsls::TimeInterval&               time,
                int                                     maxTimers,
-               std::pmr::vector<TimeQueueItem<DATA> > *buffer,
+               std::experimental::pmr::vector<TimeQueueItem<DATA> > *buffer,
                int                                    *newLength = 0,
                bsls::TimeInterval                     *newMinTime = 0);
 #endif
@@ -1168,7 +1168,7 @@ template <class DATA>
 template <class VECTOR>
 struct TimeQueue<DATA>::IsVector {
     // This 'struct' has a 'value' that evaluates to 'true' if the specified
-    // 'VECTOR' is a 'bsl', 'std', or 'std::pmr' 'vector<VALUE>'.
+    // 'VECTOR' is a 'bsl', 'std', or 'std::experimental::pmr' 'vector<VALUE>'.
 
     // TYPE
     typedef TimeQueueItem<DATA> Item;
@@ -1177,7 +1177,7 @@ struct TimeQueue<DATA>::IsVector {
     static const bool value =
                             bsl::is_same<bsl::vector<Item>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                         || bsl::is_same<std::pmr::vector<Item>, VECTOR>::value
+                         || bsl::is_same<std::experimental::pmr::vector<Item>, VECTOR>::value
 #endif
                          || bsl::is_same<std::vector<Item>, VECTOR>::value;
 };
@@ -1614,7 +1614,7 @@ void TimeQueue<DATA>::popLE(const bsls::TimeInterval&          time,
 template <class DATA>
 inline
 void TimeQueue<DATA>::popLE(const bsls::TimeInterval&               time,
-                            std::pmr::vector<TimeQueueItem<DATA> > *buffer,
+                            std::experimental::pmr::vector<TimeQueueItem<DATA> > *buffer,
                             int                                    *newLength,
                             bsls::TimeInterval                     *newMinTime)
 {
@@ -1658,7 +1658,7 @@ template <class DATA>
 inline
 void TimeQueue<DATA>::popLE(const bsls::TimeInterval&               time,
                             int                                     maxTimers,
-                            std::pmr::vector<TimeQueueItem<DATA> > *buffer,
+                            std::experimental::pmr::vector<TimeQueueItem<DATA> > *buffer,
                             int                                    *newLength,
                             bsls::TimeInterval                     *newMinTime)
 {

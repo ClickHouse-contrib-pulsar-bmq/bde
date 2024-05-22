@@ -411,8 +411,8 @@ BSLS_IDENT("$Id: $")
 #include <bsl_set.h>
 #include <bsl_vector.h>
 
-#include <set>                   // 'std::set', 'std::pmr::set'
-#include <vector>                // 'std::vector', 'std::pmr::vector'
+#include <set>                   // 'std::set', 'std::experimental::pmr::set'
+#include <vector>                // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 
@@ -737,7 +737,7 @@ class MetricsManager {
     void publish(const std::set<const Category *>&      categories,
                  bool                                   resetFlag = true);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void publish(const std::pmr::set<const Category *>& categories,
+    void publish(const std::experimental::pmr::set<const Category *>& categories,
                  bool                                   resetFlag = true);
 #endif
         // Publish metrics belonging to the specified 'categories'.
@@ -780,7 +780,7 @@ class MetricsManager {
     void publishAll(const std::set<const Category *>&      excludedCategories,
                     bool                                   resetFlag = true);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void publishAll(const std::pmr::set<const Category *>& excludedCategories,
+    void publishAll(const std::experimental::pmr::set<const Category *>& excludedCategories,
                     bool                                   resetFlag = true);
 #endif
         // Publish metrics for every category registered with the contained
@@ -859,7 +859,7 @@ class MetricsManager {
     int findGeneralPublishers(bsl::vector<Publisher *>      *publishers) const;
     int findGeneralPublishers(std::vector<Publisher *>      *publishers) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    int findGeneralPublishers(std::pmr::vector<Publisher *> *publishers) const;
+    int findGeneralPublishers(std::experimental::pmr::vector<Publisher *> *publishers) const;
 #endif
         // Append to the specified 'publishers' the addresses of publishers
         // registered to publish metrics for every category.  Return the number
@@ -873,7 +873,7 @@ class MetricsManager {
                                const char                 *categoryName) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     int findSpecificPublishers(
-                            std::pmr::vector<Publisher *> *publishers,
+                            std::experimental::pmr::vector<Publisher *> *publishers,
                             const char                    *categoryName) const;
 #endif
         // Append to the specified 'publishers' the addresses of any
@@ -888,7 +888,7 @@ class MetricsManager {
     int findSpecificPublishers(std::vector<Publisher *> *publishers,
                                const Category           *category) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    int findSpecificPublishers(std::pmr::vector<Publisher *> *publishers,
+    int findSpecificPublishers(std::experimental::pmr::vector<Publisher *> *publishers,
                                const Category                *category) const;
 #endif
         // Append to the specified 'publishers' the addresses of any
@@ -992,7 +992,7 @@ int MetricsManager::findSpecificPublishers(
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 inline
 int MetricsManager::findSpecificPublishers(
-                             std::pmr::vector<Publisher *> *publishers,
+                             std::experimental::pmr::vector<Publisher *> *publishers,
                              const char                    *categoryName) const
 {
     const Category *categoryPtr = d_metricRegistry.findCategory(categoryName);

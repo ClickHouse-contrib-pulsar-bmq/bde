@@ -530,7 +530,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_memory.h>
 #include <bsl_string.h>
 
-#include <string>                  // 'std::string', 'std::pmr::string'
+#include <string>                  // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace ball {
@@ -946,7 +946,7 @@ class AsyncFileObserver : public Observer {
         // may still be logged to 'stdout' when this method returns 'false'.
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    bool isFileLoggingEnabled(std::pmr::string *result) const;
+    bool isFileLoggingEnabled(std::experimental::pmr::string *result) const;
         // Return 'true' if file logging is enabled for this async file
         // observer, and 'false' otherwise.  Load the specified 'result' with
         // the name of the current log file if file logging is enabled, and
@@ -1155,7 +1155,7 @@ bool AsyncFileObserver::isFileLoggingEnabled(std::string *result) const
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-bool AsyncFileObserver::isFileLoggingEnabled(std::pmr::string *result) const
+bool AsyncFileObserver::isFileLoggingEnabled(std::experimental::pmr::string *result) const
 {
     return d_fileObserver.isFileLoggingEnabled(result);
 }

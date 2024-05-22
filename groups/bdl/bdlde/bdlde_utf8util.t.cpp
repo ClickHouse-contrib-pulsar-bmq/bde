@@ -116,7 +116,7 @@ using bsl::size_t;
 // [ 8] IntPtr advanceRaw(const char **, const char *, int, int);
 // [12] int appendUtf8CodePoint(bsl::string *, unsigned int);
 // [12] int appendUtf8CodePoint(std::string *, unsigned int);
-// [12] int appendUtf8CodePoint(std::pmr::string *, unsigned int);
+// [12] int appendUtf8CodePoint(std::experimental::pmr::string *, unsigned int);
 // [12] int appendUtf8Character(bsl::string *, unsigned int);
 // [11] int codePointValue(const char *);
 // [11] int numBytesInCodePoint(const char *);
@@ -5027,7 +5027,7 @@ int main(int argc, char *argv[])
         // Testing:
         //   int appendUtf8CodePoint(bsl::string *, unsigned int);
         //   int appendUtf8CodePoint(std::string *, unsigned int);
-        //   int appendUtf8CodePoint(std::pmr::string *, unsigned int);
+        //   int appendUtf8CodePoint(std::experimental::pmr::string *, unsigned int);
         //   int appendUtf8Character(bsl::string *, unsigned int);
         // --------------------------------------------------------------------
 
@@ -5045,8 +5045,8 @@ int main(int argc, char *argv[])
             std::string   emptyStd;
             std::string   nonEmptyStd("Not an empty string");
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            std::pmr::string emptyPmr;
-            std::pmr::string nonEmptyPmr("Not an empty string");
+            std::experimental::pmr::string emptyPmr;
+            std::experimental::pmr::string nonEmptyPmr("Not an empty string");
 #endif
             bsl::size_t   nonEmptyInitLen = nonEmptyBsl.length();
 

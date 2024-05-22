@@ -354,7 +354,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>            // 'std::string', 'std::pmr::string'
+#include <string>            // 'std::string', 'std::experimental::pmr::string'
 #include <bsl_streambuf.h>
 
 namespace BloombergLP {
@@ -540,7 +540,7 @@ struct Utf8Util {
     static int appendUtf8CodePoint(std::string  *output,
                                    unsigned int  codePoint);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int appendUtf8CodePoint(std::pmr::string  *output,
+    static int appendUtf8CodePoint(std::experimental::pmr::string  *output,
                                    unsigned int       codePoint);
 #endif
         // Append the UTF-8 encoding of the specified Unicode 'codePoint' to

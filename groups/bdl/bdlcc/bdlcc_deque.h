@@ -737,7 +737,7 @@ class Deque {
     void removeAll(bsl::vector<TYPE>      *buffer);
     void removeAll(std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void removeAll(std::pmr::vector<TYPE> *buffer);
+    void removeAll(std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // If the optionally specified 'buffer' is non-zero, append all the
         // elements from this container to '*buffer' in the same order, then,
@@ -836,7 +836,7 @@ class Deque {
                     std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     void tryPopBack(size_type               maxNumItems,
-                    std::pmr::vector<TYPE> *buffer);
+                    std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // Remove up to the specified 'maxNumItems' from the back of this
         // container.  Optionally specify a 'buffer' into which the items
@@ -864,7 +864,7 @@ class Deque {
                      std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     void tryPopFront(size_type               maxNumItems,
-                     std::pmr::vector<TYPE> *buffer);
+                     std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // Remove up to the specified 'maxNumItems' from the front of this
         // container.  Optionally specify a 'buffer' into which the items
@@ -1042,12 +1042,12 @@ template <class TYPE>
 template <class VECTOR>
 struct Deque<TYPE>::IsVector {
     // This 'struct' has a 'value' that evaluates to 'true' if the specified
-    // 'VECTOR' is a 'bsl', 'std', or 'std::pmr' 'vector<VALUE>'.
+    // 'VECTOR' is a 'bsl', 'std', or 'std::experimental::pmr' 'vector<VALUE>'.
 
     static const bool value =
                             bsl::is_same<bsl::vector<TYPE>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                         || bsl::is_same<std::pmr::vector<TYPE>, VECTOR>::value
+                         || bsl::is_same<std::experimental::pmr::vector<TYPE>, VECTOR>::value
 #endif
                          || bsl::is_same<std::vector<TYPE>, VECTOR>::value;
 };
@@ -2045,7 +2045,7 @@ void Deque<TYPE>::removeAll(std::vector<TYPE> *buffer)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
 inline
-void Deque<TYPE>::removeAll(std::pmr::vector<TYPE> *buffer)
+void Deque<TYPE>::removeAll(std::experimental::pmr::vector<TYPE> *buffer)
 {
     removeAllImp(buffer);
 }
@@ -2245,7 +2245,7 @@ void Deque<TYPE>::tryPopBack(typename Deque<TYPE>::size_type  maxNumItems,
 template <class TYPE>
 inline
 void Deque<TYPE>::tryPopBack(typename Deque<TYPE>::size_type  maxNumItems,
-                             std::pmr::vector<TYPE>          *buffer)
+                             std::experimental::pmr::vector<TYPE>          *buffer)
 {
     tryPopBackImp(maxNumItems, buffer);
 }
@@ -2301,7 +2301,7 @@ void Deque<TYPE>::tryPopFront(typename Deque<TYPE>::size_type  maxNumItems,
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
 void Deque<TYPE>::tryPopFront(typename Deque<TYPE>::size_type  maxNumItems,
-                              std::pmr::vector<TYPE>          *buffer)
+                              std::experimental::pmr::vector<TYPE>          *buffer)
 {
     tryPopFrontImp(maxNumItems, buffer);
 }

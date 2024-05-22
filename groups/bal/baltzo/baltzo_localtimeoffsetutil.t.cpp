@@ -74,7 +74,7 @@ using namespace bsl;
 // [ 2] void loadLocalTimePeriod(LocalTimePeriod *localTimePeriod);
 // [ 2] void loadTimezone(bsl::string      *timezone);
 // [ 2] void loadTimezone(std::string      *timezone);
-// [ 2] void loadTimezone(std::pmr::string *timezone);
+// [ 2] void loadTimezone(std::experimental::pmr::string *timezone);
 // [ 6] int updateCount();
 // [ 6] void loadLocalTimeOffset(int *result, const bdlt::Datetime& utc);
 // [ 6] blsl::TimeInterval loadLocalTimeOffset(const bdlt::Datetime& utc);
@@ -1471,7 +1471,7 @@ int main(int argc, char *argv[])
                 }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                 {
-                    std::pmr::string timezone; Util::loadTimezone(&timezone);
+                    std::experimental::pmr::string timezone; Util::loadTimezone(&timezone);
                     LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
                 }
 #endif
@@ -1520,7 +1520,7 @@ int main(int argc, char *argv[])
                 }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                 {
-                    std::pmr::string timezone; Util::loadTimezone(&timezone);
+                    std::experimental::pmr::string timezone; Util::loadTimezone(&timezone);
                     LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
                 }
 #endif
@@ -1905,7 +1905,7 @@ int main(int argc, char *argv[])
         //   void loadLocalTimePeriod(LocalTimePeriod *localTimePeriod);
         //   bsl::string loadTimezone(bsl::string      *timezone);
         //   bsl::string loadTimezone(std::string      *timezone);
-        //   bsl::string loadTimezone(std::pmr::string *timezone);
+        //   bsl::string loadTimezone(std::experimental::pmr::string *timezone);
         // --------------------------------------------------------------------
 
         if (verbose) cout << endl
@@ -1944,7 +1944,7 @@ int main(int argc, char *argv[])
                     }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                     {
-                        std::pmr::string timezone;
+                        std::experimental::pmr::string timezone;
                         Util::loadTimezone(&timezone);
                         ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
                     }
@@ -2019,7 +2019,7 @@ int main(int argc, char *argv[])
             }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
             {
-                std::pmr::string s, *pz = 0;
+                std::experimental::pmr::string s, *pz = 0;
                 ASSERT_PASS(Util::loadTimezone(&s));
                 ASSERT_FAIL(Util::loadTimezone(pz));
             }

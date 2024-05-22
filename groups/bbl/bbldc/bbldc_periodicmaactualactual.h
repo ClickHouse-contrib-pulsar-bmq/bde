@@ -67,7 +67,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsl_vector.h>
 
-#include <vector>                   // 'std::vector', 'std::pmr::vector'
+#include <vector>                   // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 namespace bbldc {
@@ -126,7 +126,7 @@ struct PeriodIcmaActualActual {
     static double yearsDiff(
                            const bdlt::Date&                   beginDate,
                            const bdlt::Date&                   endDate,
-                           const std::pmr::vector<bdlt::Date>& periodDate,
+                           const std::experimental::pmr::vector<bdlt::Date>& periodDate,
                            double                              periodYearDiff);
 #endif
         // Return the (signed fractional) number of years between the specified
@@ -201,7 +201,7 @@ inline
 double PeriodIcmaActualActual::yearsDiff(
                             const bdlt::Date&                   beginDate,
                             const bdlt::Date&                   endDate,
-                            const std::pmr::vector<bdlt::Date>& periodDate,
+                            const std::experimental::pmr::vector<bdlt::Date>& periodDate,
                             double                              periodYearDiff)
 {
     return yearsDiff(beginDate,

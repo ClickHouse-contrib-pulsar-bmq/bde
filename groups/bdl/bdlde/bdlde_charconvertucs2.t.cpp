@@ -3256,7 +3256,7 @@ int main(int argc, char**argv)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         if (verbose) cout << "\tTesting pmr containers\n";
 
-        TestDriver::testCase4<std::pmr::string>();
+        TestDriver::testCase4<std::experimental::pmr::string>();
 #endif
       } break;
       case 3: {
@@ -3483,7 +3483,7 @@ int main(int argc, char**argv)
 
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR)
             if (verbose) cout << "\tTesting pmr containers\n";
-            TestDriver::testCase3<std::pmr::vector<unsigned short> >();
+            TestDriver::testCase3<std::experimental::pmr::vector<unsigned short> >();
 #endif
         }
       } break;

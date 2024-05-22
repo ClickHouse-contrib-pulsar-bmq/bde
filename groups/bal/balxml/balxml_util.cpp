@@ -159,7 +159,7 @@ bool Util::extractNamespaceFromXsd(const bsl::string_view&  xsdSource,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 bool Util::extractNamespaceFromXsd(const bsl::string_view&  xsdSource,
-                                   std::pmr::string        *targetNamespace)
+                                   std::experimental::pmr::string        *targetNamespace)
 {
     return u::extractNamespaceFromXsd_Impl(xsdSource, targetNamespace);
 }
@@ -179,7 +179,7 @@ bool Util::extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 bool Util::extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
-                                   std::pmr::string *targetNamespace)
+                                   std::experimental::pmr::string *targetNamespace)
 {
     return u::extractNamespaceFromXsd_Impl(xsdSource, targetNamespace);
 }

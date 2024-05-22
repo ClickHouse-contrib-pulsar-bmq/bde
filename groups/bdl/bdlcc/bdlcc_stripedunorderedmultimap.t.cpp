@@ -6749,7 +6749,7 @@ void TestDriver<KEY, VALUE, HASH, EQUAL>::testCase6()
         mX.insert(VALUES[ti].first, VALUES[ti].second);
         mX.insert(VALUES[ti].first, VALUES[ti+1].second);
 
-        std::pmr::vector<VALUE> values;
+        std::experimental::pmr::vector<VALUE> values;
 
         bslma::TestAllocatorMonitor sam(&supplied);
 

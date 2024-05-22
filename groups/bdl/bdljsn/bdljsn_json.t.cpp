@@ -33,7 +33,7 @@
 #include <bsl_utility.h>
 #include <bsl_vector.h>
 
-#include <string>  // 'std::string', 'std::pmr::string' (when available)
+#include <string>  // 'std::string', 'std::experimental::pmr::string' (when available)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY
 #include <string_view> // 'std::string_view'
@@ -4007,8 +4007,8 @@ int main(int argc, char *argv[])
         obj.insert(s7,s7); ASSERTV(obj.size(), 1== obj.size()); obj.clear();
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        const std::pmr::string s8 = "s8";
-              std::pmr::string s9 = "s9";
+        const std::experimental::pmr::string s8 = "s8";
+              std::experimental::pmr::string s9 = "s9";
 
         obj.insert(s0,s8); ASSERTV(obj.size(), 1== obj.size()); obj.clear();
         obj.insert(s0,s9); ASSERTV(obj.size(), 1== obj.size()); obj.clear();

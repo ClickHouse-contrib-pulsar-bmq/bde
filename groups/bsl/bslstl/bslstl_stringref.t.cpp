@@ -7114,13 +7114,13 @@ int main(int argc, char *argv[])
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         if (veryVerbose)
             std::cout
-                << "\nbslstl_StringRef(const std::pmr::string& begin)"
+                << "\nbslstl_StringRef(const std::experimental::pmr::string& begin)"
                 << "\n=  =  =  =  =  =  =  =  =  =  =  =  =  =  "
                 << std::endl;
 
         {
             // Empty string
-            const std::pmr::string s_emptyString_p(EMPTY_STRING);
+            const std::experimental::pmr::string s_emptyString_p(EMPTY_STRING);
             Obj x1(s_emptyString_p);  const Obj& X1 = x1;
             ASSERT(X1.isEmpty());
             ASSERT(X1.length()    == 0);
@@ -7130,7 +7130,7 @@ int main(int argc, char *argv[])
                                          s_emptyString_p.length() == X1.end());
 
             // Non-empty string
-            std::pmr::string s_nonEmptyString_p(NON_EMPTY_STRING);
+            std::experimental::pmr::string s_nonEmptyString_p(NON_EMPTY_STRING);
             Obj x2(s_nonEmptyString_p);  const Obj& X2 = x2;
             ASSERT(!X2.isEmpty());
             ASSERT(X2.length()  == std::strlen(NON_EMPTY_STRING));

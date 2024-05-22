@@ -631,7 +631,7 @@ class Queue {
     void removeAll(bsl::vector<TYPE>      *buffer);
     void removeAll(std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void removeAll(std::pmr::vector<TYPE> *buffer);
+    void removeAll(std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // Remove all the items in this queue.  If the optionally specified
         // 'buffer' is not 0, load into 'buffer' a copy of the items removed in
@@ -688,7 +688,7 @@ class Queue {
     void tryPopFront(int maxNumItems, bsl::vector<TYPE>      *buffer);
     void tryPopFront(int maxNumItems, std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void tryPopFront(int maxNumItems, std::pmr::vector<TYPE> *buffer);
+    void tryPopFront(int maxNumItems, std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // Remove up to the specified 'maxNumItems' from the front of this
         // queue.  Optionally specify a 'buffer' into which the items removed
@@ -708,7 +708,7 @@ class Queue {
     void tryPopBack(int maxNumItems, bsl::vector<TYPE>      *buffer);
     void tryPopBack(int maxNumItems, std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void tryPopBack(int maxNumItems, std::pmr::vector<TYPE> *buffer);
+    void tryPopBack(int maxNumItems, std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // Remove up to the specified 'maxNumItems' from the back of this
         // queue.  Optionally specify a 'buffer' into which the items removed
@@ -781,12 +781,12 @@ template <class TYPE>
 template <class VECTOR>
 struct Queue<TYPE>::IsVector {
     // This 'struct' has a 'value' that evaluates to 'true' if the specified
-    // 'VECTOR' is a 'bsl', 'std', or 'std::pmr' 'vector<TYPE>'.
+    // 'VECTOR' is a 'bsl', 'std', or 'std::experimental::pmr' 'vector<TYPE>'.
 
     static const bool value =
                             bsl::is_same<bsl::vector<TYPE>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                         || bsl::is_same<std::pmr::vector<TYPE>, VECTOR>::value
+                         || bsl::is_same<std::experimental::pmr::vector<TYPE>, VECTOR>::value
 #endif
                          || bsl::is_same<std::vector<TYPE>, VECTOR>::value;
 };
@@ -1127,7 +1127,7 @@ void Queue<TYPE>::tryPopFront(int maxNumItems, std::vector<TYPE> *buffer)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
 inline
-void Queue<TYPE>::tryPopFront(int maxNumItems, std::pmr::vector<TYPE> *buffer)
+void Queue<TYPE>::tryPopFront(int maxNumItems, std::experimental::pmr::vector<TYPE> *buffer)
 {
     tryPopFrontImp(maxNumItems, buffer);
 }
@@ -1178,7 +1178,7 @@ void Queue<TYPE>::tryPopBack(int maxNumItems, std::vector<TYPE> *buffer)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
 inline
-void Queue<TYPE>::tryPopBack(int maxNumItems, std::pmr::vector<TYPE> *buffer)
+void Queue<TYPE>::tryPopBack(int maxNumItems, std::experimental::pmr::vector<TYPE> *buffer)
 {
     tryPopBackImp(maxNumItems, buffer);
 }
@@ -1204,7 +1204,7 @@ void Queue<TYPE>::removeAll(std::vector<TYPE> *buffer)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
-void Queue<TYPE>::removeAll(std::pmr::vector<TYPE> *buffer)
+void Queue<TYPE>::removeAll(std::experimental::pmr::vector<TYPE> *buffer)
 {
     removeAllImp(buffer);
 }

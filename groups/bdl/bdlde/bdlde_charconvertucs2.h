@@ -277,8 +277,8 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>                  // 'std::string', 'std::pmr::string'
-#include <vector>                  // 'std::vector', 'std::pmr::vector'
+#include <string>                  // 'std::string', 'std::experimental::pmr::string'
+#include <vector>                  // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 
@@ -339,7 +339,7 @@ struct CharConvertUcs2 {
                           unsigned short               errorCharacter  = '?');
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf8ToUcs2(
-                      std::pmr::vector<unsigned short> *result,
+                      std::experimental::pmr::vector<unsigned short> *result,
                       const char                       *srcString,
                       unsigned short                    errorCharacter  = '?');
 #endif
@@ -396,7 +396,7 @@ struct CharConvertUcs2 {
                           const unsigned short *srcString,
                           bsl::size_t          *numCharsWritten = 0);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int ucs2ToUtf8(std::pmr::string     *result,
+    static int ucs2ToUtf8(std::experimental::pmr::string     *result,
                           const unsigned short *srcString,
                           bsl::size_t          *numCharsWritten = 0);
 #endif

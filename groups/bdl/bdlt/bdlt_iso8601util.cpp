@@ -37,7 +37,7 @@ class Impl {
         static const bool value = bsl::is_same<TYPE, bsl::string>::value
                                || bsl::is_same<TYPE, std::string>::value
     #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                               || bsl::is_same<TYPE, std::pmr::string>::value
+                               || bsl::is_same<TYPE, std::experimental::pmr::string>::value
     #endif
         ;
     };
@@ -90,7 +90,7 @@ class Impl {
         // supplied, the process-wide default value
         // 'Iso8601UtilConfiguration::defaultConfiguration()' is used.
         // 'STRING' must be 'bsl::string', 'std::string', or
-        // 'std::pmr::string'.  Return the number of characters in the
+        // 'std::experimental::pmr::string'.  Return the number of characters in the
         // formatted string.  The previous contents of 'string' (if any) are
         // discarded.
 };
@@ -2122,70 +2122,70 @@ int Iso8601Util::generate(std::string                     *string,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const bsls::TimeInterval&        object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const Date&                      object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const Time&                      object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const Datetime&                  object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const DateTz&                    object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const TimeTz&                    object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const DatetimeTz&                object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const DateOrDateTz&              object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const TimeOrTimeTz&              object,
                           const GenerateConfiguration&     configuration)
 {
     return u::Impl::generate(string, object, configuration);
 }
 
-int Iso8601Util::generate(std::pmr::string                *string,
+int Iso8601Util::generate(std::experimental::pmr::string                *string,
                           const DatetimeOrDatetimeTz&      object,
                           const GenerateConfiguration&     configuration)
 {

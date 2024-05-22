@@ -221,7 +221,7 @@ bsl::ostream& operator<<(bsl::ostream& stream, u::VecType value)
 {
     stream << (u::e_BSL == value ? "bsl"      :
                u::e_STD == value ? "std"      :
-               u::e_PMR == value ? "std::pmr" : "unk");
+               u::e_PMR == value ? "std::experimental::pmr" : "unk");
 
     return stream;
 }
@@ -635,7 +635,7 @@ class TestPopFront {
                          bsl::is_same<bsl::vector<Element>, VECTOR>::value
                        ? u::e_BSL
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                       : bsl::is_same<std::pmr::vector<Element>, VECTOR>::value
+                       : bsl::is_same<std::experimental::pmr::vector<Element>, VECTOR>::value
                        ? u::e_PMR
 #endif
                        : u::e_STD;
@@ -703,7 +703,7 @@ class TestPopBack {
                          bsl::is_same<bsl::vector<Element>, VECTOR>::value
                        ? u::e_BSL
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                       : bsl::is_same<std::pmr::vector<Element>, VECTOR>::value
+                       : bsl::is_same<std::experimental::pmr::vector<Element>, VECTOR>::value
                        ? u::e_PMR
 #endif
                        : u::e_STD;
@@ -2338,7 +2338,7 @@ int main(int argc, char *argv[])
               } break;
               case u::e_PMR: {
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                TestPopFront<std::pmr::vector<Element> > testFront(&mX, &ta);
+                TestPopFront<std::experimental::pmr::vector<Element> > testFront(&mX, &ta);
                 bslmt::ThreadUtil::create(&handle, testFront);
 #else
                 ASSERT(0 && "PMR");
@@ -2373,7 +2373,7 @@ int main(int argc, char *argv[])
               } break;
               case u::e_PMR: {
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                TestPopBack<std::pmr::vector<Element> > testBack(&mX, &ta);
+                TestPopBack<std::experimental::pmr::vector<Element> > testBack(&mX, &ta);
                 bslmt::ThreadUtil::create(&handle, testBack);
 #else
                 ASSERT(0 && "PMR");
@@ -2600,7 +2600,7 @@ int main(int argc, char *argv[])
         TC::testTryPop<bsl::vector<Element> >();
         TC::testTryPop<std::vector<Element> >();
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        TC::testTryPop<std::pmr::vector<Element> >();
+        TC::testTryPop<std::experimental::pmr::vector<Element> >();
 #endif
       } break;
       case 9: {
@@ -2709,7 +2709,7 @@ int main(int argc, char *argv[])
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
         {
             Obj mX(&ta);
-            std::pmr::vector<Element> buffer;
+            std::experimental::pmr::vector<Element> buffer;
 
             mX.pushBack(VA);
             mX.pushBack(VB);

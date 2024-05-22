@@ -39,7 +39,7 @@ struct IsVector {
     static const bool value =
                          bsl::is_same<VECTOR, bsl::vector<MEMBER> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                      || bsl::is_same<VECTOR, std::pmr::vector<MEMBER> >::value
+                      || bsl::is_same<VECTOR, std::experimental::pmr::vector<MEMBER> >::value
 #endif
                       || bsl::is_same<VECTOR, std::vector<MEMBER> >::value;
 };
@@ -529,7 +529,7 @@ void CollectorRepository::collectAndReset(std::vector<MetricRecord> *records,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 void CollectorRepository::collectAndReset(
-                                      std::pmr::vector<MetricRecord> *records,
+                                      std::experimental::pmr::vector<MetricRecord> *records,
                                       const Category                 *category)
 {
     collectAndResetImp(records, category);
@@ -549,7 +549,7 @@ void CollectorRepository::collect(std::vector<MetricRecord> *records,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-void CollectorRepository::collect(std::pmr::vector<MetricRecord> *records,
+void CollectorRepository::collect(std::experimental::pmr::vector<MetricRecord> *records,
                                   const Category                 *category)
 {
     collectImp(records, category);
@@ -641,8 +641,8 @@ int CollectorRepository::getAddedCollectors(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 int CollectorRepository::getAddedCollectors(
-          std::pmr::vector<bsl::shared_ptr<Collector> >         *collectors,
-          std::pmr::vector<bsl::shared_ptr<IntegerCollector> >  *intCollectors,
+          std::experimental::pmr::vector<bsl::shared_ptr<Collector> >         *collectors,
+          std::experimental::pmr::vector<bsl::shared_ptr<IntegerCollector> >  *intCollectors,
           const MetricId&                                        metricId)
 {
     int numFound = 0;

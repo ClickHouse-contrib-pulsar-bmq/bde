@@ -671,7 +671,7 @@ bsl::ostream& operator<<(bsl::ostream& stream, u::VecType value)
     stream << (u::e_BSL == value ? "bsl"      :
                u::e_STD == value ? "std"      :
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-               u::e_PMR == value ? "std::pmr" :
+               u::e_PMR == value ? "std::experimental::pmr" :
 #endif
                "unk");
 
@@ -2632,7 +2632,7 @@ void TestDriver<KEY_TYPE, DATA_TYPE>::removeAllTestByVecType()
                    : bsl::is_same<VECTOR, std::vector<PairHandle> >::value
                    ? u::e_STD
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                   : bsl::is_same<VECTOR, std::pmr::vector<PairHandle> >::value
+                   : bsl::is_same<VECTOR, std::experimental::pmr::vector<PairHandle> >::value
                    ? u::e_PMR
 #endif
                    : u::e_NUM_VEC_TYPES;
@@ -2771,7 +2771,7 @@ void TestDriver<KEY_TYPE, DATA_TYPE>::removeAllTest()
     removeAllTestByVecType<bsl::vector<PairHandle> >();
     removeAllTestByVecType<std::vector<PairHandle> >();
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    removeAllTestByVecType<std::pmr::vector<PairHandle> >();
+    removeAllTestByVecType<std::experimental::pmr::vector<PairHandle> >();
 #endif
 }
 
@@ -4069,7 +4069,7 @@ void removeAllSafetyFunc(Obj        *list,
               } break;
               case 3: {
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR)
-                std::pmr::vector<Pair*> removedPairsPmr(alloc_p);
+                std::experimental::pmr::vector<Pair*> removedPairsPmr(alloc_p);
 
                 unsigned rc = list->removeAllRaw(&removedPairsPmr);
                 ASSERT(rc == removedPairsPmr.size());

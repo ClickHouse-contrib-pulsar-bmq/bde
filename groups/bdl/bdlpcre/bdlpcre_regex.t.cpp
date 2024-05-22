@@ -62,14 +62,14 @@ using namespace bdlpcre;
 // [ 4] int match(bsl::vector<bsl::pair<size_t, size_t> > *result, ...) const;
 // [ 4] int match(bsl::vector<bsl::string_view> *result, ...) const;
 // [ 4] int match(std::vector<bsl::string_view> *result, ...) const;
-// [ 4] int match(std::pmr::vector<bsl::string_view> *result, ...) const;
+// [ 4] int match(std::experimental::pmr::vector<bsl::string_view> *result, ...) const;
 // [ 4] int matchRaw(const bsl::string_view& subject, ...) const;
 // [ 4] int matchRaw(const char *subject, ...) const;
 // [ 4] int matchRaw(bsl::pair<size_t, size_t> *result, ...) const;
 // [ 4] int matchRaw(bsl::vector<bsl::pair<size_t, size_t> > *result,...)const;
 // [ 4] int matchRaw(bsl::vector<bsl::string_view> *result, ...) const;
 // [ 4] int matchRaw(std::vector<bsl::string_view> *result, ...) const;
-// [ 4] int matchRaw(std::pmr::vector<bsl::string_view> *result, ...) const;
+// [ 4] int matchRaw(std::experimental::pmr::vector<bsl::string_view> *result, ...) const;
 // [ 5] int match(bslstl::StringRef *result, ...) const;
 // [ 5] int match(bsl::vector<bslstl::StringRef> *result, ...) const;
 // [ 5] int matchRaw(bslstl::StringRef *result, ...) const;
@@ -82,10 +82,10 @@ using namespace bdlpcre;
 // [13] bool isJitAvailable();
 // [16] int replace(bsl::string *, int *, const string_view&, ...) const;
 // [16] int replace(std::string *, int *, const string_view&, ...) const;
-// [16] int replace(std::pmr::string *, int *, const string_view&, ...) const;
+// [16] int replace(std::experimental::pmr::string *, int *, const string_view&, ...) const;
 // [16] int replaceRaw(bsl::string *, int *, const string_view&, ...) const;
 // [16] int replaceRaw(std::string *, int *, const string_view&, ...) const;
-// [16] int replaceRaw(std::pmr::string *, int *, ...) const;
+// [16] int replaceRaw(std::experimental::pmr::string *, int *, ...) const;
 // ----------------------------------------------------------------------------
 // [ 1] BREATHING TEST
 // [ 7] k_FLAG_CASELESS
@@ -1294,10 +1294,10 @@ int main(int argc, char *argv[])
         // Testing:
         //   int replace(bsl::string *, int *,  ...) const;
         //   int replace(std::string *, int *, const string_view&, ...) const;
-        //   int replace(std::pmr::string *, int *, ...) const;
+        //   int replace(std::experimental::pmr::string *, int *, ...) const;
         //   int replaceRaw(bsl::string *, int *,  ...) const;
         //   int replaceRaw(std::string *, int *,  ...) const;
-        //   int replaceRaw(std::pmr::string *, int *, ...) const;
+        //   int replaceRaw(std::experimental::pmr::string *, int *, ...) const;
         // --------------------------------------------------------------------
 
         if (verbose)
@@ -1424,7 +1424,7 @@ int main(int argc, char *argv[])
                                      0 >  retCode || EXPECTED == result2);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                        std::pmr::string result3(j, 0);
+                        std::experimental::pmr::string result3(j, 0);
 
                         retCode = X.replace(&result3,
                                             &offset,
@@ -1470,7 +1470,7 @@ int main(int argc, char *argv[])
                                      0 >  retCode || EXPECTED == result2);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                        std::pmr::string result3(j, 0);
+                        std::experimental::pmr::string result3(j, 0);
 
                         retCode = X.replaceRaw(&result3,
                                                &offset,
@@ -2691,7 +2691,7 @@ int main(int argc, char *argv[])
                 ASSERTV(LINE, retCode, 0 != retCode);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                std::pmr::vector<bsl::string_view> vsv3;
+                std::experimental::pmr::vector<bsl::string_view> vsv3;
 
                 retCode = X.match(&vsv3,
                                   string_view( (const char*)UTF8_SUBJECT, 2));
@@ -2789,7 +2789,7 @@ int main(int argc, char *argv[])
                 ASSERTV(LINE, retCode, 0 == retCode);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                std::pmr::vector<bsl::string_view> vsv3;
+                std::experimental::pmr::vector<bsl::string_view> vsv3;
 
                 retCode = X.match(
                                &vsv3,
@@ -3713,13 +3713,13 @@ int main(int argc, char *argv[])
         //   int match(bsl::vector<bslstl::string_view>*, ...) const;
         //   int match(bsl::vector<bsl::string_view> *result, ...) const;
         //   int match(std::vector<bsl::string_view> *result, ...) const;
-        //   int match(std::pmr::vector<bsl::string_view> *result, ...) const;
+        //   int match(std::experimental::pmr::vector<bsl::string_view> *result, ...) const;
         //   int matchRaw(const char *subject, ...) const;
         //   int matchRaw(bsl::pair<size_t, size_t> *result, ...) const;
         //   int matchRaw(vector<bsl::pair<size_t, size_t> > *result,...)const;
         //   int matchRaw(bsl::vector<bsl::string_view> *result, ...) const;
         //   int matchRaw(bsl::vector<bsl::string_view> *result, ...) const;
-        //   int matchRaw(std::pmr::vector<bsl::string_view> *result,...)const;
+        //   int matchRaw(std::experimental::pmr::vector<bsl::string_view> *result,...)const;
         // --------------------------------------------------------------------
         if (verbose) cout << endl
                           << "TESTING 'match' AND 'matchRaw' METHODS" << endl
@@ -3847,7 +3847,7 @@ int main(int argc, char *argv[])
             bsl::vector<bsl::string_view>       vsv;
             std::vector<bsl::string_view>       vsv1;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bsl::string_view>  vsv2;
+            std::experimental::pmr::vector<bsl::string_view>  vsv2;
 #endif
             for (size_t subjectStart = 0; subjectStart <= SUBJECT_LEN;
                                                               ++subjectStart) {
@@ -4053,7 +4053,7 @@ int main(int argc, char *argv[])
             bsl::vector<bsl::string_view>       vsv;
             std::vector<bsl::string_view>       vsv1;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bsl::string_view>  vsv2;
+            std::experimental::pmr::vector<bsl::string_view>  vsv2;
 #endif
             retCode = GOOD.match(&pr, "", 0);
             ASSERT(0 == retCode);
@@ -4395,9 +4395,9 @@ int main(int argc, char *argv[])
             }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            // 'match' taking 'std::pmr::vector<bsl::string_view>'
+            // 'match' taking 'std::experimental::pmr::vector<bsl::string_view>'
             {
-                std::pmr::vector<bsl::string_view> v, *zv = 0; (void)zv;
+                std::experimental::pmr::vector<bsl::string_view> v, *zv = 0; (void)zv;
 
                 ASSERT_SAFE_PASS(X.match(   &v, string_view(SUBJECT,  9),  1));
                 ASSERT_SAFE_PASS(X.matchRaw(&v, string_view(SUBJECT,  9),  1));
@@ -4425,7 +4425,7 @@ int main(int argc, char *argv[])
                 bsl::vector<bsl::string_view>       vsv;
                 std::vector<bsl::string_view>       vsv1;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                std::pmr::vector<bsl::string_view>  vsv2;
+                std::experimental::pmr::vector<bsl::string_view>  vsv2;
 #endif
 
                 mX.clear();
@@ -4463,7 +4463,7 @@ int main(int argc, char *argv[])
                 ASSERT_FAIL(X.matchRaw(&vsv1, string_view(SUBJECT,  9), 1));
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                // 'match' taking 'std::pmr::vector<bsl::string_view>'
+                // 'match' taking 'std::experimental::pmr::vector<bsl::string_view>'
                 ASSERT_FAIL(X.match(   &vsv2, string_view(SUBJECT,  9), 1));
                 ASSERT_FAIL(X.matchRaw(&vsv2, string_view(SUBJECT,  9), 1));
 #endif

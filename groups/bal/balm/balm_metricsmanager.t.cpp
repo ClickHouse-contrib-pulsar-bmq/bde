@@ -2809,7 +2809,7 @@ int main(int argc, char *argv[])
                 bsl::set<const balm::Category *>      excludedSetBsl(Z);
                 std::set<const balm::Category *>      excludedSetStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                std::pmr::set<const balm::Category *> excludedSetPmr;
+                std::experimental::pmr::set<const balm::Category *> excludedSetPmr;
 #endif
                 for (int i = 0; i < NUM_CATEGORIES; ++i) {
                     if (!combIt.includesElement(i)) {
@@ -3154,7 +3154,7 @@ int main(int argc, char *argv[])
                 bsl::set<const balm::Category *>      categorySetBsl(Z);
                 std::set<const balm::Category *>      categorySetStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                std::pmr::set<const balm::Category *> categorySetPmr;
+                std::experimental::pmr::set<const balm::Category *> categorySetPmr;
 #endif
 
                 // Initialize the set and publish the records.
@@ -3515,7 +3515,7 @@ int main(int argc, char *argv[])
                     bsl::vector<balm::Publisher *>      pubsFoundBsl(Z);
                     std::vector<balm::Publisher *>      pubsFoundStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                    std::pmr::vector<balm::Publisher *> pubsFoundPmr;
+                    std::experimental::pmr::vector<balm::Publisher *> pubsFoundPmr;
 #endif
 
                     ASSERT(0 != mX.addSpecificPublisher(CAT, pub_p));
@@ -3551,7 +3551,7 @@ int main(int argc, char *argv[])
                 bsl::vector<balm::Publisher *>      pubsFoundBsl(Z);
                 std::vector<balm::Publisher *>      pubsFoundStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                std::pmr::vector<balm::Publisher *> pubsFoundPmr;
+                std::experimental::pmr::vector<balm::Publisher *> pubsFoundPmr;
 #endif
 
                 switch (libType) {
@@ -3657,7 +3657,7 @@ int main(int argc, char *argv[])
                     bsl::vector<balm::Publisher *>      pubsFoundBsl(Z);
                     std::vector<balm::Publisher *>      pubsFoundStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                    std::pmr::vector<balm::Publisher *> pubsFoundPmr;
+                    std::experimental::pmr::vector<balm::Publisher *> pubsFoundPmr;
 #endif
 
                     switch (libType) {

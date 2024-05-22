@@ -114,7 +114,7 @@ using bsl::flush;
 // [ 1] bool isFileLoggingEnabled() const;
 // [ 1] bool isFileLoggingEnabled(bsl::string *result) const;
 // [ 1] bool isFileLoggingEnabled(std::string *result) const;
-// [ 1] bool isFileLoggingEnabled(std::pmr::string *result) const;
+// [ 1] bool isFileLoggingEnabled(std::experimental::pmr::string *result) const;
 // [ 1] bool isPublishInLocalTimeEnabled() const;
 // [ 2] DatetimeInterval rotationLifetime() const;
 // [ 2] int rotationSize() const;
@@ -3062,7 +3062,7 @@ int main(int argc, char *argv[])
         //   bool isFileLoggingEnabled() const;
         //   bool isFileLoggingEnabled(bsl::string *result) const;
         //   bool isFileLoggingEnabled(std::string *result) const;
-        //   bool isFileLoggingEnabled(std::pmr::string *result) const;
+        //   bool isFileLoggingEnabled(std::experimental::pmr::string *result) const;
         //   bool isPublishInLocalTimeEnabled() const;
         // --------------------------------------------------------------------
 
@@ -3427,7 +3427,7 @@ int main(int argc, char *argv[])
                     }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                     {
-                        std::pmr::string actual;
+                        std::experimental::pmr::string actual;
                         ASSERTV(LINE, true == X.isFileLoggingEnabled(&actual));
 
                         if (veryVeryVerbose) {
@@ -3435,7 +3435,7 @@ int main(int argc, char *argv[])
                         }
 
                         ASSERTV(LINE,
-                                std::pmr::string(expected.cbegin(),
+                                std::experimental::pmr::string(expected.cbegin(),
                                                  expected.cend()) == actual);
                     }
 #endif  // BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING

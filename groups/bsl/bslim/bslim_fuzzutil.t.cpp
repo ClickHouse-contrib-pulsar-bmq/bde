@@ -49,7 +49,7 @@ using bsl::flush;
 // [ 7] TYPE consumeNumberInRange<FLOATING_POINT>(FDV *, min, max);
 // [ 8] void consumeRandomLengthString(bsl::string*,FDV*,maxLen);
 // [ 8] void consumeRandomLengthString(std::string*,FDV*,maxLen);
-// [ 8] void consumeRandomLengthString(std::pmr::string*,FDV*,maxLen);
+// [ 8] void consumeRandomLengthString(std::experimental::pmr::string*,FDV*,maxLen);
 // [ 9] void consumeRandomLengthChars(bsl::vector<char>*,FDV*,maxLen);
 // [ 9] void consumeRandomLengthChars(std::vector<char>*,FDV*,maxLen);
 // [ 9] void consumeRandomLengthChars(pmr::vector<char>*,FDV*,maxLen);
@@ -464,7 +464,7 @@ int main(int argc, char *argv[])
         //:
         //: 5 That the function under test works properly for each of its
         //:   overloaded types (i.e., 'bsl::vector<char>', 'std::vector<char>',
-        //:   and 'std::pmr::vector<char>').
+        //:   and 'std::experimental::pmr::vector<char>').
         //
         // Plan:
         //: 1 Using a Generator Function with the table-driven technique:
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
         //:
         //:   5 Construct three 'fuzzDataView' objects -- one each for
         //:     'bsl::vector<char>', 'std::vector<char>', and
-        //:     'std::pmr::vector<char>' -- with the same underlying byte
+        //:     'std::experimental::pmr::vector<char>' -- with the same underlying byte
         //:     array, and verify that the above concerns are addressed in each
         //:     case.  (C-5)
         //
@@ -578,7 +578,7 @@ int main(int argc, char *argv[])
             {
                 bslim::FuzzDataView fdvPMR(fuzzData.data(), fuzzData.size());
 
-                std::pmr::vector<char> result;
+                std::experimental::pmr::vector<char> result;
                 Util::consumeRandomLengthChars(&result, &fdvPMR, MAXLENGTH);
 
                 if (veryVerbose) {
@@ -615,7 +615,7 @@ int main(int argc, char *argv[])
         //:
         //: 5 That the function under test works properly for each of its
         //:   overloaded types (i.e., 'bsl::string', 'std::string', and
-        //:   'std::pmr::string').
+        //:   'std::experimental::pmr::string').
         //
         // Plan:
         //: 1 Using a Generator Function with the table-driven technique:
@@ -639,14 +639,14 @@ int main(int argc, char *argv[])
         //:     a string of no greater than 'maxLength'.  (C-4)
         //:
         //:   5 Construct three 'fuzzDataView' objects -- one each for
-        //:     'bsl::string', 'std::string', and 'std::pmr::string' -- with
+        //:     'bsl::string', 'std::string', and 'std::experimental::pmr::string' -- with
         //:     the same underlying byte array, and verify that the above
         //:     concerns are addressed in each case.  (C-5)
         //
         // Testing:
         //   void consumeRandomLengthString(bsl::string*,FDV*,maxLen);
         //   void consumeRandomLengthString(std::string*,FDV*,maxLen);
-        //   void consumeRandomLengthString(std::pmr::string*,FDV*,maxLen);
+        //   void consumeRandomLengthString(std::experimental::pmr::string*,FDV*,maxLen);
         // --------------------------------------------------------------------
         if (verbose)
             cout << endl
@@ -727,7 +727,7 @@ int main(int argc, char *argv[])
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
             {
                 bslim::FuzzDataView fdvPMR(fuzzData.data(), fuzzData.size());
-                std::pmr::string    result;
+                std::experimental::pmr::string    result;
                 Util::consumeRandomLengthString(&result, &fdvPMR, MAXLENGTH);
 
                 if (veryVerbose) {

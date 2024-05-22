@@ -336,7 +336,7 @@ bool PassthroughTest::do_is_equal(const memory_resource& other) const
 // (typically the size of 2 pointers), regardless of the size of 'TYPE'.
 //
 // First, we define a simple class template modeled after the C++17 standard
-// library 'std::pmr::polymorphic_allocator' template, which is a thin wrapper
+// library 'std::experimental::pmr::polymorphic_allocator' template, which is a thin wrapper
 // around a 'memory_resource' pointer.  By wrapping the pointer in a class, we
 // avoid some the problems of raw pointers such as accidental use of a null
 // pointer:
@@ -404,7 +404,7 @@ bool PassthroughTest::do_is_equal(const memory_resource& other) const
 // 'allocator_type' typedef that can be passed to each constructor.
 // Typically, the allocator constructor argument would be optional, but,
 // because our 'PolymorphicAllocator' has no default constructor (unlike the
-// 'std::pmr::polymorphic_allocator'), the allocator is *required* for all
+// 'std::experimental::pmr::polymorphic_allocator'), the allocator is *required* for all
 // constructors except the move constructor:
 //..
       public:

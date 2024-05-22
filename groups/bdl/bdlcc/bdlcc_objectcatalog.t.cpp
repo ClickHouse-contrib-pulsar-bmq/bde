@@ -1535,7 +1535,7 @@ void TestDriver<ELEMENT>::testCaseManipulatorsCopyable()
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     gg(&mX, spec);
-    std::pmr::vector<ELEMENT> vPmr;
+    std::experimental::pmr::vector<ELEMENT> vPmr;
     mX.removeAll(&vPmr);
     ASSERT(hasSpecElements(vPmr, spec));
     ASSERT(0 == X.length());

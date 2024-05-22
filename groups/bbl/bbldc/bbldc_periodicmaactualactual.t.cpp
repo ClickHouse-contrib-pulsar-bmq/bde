@@ -95,7 +95,7 @@ typedef bbldc::PeriodIcmaActualActual Util;
 typedef bsl::vector<bdlt::Date>      BslVector;
 typedef std::vector<bdlt::Date>      StdVector;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-typedef std::pmr::vector<bdlt::Date> PmrVector;
+typedef std::experimental::pmr::vector<bdlt::Date> PmrVector;
 #endif
 
 enum VecType { e_BEGIN,
@@ -576,8 +576,8 @@ int main(int argc, char *argv[])
             std::vector<bdlt::Date>            mAS(A.begin(), A.end());
             const std::vector<bdlt::Date>      AS = mAS;    (void) AS;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bdlt::Date>       mAP(A.begin(), A.end());
-            const std::pmr::vector<bdlt::Date> AP = mAP;    (void) AP;
+            std::experimental::pmr::vector<bdlt::Date>       mAP(A.begin(), A.end());
+            const std::experimental::pmr::vector<bdlt::Date> AP = mAP;    (void) AP;
 #endif
 
             // 'periodDate' with non-sorted values.
@@ -595,8 +595,8 @@ int main(int argc, char *argv[])
             std::vector<bdlt::Date>          mE1S(E1.begin(), E1.end());
             const std::vector<bdlt::Date>    E1S = mE1S;    (void) E1S;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bdlt::Date>     mE1P(E1.begin(), E1.end());
-            const std::pmr::vector<bdlt::Date> E1P = mE1P;    (void) E1P;
+            std::experimental::pmr::vector<bdlt::Date>     mE1P(E1.begin(), E1.end());
+            const std::experimental::pmr::vector<bdlt::Date> E1P = mE1P;    (void) E1P;
 #endif
 
             // 'periodDate' with non-unique values.
@@ -615,8 +615,8 @@ int main(int argc, char *argv[])
             std::vector<bdlt::Date>          mE2S(E2.begin(), E2.end());
             const std::vector<bdlt::Date>    E2S = mE2S;    (void) E2S;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bdlt::Date>     mE2P(E2.begin(), E2.end());
-            const std::pmr::vector<bdlt::Date> E2P = mE2P;    (void) E2P;
+            std::experimental::pmr::vector<bdlt::Date>     mE2P(E2.begin(), E2.end());
+            const std::experimental::pmr::vector<bdlt::Date> E2P = mE2P;    (void) E2P;
 #endif
 
             // 'periodDate' with only one value.
@@ -630,8 +630,8 @@ int main(int argc, char *argv[])
             std::vector<bdlt::Date>          mE3S(E3.begin(), E3.end());
             const std::vector<bdlt::Date>    E3S = mE3S;    (void) E3S;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bdlt::Date>     mE3P(E3.begin(), E3.end());
-            const std::pmr::vector<bdlt::Date> E3P = mE3P;    (void) E3P;
+            std::experimental::pmr::vector<bdlt::Date>     mE3P(E3.begin(), E3.end());
+            const std::experimental::pmr::vector<bdlt::Date> E3P = mE3P;    (void) E3P;
 #endif
 
             // 'periodDate' with no values.
@@ -642,8 +642,8 @@ int main(int argc, char *argv[])
             std::vector<bdlt::Date>            mE4S;
             const std::vector<bdlt::Date>      E4S = mE4S;    (void) E4S;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<bdlt::Date>       mE4P;
-            const std::pmr::vector<bdlt::Date> E4P = mE4P;    (void) E4P;
+            std::experimental::pmr::vector<bdlt::Date>       mE4P;
+            const std::experimental::pmr::vector<bdlt::Date> E4P = mE4P;    (void) E4P;
 #endif
 
             ASSERT_PASS(Util::yearsDiff(bdlt::Date(2015, 1, 5),

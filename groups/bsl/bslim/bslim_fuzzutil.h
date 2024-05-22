@@ -165,7 +165,7 @@ struct FuzzUtil {
                                          FuzzDataView      *fuzzDataView,
                                          bsl::size_t        maxLength);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    static void consumeRandomLengthChars(std::pmr::vector<char> *output,
+    static void consumeRandomLengthChars(std::experimental::pmr::vector<char> *output,
                                          FuzzDataView           *fuzzDataView,
                                          bsl::size_t             maxLength);
 #endif
@@ -189,7 +189,7 @@ struct FuzzUtil {
                                           FuzzDataView     *fuzzDataView,
                                           bsl::size_t       maxLength);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void consumeRandomLengthString(std::pmr::string *output,
+    static void consumeRandomLengthString(std::experimental::pmr::string *output,
                                           FuzzDataView     *fuzzDataView,
                                           bsl::size_t       maxLength);
 #endif

@@ -354,7 +354,7 @@ if (verbose) {
             P(Pretty<std::string>());
             P(Pretty<MyType>());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            P(Pretty<std::pmr::string>());
+            P(Pretty<std::experimental::pmr::string>());
 #endif
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY)
             P(Pretty<std::string_view>());
@@ -371,7 +371,7 @@ if (verbose) {
             P(NameOf<NameOf<std::string> >());
             P(NameOf<NameOf<bsls::Stopwatch> >());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            P(NameOf<std::pmr::string>());
+            P(NameOf<std::experimental::pmr::string>());
 #endif
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY)
             P(NameOf<std::string_view>());
@@ -387,7 +387,7 @@ if (verbose) {
             P(nameOfType(sw));
             P(nameOfType(&NameOf<std::string>::name));
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            P(nameOfType(std::pmr::string()));
+            P(nameOfType(std::experimental::pmr::string()));
 #endif
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY)
             P(nameOfType(std::string_view()));
@@ -449,8 +449,8 @@ if (verbose) {
         ASSERTV(NameOf<MyUnion>(),    eq("MyUnion",    NameOf<MyUnion>()));
         ASSERTV(NameOf<std::string>(),eq("std::string",NameOf<std::string>()));
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        ASSERTV(NameOf<std::pmr::string>(),
-                           eq("std::pmr::string", NameOf<std::pmr::string>()));
+        ASSERTV(NameOf<std::experimental::pmr::string>(),
+                           eq("std::experimental::pmr::string", NameOf<std::experimental::pmr::string>()));
 #endif
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY)
         ASSERTV(NameOf<std::string_view>(),

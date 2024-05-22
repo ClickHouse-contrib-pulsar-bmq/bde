@@ -124,7 +124,7 @@ int PipeUtil::makeCanonicalName(std::string             *pipeName,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PipeUtil::makeCanonicalName(std::pmr::string        *pipeName,
+int PipeUtil::makeCanonicalName(std::experimental::pmr::string        *pipeName,
                                 const bsl::string_view&  baseName)
 {
     return u_makeCanonicalName(pipeName, baseName);

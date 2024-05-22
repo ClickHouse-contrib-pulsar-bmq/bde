@@ -70,7 +70,7 @@ using namespace bsl;
 // [ 3] Guid guidFromString(bsl::string_view guidString)
 // [ 4] void guidToString(bsl::string *result, const Guid& guid)
 // [ 4] void guidToString(std::string *result, const Guid& guid)
-// [ 4] void guidToString(std::pmr::string *result, const Guid& guid)
+// [ 4] void guidToString(std::experimental::pmr::string *result, const Guid& guid)
 // [ 4] bsl::string guidToString(const Guid& guid)
 // [ 5] Uint64 getMostSignificantBits(const Guid& guid)
 // [ 6] Uint64 getLeastSignificantBits(const Guid& guid)
@@ -1135,7 +1135,7 @@ int main(int argc, char *argv[])
         // Testing:
         //  void guidToString(bsl::string *result, const Guid& guid)
         //  void guidToString(std::string *result, const Guid& guid)
-        //  void guidToString(std::pmr::string *result, const Guid& guid)
+        //  void guidToString(std::experimental::pmr::string *result, const Guid& guid)
         //  bsl::string guidToString(const Guid& guid)
         // --------------------------------------------------------------------
         if (verbose) cout << endl
@@ -1184,8 +1184,8 @@ int main(int argc, char *argv[])
             }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
             {
-                std::pmr::string        result;
-                const std::pmr::string  EXP(GUID_STR);
+                std::experimental::pmr::string        result;
+                const std::experimental::pmr::string  EXP(GUID_STR);
                 Util::guidToString(&result, guid);
                 if (veryVeryVerbose) { P_(LINE) P(result.c_str()) }
                 LOOP_ASSERT(LINE, EXP == result);

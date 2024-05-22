@@ -70,14 +70,14 @@ using bsl::cout; using bsl::flush; using bsl::endl; using bsl::cerr;
 // [ 5] ltrim(char *str, int *L);
 // [ 5] ltrim(bsl::string *str);
 // [ 5] ltrim(std::string *str);
-// [ 5] ltrim(std::pmr::string *str);
+// [ 5] ltrim(std::experimental::pmr::string *str);
 // [ 6] pad(bsl::string *str, int numChars, char padChar = ' ');
 // [ 6] pad(std::string *str, int numChars, char padChar = ' ');
-// [ 6] pad(std::pmr::string *str, size_type numChars, char padChar = ' ');
+// [ 6] pad(std::experimental::pmr::string *str, size_type numChars, char padChar = ' ');
 // [ 5] rtrim(char *str);
 // [ 5] rtrim(bsl::string *str);
 // [ 5] rtrim(std::string *str);
-// [ 5] rtrim(std::pmr::string *str);
+// [ 5] rtrim(std::experimental::pmr::string *str);
 // [ 5] rtrim(cchar *str, int *L);
 // [ 9] strstr(cchar *str, int strL, cchar *subStr, int subStrL);
 // [ 9] strstrCaseless(cchar *str, int strL, cchar *subStr, int subStrL);
@@ -89,17 +89,17 @@ using bsl::cout; using bsl::flush; using bsl::endl; using bsl::cerr;
 // [ 2] toLower(char *string, int length);
 // [ 2] toLower(bsl::string *string);
 // [ 2] toLower(std::string *string);
-// [ 2] toLower(std::pmr::string *string);
+// [ 2] toLower(std::experimental::pmr::string *string);
 // [ 2] toUpper(char *string);
 // [ 2] toUpper(char *string, int length);
 // [ 2] toUpper(bsl::string *string);
 // [ 2] toUpper(std::string *string);
-// [ 2] toUpper(std::pmr::string *string);
+// [ 2] toUpper(std::experimental::pmr::string *string);
 // [ 5] trim(char *string);
 // [ 5] trim(char *string, int *length);
 // [ 5] trim(bsl::string *string);
 // [ 5] trim(std::string *string);
-// [ 5] trim(std::pmr::string *string);
+// [ 5] trim(std::experimental::pmr::string *string);
 // [10] skipLeadingTrailing(cchar **begin, cchar **end);
 // [ 4] upperCaseCmp(cchar *lhs, cchar *rhs);
 // [ 4] upperCaseCmp(cchar *lhs, cchar *rhs, int rhsL);
@@ -1048,7 +1048,7 @@ int main(int argc, char *argv[])
         // Testing:
         //  pad(bsl::string *str, int numChars, char padChar = ' ');
         //  pad(std::string *str, int numChars, char padChar = ' ');
-        //  pad(std::pmr::string *str, size_type numChars, char padChar = ' ');
+        //  pad(std::experimental::pmr::string *str, size_type numChars, char padChar = ' ');
         // --------------------------------------------------------------------
 
         if (verbose) cout << "\n" "TESTING 'pad'" "\n"
@@ -1109,7 +1109,7 @@ int main(int argc, char *argv[])
                     }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                    std::pmr::string pmrString(STRING);
+                    std::experimental::pmr::string pmrString(STRING);
                     if ('x' != PADCHAR) {
                         Util::pad(&pmrString, length, PADCHAR);
                     }
@@ -1138,7 +1138,7 @@ int main(int argc, char *argv[])
                                   STRING + std::string(length - LEN, CHKCHAR));
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                         ASSERTV(strIdx, charIdx, pmrString ==
-                             STRING + std::pmr::string(length - LEN, CHKCHAR));
+                             STRING + std::experimental::pmr::string(length - LEN, CHKCHAR));
 #endif
                     }
                 }
@@ -1187,17 +1187,17 @@ int main(int argc, char *argv[])
         //  ltrim(char *str, int *L);
         //  ltrim(bsl::string *str);
         //  ltrim(std::string *str);
-        //  ltrim(std::pmr::string *str);
+        //  ltrim(std::experimental::pmr::string *str);
         //  rtrim(char *str);
         //  rtrim(bsl::string *str);
         //  rtrim(std::string *str);
-        //  rtrim(std::pmr::string *str);
+        //  rtrim(std::experimental::pmr::string *str);
         //  rtrim(cchar *str, int *L);
         //  trim(char *string);
         //  trim(char *string, int *length);
         //  trim(bsl::string *string);
         //  trim(std::string *string);
-        //  trim(std::pmr::string *string);
+        //  trim(std::experimental::pmr::string *string);
         // --------------------------------------------------------------------
 
         if (verbose) cout << "\n" "TESTING 'ltrim', 'rtrim', 'trim'" "\n"
@@ -1370,7 +1370,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (verbose) cout << "\tTesting 'std::pmr::string'" << endl;
+        if (verbose) cout << "\tTesting 'std::experimental::pmr::string'" << endl;
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         for (int i = 0; STRINGS[i]; ++i) {
@@ -1387,7 +1387,7 @@ int main(int argc, char *argv[])
 
                     // Generate the whitespace padding before the string.
 
-                    std::pmr::string pmrRTrim;
+                    std::experimental::pmr::string pmrRTrim;
                     for (int trimIdx = 0; trimIdx < padBefore; ++trimIdx) {
                         // Insert random whitespace characters in the padding.
 
@@ -1396,7 +1396,7 @@ int main(int argc, char *argv[])
 
                     // Generate the whitespace padding after the string.
 
-                    std::pmr::string pmrLTrim;
+                    std::experimental::pmr::string pmrLTrim;
                     for (int trimIdx = 0; trimIdx < padAfter; ++trimIdx) {
                         // Insert random whitespace characters in the padding.
 
@@ -1405,11 +1405,11 @@ int main(int argc, char *argv[])
 
                     // Generate the string to be trimmed.
 
-                    std::pmr::string pmrString(pmrRTrim);
+                    std::experimental::pmr::string pmrString(pmrRTrim);
                     pmrString.append(STRINGS[i]);
                     pmrString.append(pmrLTrim);
 
-                    std::pmr::string pmrStringBeforeTrim = pmrString;
+                    std::experimental::pmr::string pmrStringBeforeTrim = pmrString;
 
                     // Generate the expected results for 'ltrim' and 'rtrim'.
 
@@ -2078,12 +2078,12 @@ int main(int argc, char *argv[])
         //  toLower(char *string, int length);
         //  toLower(bsl::string *string);
         //  toLower(std::string *string);
-        //  toLower(std::pmr::string *string);
+        //  toLower(std::experimental::pmr::string *string);
         //  toUpper(char *string);
         //  toUpper(char *string, int length);
         //  toUpper(bsl::string *string);
         //  toUpper(std::string *string);
-        //  toUpper(std::pmr::string *string);
+        //  toUpper(std::experimental::pmr::string *string);
         // --------------------------------------------------------------------
 
         if (verbose) cout << "\n" "TESTING 'toLower' AND 'toUpper'" "\n"
@@ -2136,7 +2136,7 @@ int main(int argc, char *argv[])
                 bsl::string bslString(cstring);
                 std::string stdString(cstring);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                std::pmr::string pmrString(cstring);
+                std::experimental::pmr::string pmrString(cstring);
 #endif
                 char        nonNullString[sizeof(cstring)];
                 bsl::memset(nonNullString, 'Z', sizeof(nonNullString));
@@ -2176,7 +2176,7 @@ int main(int argc, char *argv[])
                 bsl::string bslString(cstring);
                 std::string stdString(cstring);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                std::pmr::string pmrString(cstring);
+                std::experimental::pmr::string pmrString(cstring);
 #endif
                 char        nonNullString[sizeof(cstring)];
                 bsl::memset(nonNullString, 'z', sizeof(nonNullString));

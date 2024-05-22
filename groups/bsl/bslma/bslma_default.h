@@ -62,7 +62,7 @@ BSLS_IDENT("$Id: $")
 // method will unconditionally set the default allocator regardless of whether
 // it is locked.  When the C++17 'pmr' library is available, setting the
 // default allocator by any of these methods also sets the default memory
-// resource to the same value by invoking 'std::pmr::set_default_resource'.
+// resource to the same value by invoking 'std::experimental::pmr::set_default_resource'.
 //
 // A well-behaved program should call 'bslma::Default::setDefaultAllocator'
 // *once*.  It should be invoked in 'main' before starting any threads, and be
@@ -72,11 +72,11 @@ BSLS_IDENT("$Id: $")
 //
 // When using a platform library that supports the C++17 PMR interface, a
 // successful change to the default allocator will also result in changing the
-// default *memory* *resource* returned by 'std::pmr::get_default_resource' to
+// default *memory* *resource* returned by 'std::experimental::pmr::get_default_resource' to
 // the same value.  This automatic syncronization can be broken by deliberately
-// calling 'std::pmr::set_default_resource', which will change the default
+// calling 'std::experimental::pmr::set_default_resource', which will change the default
 // memory resource without also changing the default allocator.  Note that
-// 'std::pmr::get_default_resource' does not lock the default memory resource
+// 'std::experimental::pmr::get_default_resource' does not lock the default memory resource
 // the way 'bslma::Default::defaultAllocator' locks the default allocator.
 //
 // *WARNING*: Note that the default allocator can become locked prior to
@@ -721,7 +721,7 @@ struct Default {
         // that this operation performs the one and only assigment to
         // 's_defaultAllocator' (unless 'setDefaultAllocatorRaw' is called).
         // In C++, this function also ensures that the default
-        // 'std::pmr::memory_resource' is the same as the default 'Allocator'.
+        // 'std::experimental::pmr::memory_resource' is the same as the default 'Allocator'.
         // Note also that this function has the same externally visible
         // behavior as 'defaultAllocator', but forms the (thread-safe)
         // "slow-path" for that function's implementation.
@@ -738,7 +738,7 @@ struct Default {
         // will fail if either 'defaultAllocator', 'lockDefaultAllocator', or
         // 'allocator' with argument 0 has been called previously in this
         // process.  In C++17 and later, a successful call to this method will
-        // also set the default 'std::pmr::memory_resource'.  The behavior is
+        // also set the default 'std::experimental::pmr::memory_resource'.  The behavior is
         // undefined unless 'basicAllocator' is the address of an allocator
         // with sufficient lifetime to satisfy all allocation requests within
         // this process, and unless there is only one thread started within
@@ -751,7 +751,7 @@ struct Default {
     static void setDefaultAllocatorRaw(Allocator *basicAllocator);
         // Unconditionally set the address of the default allocator to the
         // specified 'basicAllocator'.  In C++17 and later, a call to this
-        // method will also set the default 'std::pmr::memory_resource'.  The
+        // method will also set the default 'std::experimental::pmr::memory_resource'.  The
         // behavior is undefined unless 'basicAllocator' is the address of an
         // allocator with sufficient lifetime to satisfy all allocation
         // requests within this process, and unless there is only one thread
@@ -858,10 +858,10 @@ Allocator *Default::globalAllocator(Allocator *basicAllocator)
 struct Default_NewDeleteSetter {
     // Stateless class to set the initial default resource to
     // 'bslma::NewDeleteAllocator' automatically when using this component
-    // with a platform that supports C++17 'std::pmr::memory_resource'.
+    // with a platform that supports C++17 'std::experimental::pmr::memory_resource'.
 
     Default_NewDeleteSetter();
-        // If 'std::pmr::set_default_resource' has not yet been invoked, call
+        // If 'std::experimental::pmr::set_default_resource' has not yet been invoked, call
         // it with the address of the 'bslma::NewDeleteAllocator' singleton,
         // thus ensuring that 'bslma::Default' and 'get_default_resource' are
         // in sync.

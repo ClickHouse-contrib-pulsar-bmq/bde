@@ -3130,7 +3130,7 @@ int main(int argc, char *argv[])
                 const bsl::string      DESCB  = DATA[ti].d_description;
                 const std::string      DESCS  = DATA[ti].d_description;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                const std::pmr::string DESCP  = DATA[ti].d_description;
+                const std::experimental::pmr::string DESCP  = DATA[ti].d_description;
 #endif
 
                 if (veryVerbose) { T_ P_(MEM) P_(OFFSET) P_(FLAG) P(DESC) }

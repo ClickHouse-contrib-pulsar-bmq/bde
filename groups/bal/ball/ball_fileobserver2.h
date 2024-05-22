@@ -369,7 +369,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_memory.h>
 #include <bsl_string.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace ball {
@@ -707,7 +707,7 @@ class FileObserver2 : public Observer {
         // method returns 'false'.
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    bool isFileLoggingEnabled(std::pmr::string *result) const;
+    bool isFileLoggingEnabled(std::experimental::pmr::string *result) const;
         // Return 'true' if file logging is enabled for this file observer, and
         // 'false' otherwise.  Load the specified 'result' with the name of the
         // current log file if file logging is enabled, and leave 'result'

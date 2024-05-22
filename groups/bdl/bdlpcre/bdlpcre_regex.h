@@ -899,7 +899,7 @@ class RegEx {
     typename bsl::enable_if<   bsl::is_same<STRING, bsl::string>::value
                             || bsl::is_same<STRING, std::string>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                            || bsl::is_same<STRING, std::pmr::string>::value
+                            || bsl::is_same<STRING, std::experimental::pmr::string>::value
 #endif
                             ,  int>::type
     prepare(STRING                    *errorMessage,
@@ -1146,7 +1146,7 @@ class RegEx {
               const bsl::string_view&             subject,
               size_t                              subjectOffset = 0) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    int match(std::pmr::vector<bsl::string_view> *result,
+    int match(std::experimental::pmr::vector<bsl::string_view> *result,
               const bsl::string_view&             subject,
               size_t                              subjectOffset = 0) const;
 #endif
@@ -1337,7 +1337,7 @@ class RegEx {
                  size_t                                   subjectOffset = 0)
                                                                          const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    int matchRaw(std::pmr::vector<bsl::string_view>      *result,
+    int matchRaw(std::experimental::pmr::vector<bsl::string_view>      *result,
                  const bsl::string_view&                  subject,
                  size_t                                   subjectOffset = 0)
                                                                         const;
@@ -1380,7 +1380,7 @@ class RegEx {
                  std::vector<std::pair<bsl::string_view, int> > *result) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     void namedSubpatterns(
-            std::pmr::vector<std::pair<bsl::string_view, int> > *result) const;
+            std::experimental::pmr::vector<std::pair<bsl::string_view, int> > *result) const;
 #endif
         // Load into the specified 'result' the mapping between the sub-pattern
         // names and their indices.  The names are in alphabetical order.  If
@@ -1410,7 +1410,7 @@ class RegEx {
                 const bsl::string_view&  replacement,
                 size_t                   options = 0) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    int replace(std::pmr::string        *result,
+    int replace(std::experimental::pmr::string        *result,
                 int                     *errorOffset,
                 const bsl::string_view&  subject,
                 const bsl::string_view&  replacement,
@@ -1453,7 +1453,7 @@ class RegEx {
                    const bsl::string_view&  replacement,
                    size_t                   options = 0) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    int replaceRaw(std::pmr::string        *result,
+    int replaceRaw(std::experimental::pmr::string        *result,
                    int                     *errorOffset,
                    const bsl::string_view&  subject,
                    const bsl::string_view&  replacement,
@@ -1536,7 +1536,7 @@ template <class STRING>
 typename bsl::enable_if<   bsl::is_same<STRING, bsl::string>::value
                         || bsl::is_same<STRING, std::string>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-                        || bsl::is_same<STRING, std::pmr::string>::value
+                        || bsl::is_same<STRING, std::experimental::pmr::string>::value
 #endif
                         ,  int>::type
 RegEx::prepare(STRING     *errorMessage,

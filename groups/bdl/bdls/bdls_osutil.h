@@ -71,7 +71,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 
@@ -92,9 +92,9 @@ struct OsUtil {
                          std::string *osVersion,
                          std::string *osPatch);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getOsInfo(std::pmr::string *osName,
-                         std::pmr::string *osVersion,
-                         std::pmr::string *osPatch);
+    static int getOsInfo(std::experimental::pmr::string *osName,
+                         std::experimental::pmr::string *osVersion,
+                         std::experimental::pmr::string *osPatch);
 #endif
         // Load the operating system name, version name and patch name into the
         // specified 'osName', 'osVersion' and 'osPatch' respectively.  Return

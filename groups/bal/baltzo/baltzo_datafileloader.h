@@ -287,7 +287,7 @@ class DataFileLoader : public Loader {
     int loadTimeZoneFilePath(std::string      *result,
                              const char       *timeZoneId) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    int loadTimeZoneFilePath(std::pmr::string *result,
+    int loadTimeZoneFilePath(std::experimental::pmr::string *result,
                              const char       *timeZoneId) const;
 #endif
         // Load into the specified 'result' the file-system path to the

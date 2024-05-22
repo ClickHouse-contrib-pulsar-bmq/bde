@@ -85,7 +85,7 @@ BSLS_IDENT("$Id$")
 #include <bsl_optional.h>
 #include <bsl_string.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace bdldfp {
@@ -164,7 +164,7 @@ struct DecimalUtil {
         // successful and non-zero otherwise.  The value of 'out' is
         // unspecified if the function returns a non-zero value.  The
         // parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static int parseDecimal32Exact(Decimal32 *out, const char *str);
@@ -183,7 +183,7 @@ struct DecimalUtil {
         // exactly), and a negative value if 'str' could not be parsed.  The
         // value of 'out' is unspecified if the function returns a negative
         // value.  The parameterized 'STRING_TYPE' must be one of
-        // 'bsl::string', 'std::string', 'std::pmr::string' (if supported), or
+        // 'bsl::string', 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     // math
@@ -768,7 +768,7 @@ struct DecimalUtil_CStringUtil {
     static const char *flatten(const bsl::string& string);
     static const char *flatten(const std::string& string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static const char *flatten(const std::pmr::string& string);
+    static const char *flatten(const std::experimental::pmr::string& string);
 #endif
         // Return the result of invoking 'c_str()' on the specified 'string'.
 
@@ -1429,7 +1429,7 @@ const char *DecimalUtil_CStringUtil::flatten(const std::string& string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-const char *DecimalUtil_CStringUtil::flatten(const std::pmr::string& string)
+const char *DecimalUtil_CStringUtil::flatten(const std::experimental::pmr::string& string)
 {
     return string.c_str();
 }

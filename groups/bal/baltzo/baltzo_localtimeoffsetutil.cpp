@@ -185,7 +185,7 @@ void LocalTimeOffsetUtil::loadTimezone(std::string *timezone)
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-void LocalTimeOffsetUtil::loadTimezone(std::pmr::string *timezone)
+void LocalTimeOffsetUtil::loadTimezone(std::experimental::pmr::string *timezone)
 {
     BSLS_ASSERT(timezone);
 

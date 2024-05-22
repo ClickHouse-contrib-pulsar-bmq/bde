@@ -2400,7 +2400,7 @@ int main(int argc, char *argv[])
                                     failureList,
                                     k_NUM_FAILURE_LIST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        TC::testCase07<std::pmr::string>(DATA,
+        TC::testCase07<std::experimental::pmr::string>(DATA,
                                          k_NUM_DATA,
                                          failureList,
                                          k_NUM_FAILURE_LIST);
@@ -2860,7 +2860,7 @@ int main(int argc, char *argv[])
         TC::testCase06<bsl::string>(     DATA, k_NUM_DATA);
         TC::testCase06<std::string>(     DATA, k_NUM_DATA);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        TC::testCase06<std::pmr::string>(DATA, k_NUM_DATA);
+        TC::testCase06<std::experimental::pmr::string>(DATA, k_NUM_DATA);
 #endif
       } break;
       case 5: {
@@ -3697,7 +3697,7 @@ int main(int argc, char *argv[])
         testCase04<bsl::string>();
         testCase04<std::string>();
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        testCase04<std::pmr::string>();
+        testCase04<std::experimental::pmr::string>();
 #endif
       } break;
       case 3: {
@@ -3729,7 +3729,7 @@ int main(int argc, char *argv[])
         testCase03<bsl::string>();
         testCase03<std::string>();
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        testCase03<std::pmr::string>();
+        testCase03<std::experimental::pmr::string>();
 #endif
       } break;
       case 2: {
@@ -4041,7 +4041,7 @@ int main(int argc, char *argv[])
         testCase01<bsl::string>();
         testCase01<std::string>();
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        testCase01<std::pmr::string>();
+        testCase01<std::experimental::pmr::string>();
 #endif
       } break;
       default: {

@@ -188,8 +188,8 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>                   // 'std::string', 'std::pmr::string'
-#include <vector>                   // 'std::vector', 'std::pmr::vector'
+#include <string>                   // 'std::string', 'std::experimental::pmr::string'
+#include <vector>                   // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 
@@ -221,7 +221,7 @@ struct CharConvertUtf32 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf8ToUtf32(
-                std::pmr::vector<unsigned int> *dstVector,
+                std::experimental::pmr::vector<unsigned int> *dstVector,
                 const char                     *srcString,
                 unsigned int                    errorWord = '?',
                 ByteOrder::Enum                 byteOrder = ByteOrder::e_HOST);
@@ -238,7 +238,7 @@ struct CharConvertUtf32 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf8ToUtf32(
-                std::pmr::vector<unsigned int> *dstVector,
+                std::experimental::pmr::vector<unsigned int> *dstVector,
                 const bsl::string_view&         srcString,
                 unsigned int                    errorWord = '?',
                 ByteOrder::Enum                 byteOrder = ByteOrder::e_HOST);
@@ -335,7 +335,7 @@ struct CharConvertUtf32 {
                            ByteOrder::Enum        byteOrder            =
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int utf32ToUtf8(std::pmr::string   *dstString,
+    static int utf32ToUtf8(std::experimental::pmr::string   *dstString,
                            const unsigned int *srcString,
                            bsl::size_t        *numCodePointsWritten = 0,
                            unsigned char       errorByte            = '?',
@@ -356,7 +356,7 @@ struct CharConvertUtf32 {
                            ByteOrder::Enum        byteOrder            =
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int utf32ToUtf8(std::pmr::string   *dstString,
+    static int utf32ToUtf8(std::experimental::pmr::string   *dstString,
                            const unsigned int *srcString,
                            bsl::size_t         srcStringLength,
                            bsl::size_t        *numCodePointsWritten = 0,
@@ -399,7 +399,7 @@ struct CharConvertUtf32 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf32ToUtf8(
-                        std::pmr::vector<char> *dstVector,
+                        std::experimental::pmr::vector<char> *dstVector,
                         const unsigned int     *srcString,
                         bsl::size_t            *numCodePointsWritten = 0,
                         unsigned char           errorByte            = '?',
@@ -421,7 +421,7 @@ struct CharConvertUtf32 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf32ToUtf8(
-                        std::pmr::vector<char> *dstVector,
+                        std::experimental::pmr::vector<char> *dstVector,
                         const unsigned int     *srcString,
                         bsl::size_t             srcStringLength,
                         bsl::size_t            *numCodePointsWritten = 0,

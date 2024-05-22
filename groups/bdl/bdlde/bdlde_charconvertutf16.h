@@ -297,8 +297,8 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>                   // 'std::string', 'std::pmr::string'
-#include <vector>                   // 'std::vector', 'std::pmr::vector'
+#include <string>                   // 'std::string', 'std::experimental::pmr::string'
+#include <vector>                   // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 
@@ -346,7 +346,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf8ToUtf16(
-                       std::pmr::wstring       *dstString,
+                       std::experimental::pmr::wstring       *dstString,
                        const bsl::string_view&  srcString,
                        bsl::size_t             *numCodePointsWritten = 0,
                        wchar_t                  errorWord            = '?',
@@ -367,7 +367,7 @@ struct CharConvertUtf16 {
                           ByteOrder::Enum           byteOrder            =
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int utf8ToUtf16(std::pmr::wstring *dstString,
+    static int utf8ToUtf16(std::experimental::pmr::wstring *dstString,
                            const char        *srcString,
                            bsl::size_t       *numCodePointsWritten = 0,
                            wchar_t            errorWord            = '?',
@@ -390,7 +390,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf8ToUtf16(
-                          std::pmr::u16string      *dstString,
+                          std::experimental::pmr::u16string      *dstString,
                           const bsl::string_view&   srcString,
                           bsl::size_t              *numCodePointsWritten = 0,
                           char16_t                  errorChar            = '?',
@@ -413,7 +413,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf8ToUtf16(
-                          std::pmr::u16string      *dstString,
+                          std::experimental::pmr::u16string      *dstString,
                           const char               *srcString,
                           bsl::size_t              *numCodePointsWritten = 0,
                           char16_t                  errorChar            = '?',
@@ -459,7 +459,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf8ToUtf16(
-              std::pmr::vector<unsigned short> *dstVector,
+              std::experimental::pmr::vector<unsigned short> *dstVector,
               const bsl::string_view&           srcString,
               bsl::size_t                      *numCodePointsWritten = 0,
               unsigned short                    errorWord            = '?',
@@ -481,7 +481,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf8ToUtf16(
-              std::pmr::vector<unsigned short> *dstVector,
+              std::experimental::pmr::vector<unsigned short> *dstVector,
               const char                       *srcString,
               bsl::size_t                      *numCodePointsWritten = 0,
               unsigned short                    errorWord            = '?',
@@ -701,7 +701,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf16ToUtf8(
-                          std::pmr::string     *dstString,
+                          std::experimental::pmr::string     *dstString,
                           const unsigned short *srcString,
                           bsl::size_t          *numCodePointsWritten = 0,
                           char                  errorByte            = '?',
@@ -723,7 +723,7 @@ struct CharConvertUtf16 {
                           ByteOrder::Enum       byteOrder = ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf16ToUtf8(
-                          std::pmr::string     *dstString,
+                          std::experimental::pmr::string     *dstString,
                           const unsigned short *srcString,
                           bsl::size_t           srcLengthInWords,
                           bsl::size_t          *numCodePointsWritten = 0,
@@ -746,7 +746,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf16ToUtf8(
-                      std::pmr::string         *dstString,
+                      std::experimental::pmr::string         *dstString,
                       const bsl::wstring_view&  srcString,
                       bsl::size_t              *numCodePointsWritten = 0,
                       char                      errorByte            = '?',
@@ -766,7 +766,7 @@ struct CharConvertUtf16 {
                            ByteOrder::Enum  byteOrder            =
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int utf16ToUtf8(std::pmr::string *dstString,
+    static int utf16ToUtf8(std::experimental::pmr::string *dstString,
                            const wchar_t    *srcString,
                            bsl::size_t      *numCodePointsWritten = 0,
                            char              errorByte            = '?',
@@ -790,7 +790,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int utf16ToUtf8(
-                      std::pmr::string           *dstString,
+                      std::experimental::pmr::string           *dstString,
                       const bsl::u16string_view&  srcString,
                       bsl::size_t                *numCodePointsWritten = 0,
                       char                        errorByte            = '?',
@@ -810,7 +810,7 @@ struct CharConvertUtf16 {
                            ByteOrder::Enum  byteOrder            =
                                                             ByteOrder::e_HOST);
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int utf16ToUtf8(std::pmr::string *dstString,
+    static int utf16ToUtf8(std::experimental::pmr::string *dstString,
                            const char16_t   *srcString,
                            bsl::size_t      *numCodePointsWritten = 0,
                            char              errorByte            = '?',
@@ -853,7 +853,7 @@ struct CharConvertUtf16 {
                            ByteOrder::Enum       byteOrder            =
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    static int utf16ToUtf8(std::pmr::vector<char> *dstVector,
+    static int utf16ToUtf8(std::experimental::pmr::vector<char> *dstVector,
                            const unsigned short   *srcString,
                            bsl::size_t            *numCodePointsWritten = 0,
                            char                    errorByte            = '?',
@@ -875,7 +875,7 @@ struct CharConvertUtf16 {
                            ByteOrder::Enum       byteOrder            =
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    static int utf16ToUtf8(std::pmr::vector<char> *dstVector,
+    static int utf16ToUtf8(std::experimental::pmr::vector<char> *dstVector,
                            const unsigned short   *srcString,
                            bsl::size_t             srcLengthInWords,
                            bsl::size_t            *numCodePointsWritten = 0,
@@ -922,7 +922,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf16ToUtf8(
-                      std::pmr::vector<char>   *dstVector,
+                      std::experimental::pmr::vector<char>   *dstVector,
                       const bsl::wstring_view&  srcString,
                       bsl::size_t              *numCodePointsWritten = 0,
                       char                      errorByte            = '?',
@@ -945,7 +945,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf16ToUtf8(
-                      std::pmr::vector<char>       *dstVector,
+                      std::experimental::pmr::vector<char>       *dstVector,
                       const wchar_t                *srcString,
                       bsl::size_t                  *numCodePointsWritten = 0,
                       char                          errorByte            = '?',
@@ -969,7 +969,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf16ToUtf8(
-                      std::pmr::vector<char>     *dstVector,
+                      std::experimental::pmr::vector<char>     *dstVector,
                       const bsl::u16string_view&  srcString,
                       bsl::size_t                *numCodePointsWritten = 0,
                       char                        errorByte            = '?',
@@ -992,7 +992,7 @@ struct CharConvertUtf16 {
                                                             ByteOrder::e_HOST);
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static int utf16ToUtf8(
-                      std::pmr::vector<char>       *dstVector,
+                      std::experimental::pmr::vector<char>       *dstVector,
                       const char16_t               *srcString,
                       bsl::size_t                  *numCodePointsWritten = 0,
                       char                          errorByte            = '?',

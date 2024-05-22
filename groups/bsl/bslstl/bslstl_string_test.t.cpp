@@ -5191,7 +5191,7 @@ void TestDriver<TYPE,TRAITS,ALLOC>::testCase29()
     typedef typename Hasher::result_type           HashType;
     typedef std::basic_string<TYPE, TRAITS, ALLOC> NativeObj;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    typedef std::pmr::basic_string<TYPE, TRAITS>   NativePmrObj;
+    typedef std::experimental::pmr::basic_string<TYPE, TRAITS>   NativePmrObj;
 #endif
     typedef bsl::basic_string_view<TYPE>           StringView;
 
@@ -5340,7 +5340,7 @@ void TestDriver<TYPE,TRAITS,ALLOC>::testCase29()
     }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    if (verbose) printf("Use 'bslh::Hash' to hash a few values of 'std::pmr'"
+    if (verbose) printf("Use 'bslh::Hash' to hash a few values of 'std::experimental::pmr'"
                         " strings with each char type. (C-1,2)\n");
     {
 #ifdef BSLS_PLATFORM_HAS_PRAGMA_GCC_DIAGNOSTIC

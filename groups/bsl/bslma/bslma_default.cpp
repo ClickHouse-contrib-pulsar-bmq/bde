@@ -68,7 +68,7 @@ Allocator *Default::determineAndReturnDefaultAllocator()
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
         // We have just installed and locked the default allocator.  Ensure
         // that the default resource is the same as the default allocator.
-        std::pmr::set_default_resource(
+        std::experimental::pmr::set_default_resource(
             static_cast<bsl::memory_resource *>(requested));
 #endif
 
@@ -108,7 +108,7 @@ int Default::setDefaultAllocator(Allocator *basicAllocator)
         // The default resource tracks the default allocator.  Note that,
         // unlike the default allocator, the default resource can be queried
         // without locking it.
-        std::pmr::set_default_resource(
+        std::experimental::pmr::set_default_resource(
             static_cast<bsl::memory_resource *>(basicAllocator));
 #endif
 
@@ -125,7 +125,7 @@ void Default::setDefaultAllocatorRaw(Allocator *basicAllocator)
     bsls::AtomicOperations::setPtr(&s_defaultAllocator, basicAllocator);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     // Ensure that the default resource is the same as the default allocator.
-    std::pmr::set_default_resource(basicAllocator);
+    std::experimental::pmr::set_default_resource(basicAllocator);
 #endif
 }
 
@@ -145,7 +145,7 @@ Allocator *Default::setGlobalAllocator(Allocator *basicAllocator)
 
 Default_NewDeleteSetter::Default_NewDeleteSetter()
 {
-    namespace pmr = std::pmr;
+    namespace pmr = std::experimental::pmr;
 
     static bool done = false;
 

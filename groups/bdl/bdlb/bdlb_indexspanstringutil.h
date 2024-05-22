@@ -353,11 +353,11 @@ struct IndexSpanStringUtil {
                             std::wstring::const_iterator          begin,
                             IndexSpan::size_type                  length);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static IndexSpan create(const std::pmr::string&               string,
-                            std::pmr::string::const_iterator      begin,
+    static IndexSpan create(const std::experimental::pmr::string&               string,
+                            std::experimental::pmr::string::const_iterator      begin,
                             IndexSpan::size_type                  length);
-    static IndexSpan create(const std::pmr::wstring&              string,
-                            std::pmr::wstring::const_iterator     begin,
+    static IndexSpan create(const std::experimental::pmr::wstring&              string,
+                            std::experimental::pmr::wstring::const_iterator     begin,
                             IndexSpan::size_type                  length);
 #endif
         // Return an 'IndexSpan' describing the substring of the specified
@@ -391,12 +391,12 @@ struct IndexSpanStringUtil {
                             std::wstring::const_iterator          begin,
                             std::wstring::const_iterator          end);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static IndexSpan create(const std::pmr::string&               string,
-                            std::pmr::string::const_iterator      begin,
-                            std::pmr::string::const_iterator      end);
-    static IndexSpan create(const std::pmr::wstring&              string,
-                            std::pmr::wstring::const_iterator     begin,
-                            std::pmr::wstring::const_iterator     end);
+    static IndexSpan create(const std::experimental::pmr::string&               string,
+                            std::experimental::pmr::string::const_iterator      begin,
+                            std::experimental::pmr::string::const_iterator      end);
+    static IndexSpan create(const std::experimental::pmr::wstring&              string,
+                            std::experimental::pmr::wstring::const_iterator     begin,
+                            std::experimental::pmr::wstring::const_iterator     end);
 #endif
         // Return an 'IndexSpan' describing the substring of the specified
         // 'string' starting at the specified 'begin' and ending (not
@@ -785,8 +785,8 @@ IndexSpanStringUtil::create(const std::wstring&          string,
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
 IndexSpan
-IndexSpanStringUtil::create(const std::pmr::string&          string,
-                            std::pmr::string::const_iterator begin,
+IndexSpanStringUtil::create(const std::experimental::pmr::string&          string,
+                            std::experimental::pmr::string::const_iterator begin,
                             IndexSpan::size_type             length)
 {
     return createImp(string, begin, length);
@@ -794,8 +794,8 @@ IndexSpanStringUtil::create(const std::pmr::string&          string,
 
 inline
 IndexSpan
-IndexSpanStringUtil::create(const std::pmr::wstring&          string,
-                            std::pmr::wstring::const_iterator begin,
+IndexSpanStringUtil::create(const std::experimental::pmr::wstring&          string,
+                            std::experimental::pmr::wstring::const_iterator begin,
                             IndexSpan::size_type              length)
 {
     return createImp(string, begin, length);
@@ -877,18 +877,18 @@ IndexSpanStringUtil::create(const std::wstring&          string,
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
 IndexSpan
-IndexSpanStringUtil::create(const std::pmr::string&          string,
-                            std::pmr::string::const_iterator begin,
-                            std::pmr::string::const_iterator end)
+IndexSpanStringUtil::create(const std::experimental::pmr::string&          string,
+                            std::experimental::pmr::string::const_iterator begin,
+                            std::experimental::pmr::string::const_iterator end)
 {
     return createImp(string, begin, end);
 }
 
 inline
 IndexSpan
-IndexSpanStringUtil::create(const std::pmr::wstring&          string,
-                            std::pmr::wstring::const_iterator begin,
-                            std::pmr::wstring::const_iterator end)
+IndexSpanStringUtil::create(const std::experimental::pmr::wstring&          string,
+                            std::experimental::pmr::wstring::const_iterator begin,
+                            std::experimental::pmr::wstring::const_iterator end)
 {
     return createImp(string, begin, end);
 }

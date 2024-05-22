@@ -559,7 +559,7 @@ class StripedUnorderedMultiMap {
     bsl::size_t getValueAll(std::vector<VALUE>      *valuesPtr,
                             const KEY&               key) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    bsl::size_t getValueAll(std::pmr::vector<VALUE> *valuesPtr,
+    bsl::size_t getValueAll(std::experimental::pmr::vector<VALUE> *valuesPtr,
                             const KEY&               key) const;
         // Load, into the specified '*valuesPtr', the value attributes of every
         // element in this hash map having the specified 'key'.  Return the
@@ -922,7 +922,7 @@ bsl::size_t StripedUnorderedMultiMap<KEY, VALUE, HASH, EQUAL>::getValueAll(
 template <class KEY, class VALUE, class HASH, class EQUAL>
 inline
 bsl::size_t StripedUnorderedMultiMap<KEY, VALUE, HASH, EQUAL>::getValueAll(
-                                            std::pmr::vector<VALUE> *valuesPtr,
+                                            std::experimental::pmr::vector<VALUE> *valuesPtr,
                                             const KEY&               key) const
 {
     return d_imp.getValue(valuesPtr, key);

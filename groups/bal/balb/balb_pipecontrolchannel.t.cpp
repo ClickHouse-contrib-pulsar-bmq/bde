@@ -976,7 +976,7 @@ int main(int argc, char *argv[])
                       } break;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                       case e_PMR_STRING: {
-                        const std::pmr::string PIPE_NAME(PIPE_NAME_BSL);
+                        const std::experimental::pmr::string PIPE_NAME(PIPE_NAME_BSL);
                         rc = pipeChannel.start(PIPE_NAME, SET_ATTR);
                       } break;
 #endif
@@ -1003,7 +1003,7 @@ int main(int argc, char *argv[])
                       } break;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                       case e_PMR_STRING: {
-                        const std::pmr::string PIPE_NAME(PIPE_NAME_BSL);
+                        const std::experimental::pmr::string PIPE_NAME(PIPE_NAME_BSL);
                         rc = pipeChannel.start(PIPE_NAME);
                       } break;
 #endif

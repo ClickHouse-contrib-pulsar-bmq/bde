@@ -256,10 +256,10 @@ const char *NameOf_Base::initBuffer(char       *buffer,
 #elif defined(BSLS_PLATFORM_CMP_GNU) || defined(BSLS_PLATFORM_CMP_CLANG)
 # if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING)
     char stringName[] = { "std::__cxx11::basic_string<char,"
-                                       " std::char_traits<char>, std::pmr::"
+                                       " std::char_traits<char>, std::experimental::pmr::"
                                        "polymorphic_allocator<char>>" };
 
-    u::substitute(buffer, stringName, "std::pmr::string");
+    u::substitute(buffer, stringName, "std::experimental::pmr::string");
 
     U_SAFE_COPY(stringName, "std::basic_string<char,"
                             " std::char_traits<char>, std::allocator<char>>");
@@ -312,8 +312,8 @@ const char *NameOf_Base::initBuffer(char       *buffer,
     u::substitute(buffer,    "union ",  "");
 
     char stringName[] = { "std::basic_string<char,std::char_traits<char>,"
-                          "std::pmr::polymorphic_allocator<char>>" };
-    u::substitute(buffer,     stringName,      "std::pmr::string");
+                          "std::experimental::pmr::polymorphic_allocator<char>>" };
+    u::substitute(buffer,     stringName,      "std::experimental::pmr::string");
 
     U_SAFE_COPY(stringName, "std::basic_string<char,std::char_traits<char>,"
                             "std::allocator<char>>");

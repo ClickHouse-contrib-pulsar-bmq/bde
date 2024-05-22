@@ -434,9 +434,9 @@ struct JsonUtil {
                      const Json&          json,
                      const WriteOptions&  options);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int write(std::pmr::string    *output,
+    static int write(std::experimental::pmr::string    *output,
                      const Json&          json);
-    static int write(std::pmr::string    *output,
+    static int write(std::experimental::pmr::string    *output,
                      const Json&          json,
                      const WriteOptions&  options);
 #endif
@@ -624,20 +624,20 @@ int JsonUtil::write(bsl::string         *output,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-int JsonUtil::write(std::pmr::string    *output,
+int JsonUtil::write(std::experimental::pmr::string    *output,
                     const Json&          json,
                     const WriteOptions&  options)
 {
 #if defined (BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY)
     typedef std::basic_ostringstream<char,
                                      std::char_traits<char>,
-                                     std::pmr::polymorphic_allocator<char> >
+                                     std::experimental::pmr::polymorphic_allocator<char> >
         PmrOstringStream;
 
     PmrOstringStream stream(std::ios_base::out, output->get_allocator());
     int rc = write(stream, json, options);
     if (0 == rc) {
-        std::pmr::string tmpOutput = stream.str(output->get_allocator());
+        std::experimental::pmr::string tmpOutput = stream.str(output->get_allocator());
         *output = bslmf::MovableRefUtil::move(tmpOutput);
     }
     return rc;
@@ -655,7 +655,7 @@ int JsonUtil::write(std::pmr::string    *output,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-int JsonUtil::write(std::pmr::string    *output,
+int JsonUtil::write(std::experimental::pmr::string    *output,
                     const Json&          json)
 {
     WriteOptions options;

@@ -55,7 +55,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 
@@ -72,7 +72,7 @@ struct PipeUtil {
     static int makeCanonicalName(std::string             *pipeName,
                                  const bsl::string_view&  baseName);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int makeCanonicalName(std::pmr::string        *pipeName,
+    static int makeCanonicalName(std::experimental::pmr::string        *pipeName,
                                  const bsl::string_view&  baseName);
 #endif
         // Load into the specified 'pipeName' the system-dependent canonical

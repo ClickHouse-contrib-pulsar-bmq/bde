@@ -290,7 +290,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_string.h>
 #include <bsl_string_view.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 
@@ -319,7 +319,7 @@ struct PathUtil {
     static int appendIfValid(std::string             *path,
                              const bsl::string_view&  filename);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int appendIfValid(std::pmr::string        *path,
+    static int appendIfValid(std::experimental::pmr::string        *path,
                              const bsl::string_view&  filename);
 #endif
         // Append the specified 'filename' to the end of the specified 'path'
@@ -337,7 +337,7 @@ struct PathUtil {
                           int          length  = -1,
                           int          rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void appendRaw(std::pmr::string *path,
+    static void appendRaw(std::experimental::pmr::string *path,
                           const char       *filename,
                           int               length  = -1,
                           int               rootEnd = -1);
@@ -356,7 +356,7 @@ struct PathUtil {
     static int popLeaf(bsl::string *path, int rootEnd = -1);
     static int popLeaf(std::string *path, int rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int popLeaf(std::pmr::string *path, int rootEnd = -1);
+    static int popLeaf(std::experimental::pmr::string *path, int rootEnd = -1);
 #endif
         // Remove from the specified 'path' the rightmost filename following
         // the root; that is, remove the leaf element.  If the optionally
@@ -374,7 +374,7 @@ struct PathUtil {
                            const bsl::string_view&  path,
                            int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getBasename(std::pmr::string        *leaf,
+    static int getBasename(std::experimental::pmr::string        *leaf,
                            const bsl::string_view&  path,
                            int                      rootEnd = -1);
 #endif
@@ -395,7 +395,7 @@ struct PathUtil {
                           const bsl::string_view&  path,
                           int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getDirname(std::pmr::string        *dirname,
+    static int getDirname(std::experimental::pmr::string        *dirname,
                           const bsl::string_view&  path,
                           int                      rootEnd = -1);
 #endif
@@ -418,7 +418,7 @@ struct PathUtil {
                        const bsl::string_view&  path,
                        int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getLeaf(std::pmr::string        *leaf,
+    static int getLeaf(std::experimental::pmr::string        *leaf,
                        const bsl::string_view&  path,
                        int                      rootEnd = -1);
 #endif
@@ -439,7 +439,7 @@ struct PathUtil {
                             const bsl::string_view&  path,
                             int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getExtension(std::pmr::string        *extension,
+    static int getExtension(std::experimental::pmr::string        *extension,
                             const bsl::string_view&  path,
                             int                      rootEnd = -1);
 #endif
@@ -457,7 +457,7 @@ struct PathUtil {
                        const bsl::string_view&  path,
                        int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getRoot(std::pmr::string        *root,
+    static int getRoot(std::experimental::pmr::string        *root,
                        const bsl::string_view&  path,
                        int                      rootEnd = -1);
 #endif
@@ -562,7 +562,7 @@ int PathUtil::getBasename(std::string              *leaf,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-int PathUtil::getBasename(std::pmr::string        *leaf,
+int PathUtil::getBasename(std::experimental::pmr::string        *leaf,
                           const bsl::string_view&  path,
                           int                      rootEnd)
 {

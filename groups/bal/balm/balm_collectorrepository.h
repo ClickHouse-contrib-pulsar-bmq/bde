@@ -127,7 +127,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <vector>                   // 'std::vector', 'std::pmr::vector'
+#include <vector>                   // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 namespace balm {
@@ -230,7 +230,7 @@ class CollectorRepository {
     void collectAndReset(std::vector<MetricRecord>      *records,
                          const Category                 *category);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void collectAndReset(std::pmr::vector<MetricRecord> *records,
+    void collectAndReset(std::experimental::pmr::vector<MetricRecord> *records,
                          const Category                 *category);
 #endif
         // Append to the specified 'records' the collected metric record
@@ -243,7 +243,7 @@ class CollectorRepository {
     void collect(std::vector<MetricRecord>      *records,
                  const Category                 *category);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void collect(std::pmr::vector<MetricRecord> *records,
+    void collect(std::experimental::pmr::vector<MetricRecord> *records,
                  const Category                 *category);
 #endif
         // Append to the specified 'records' the collected metric record
@@ -343,8 +343,8 @@ class CollectorRepository {
           const MetricId&                                        metricId);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     int getAddedCollectors(
-          std::pmr::vector<bsl::shared_ptr<Collector> >         *collectors,
-          std::pmr::vector<bsl::shared_ptr<IntegerCollector> >  *intCollectors,
+          std::experimental::pmr::vector<bsl::shared_ptr<Collector> >         *collectors,
+          std::experimental::pmr::vector<bsl::shared_ptr<IntegerCollector> >  *intCollectors,
           const MetricId&                                        metricId);
 #endif
         // Append to the specified 'collectors' and 'intCollectors' shared

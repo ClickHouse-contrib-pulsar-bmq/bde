@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
         //:
         //: 3 All functions are callable with 'const' references to
         //:   'bsl::string_view', 'bslstl::StringRef', 'bsl::string',
-        //:   'std::string', and 'std::pmr::string' objects as first argument,
+        //:   'std::string', and 'std::experimental::pmr::string' objects as first argument,
         //:   as well as their wide equivalents.
         //
         // Plan:
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
         //: 4 Separately verify that too low 'begin' for 'create' with
         //:   'bsl::string_view' and 'bslstl::StringRef' inputs asserts.  Note
         //:   that too low begin position or iterator cannot be tested with a
-        //:   'bsl::string', 'std::string', or 'std::pmr::string' input as we
+        //:   'bsl::string', 'std::string', or 'std::experimental::pmr::string' input as we
         //:   cannot create a valid iterator', or even a 'StringRef', that
         //:   would point into the same allocated memory area (as required by
         //:   the C++ standard) and has a lower begin value than 'begin()'.
@@ -316,12 +316,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::string        k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string   k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::string   k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::string       k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
             const bdlb::IndexSpan    k_EXPECTED(k_POS, k_LEN);
@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
             TEST_CREATE_FROM_ITER(bsl::string,       k_BSLSTR);
             TEST_CREATE_FROM_ITER(std::string,       k_STDSTR);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            TEST_CREATE_FROM_ITER(std::pmr::string, k_PMRSTR);
+            TEST_CREATE_FROM_ITER(std::experimental::pmr::string, k_PMRSTR);
 #endif
 #undef TEST_CREATE_FROM_ITER
 
@@ -438,12 +438,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::string        k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string   k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::string   k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::string       k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
 
@@ -486,7 +486,7 @@ int main(int argc, char *argv[])
 #ifndef BDLB_INDEXSPANSTRINGUTIL_DEBUGGING_NATIVE_STRING_ITERATORS
             TEST_CREATE_FROM_ITER(std::string,       k_STDSTR);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            TEST_CREATE_FROM_ITER(std::pmr::string,  k_PMRSTR);
+            TEST_CREATE_FROM_ITER(std::experimental::pmr::string,  k_PMRSTR);
 #endif
 #endif
             TEST_CREATE_FROM_ITER(bslstl::StringRef, k_STRREF);
@@ -548,12 +548,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::wstring            k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring       k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::wstring       k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::wstring      k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
             const bdlb::IndexSpan   k_EXPECTED(k_POS, k_LEN);
@@ -612,7 +612,7 @@ int main(int argc, char *argv[])
             TEST_CREATE_FROM_ITER(bsl::wstring,          k_BSLSTR);
             TEST_CREATE_FROM_ITER(std::wstring,          k_STDSTR);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            TEST_CREATE_FROM_ITER(std::pmr::wstring,     k_PMRSTR);
+            TEST_CREATE_FROM_ITER(std::experimental::pmr::wstring,     k_PMRSTR);
 #endif
 #undef TEST_CREATE_FROM_ITER
 
@@ -670,12 +670,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::wstring           k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring      k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::wstring      k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::wstring      k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
 
@@ -718,7 +718,7 @@ int main(int argc, char *argv[])
 #ifndef BDLB_INDEXSPANSTRINGUTIL_DEBUGGING_NATIVE_STRING_ITERATORS
             TEST_CREATE_FROM_ITER(std::wstring,          k_STDSTR);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            TEST_CREATE_FROM_ITER(std::pmr::wstring,     k_PMRSTR);
+            TEST_CREATE_FROM_ITER(std::experimental::pmr::wstring,     k_PMRSTR);
 #endif
 #endif
             TEST_CREATE_FROM_ITER(bslstl::StringRefWide, k_STRREF);
@@ -826,7 +826,7 @@ int main(int argc, char *argv[])
         //:   assertion is raised (if the build mode calls for it).
         //:
         //: 4 'bind' can be called with 'bsl::string', 'bsl::string_view',
-        //:    'bslstl::StringRef', 'std::string', and 'std::pmr::string'
+        //:    'bslstl::StringRef', 'std::string', and 'std::experimental::pmr::string'
         //:    first argument.
         //:
         //: 5 'bind' result can be assigned to 'bslstl::StringRef', or
@@ -837,7 +837,7 @@ int main(int argc, char *argv[])
         //:
         //: 7 When 'bsl::string_view' is an alias to the native
         //:   'std::string_view' the result of 'bind' can direct-initialize a
-        //:   'std::string', or 'std::pmr::string' variable.
+        //:   'std::string', or 'std::experimental::pmr::string' variable.
         //
         // Plan:
         //: 1 Table based testing with values that test
@@ -899,12 +899,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::string        k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string   k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::string   k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::string       k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
             const bdlb::IndexSpan    k_SPAN(k_TEST.d_pos, k_TEST.d_len);
@@ -1022,16 +1022,16 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            TEST_BIND_EXPLICIT(std::pmr::string, k_STRVIEW);
-            TEST_BIND_EXPLICIT(std::pmr::string, k_STRREF);
-            TEST_BIND_EXPLICIT(std::pmr::string, k_BSLSTR);
-            TEST_BIND_EXPLICIT(std::pmr::string, k_STDSTR);
-            TEST_BIND_EXPLICIT(std::pmr::string, k_PMRSTR);
-            TEST_BIND_ASSIGN(std::pmr::string,   k_STRVIEW);
-            TEST_BIND_ASSIGN(std::pmr::string,   k_STRREF);
-            TEST_BIND_ASSIGN(std::pmr::string,   k_BSLSTR);
-            TEST_BIND_ASSIGN(std::pmr::string,   k_STDSTR);
-            TEST_BIND_ASSIGN(std::pmr::string,   k_PMRSTR);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::string, k_STRVIEW);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::string, k_STRREF);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::string, k_BSLSTR);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::string, k_STDSTR);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::string, k_PMRSTR);
+            TEST_BIND_ASSIGN(std::experimental::pmr::string,   k_STRVIEW);
+            TEST_BIND_ASSIGN(std::experimental::pmr::string,   k_STRREF);
+            TEST_BIND_ASSIGN(std::experimental::pmr::string,   k_BSLSTR);
+            TEST_BIND_ASSIGN(std::experimental::pmr::string,   k_STDSTR);
+            TEST_BIND_ASSIGN(std::experimental::pmr::string,   k_PMRSTR);
 #endif
 #endif
 
@@ -1069,12 +1069,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::string        k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string   k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::string   k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::string       k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::string  k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
             const bdlb::IndexSpan    k_SPAN(k_TEST.d_pos, k_TEST.d_len);
@@ -1127,12 +1127,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::wstring           k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring      k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::wstring      k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::wstring      k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
             const bdlb::IndexSpan        k_SPAN(k_TEST.d_pos, k_TEST.d_len);
@@ -1251,16 +1251,16 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            TEST_BIND_EXPLICIT(std::pmr::wstring, k_STRVIEW);
-            TEST_BIND_EXPLICIT(std::pmr::wstring, k_STRREF);
-            TEST_BIND_EXPLICIT(std::pmr::wstring, k_BSLSTR);
-            TEST_BIND_EXPLICIT(std::pmr::wstring, k_STDSTR);
-            TEST_BIND_EXPLICIT(std::pmr::wstring, k_PMRSTR);
-            TEST_BIND_ASSIGN(std::pmr::wstring,   k_STRVIEW);
-            TEST_BIND_ASSIGN(std::pmr::wstring,   k_STRREF);
-            TEST_BIND_ASSIGN(std::pmr::wstring,   k_BSLSTR);
-            TEST_BIND_ASSIGN(std::pmr::wstring,   k_STDSTR);
-            TEST_BIND_ASSIGN(std::pmr::wstring,   k_PMRSTR);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::wstring, k_STRVIEW);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::wstring, k_STRREF);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::wstring, k_BSLSTR);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::wstring, k_STDSTR);
+            TEST_BIND_EXPLICIT(std::experimental::pmr::wstring, k_PMRSTR);
+            TEST_BIND_ASSIGN(std::experimental::pmr::wstring,   k_STRVIEW);
+            TEST_BIND_ASSIGN(std::experimental::pmr::wstring,   k_STRREF);
+            TEST_BIND_ASSIGN(std::experimental::pmr::wstring,   k_BSLSTR);
+            TEST_BIND_ASSIGN(std::experimental::pmr::wstring,   k_STDSTR);
+            TEST_BIND_ASSIGN(std::experimental::pmr::wstring,   k_PMRSTR);
 #endif
 #endif
 
@@ -1298,12 +1298,12 @@ int main(int argc, char *argv[])
 #ifdef BSLSTL_STRING_VIEW_IS_ALIASED
             const std::wstring           k_STDSTR(k_STRVIEW);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring      k_PMRSTR(k_STRVIEW);
+            const std::experimental::pmr::wstring      k_PMRSTR(k_STRVIEW);
 #endif
 #else
             const std::wstring      k_STDSTR(k_STRREF.data(), k_STRREF.size());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-            const std::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
+            const std::experimental::pmr::wstring k_PMRSTR(k_STRREF.data(), k_STRREF.size());
 #endif
 #endif
             const bdlb::IndexSpan   k_SPAN(k_TEST.d_pos, k_TEST.d_len);

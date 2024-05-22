@@ -41,7 +41,7 @@ struct IsVector {
     static const bool value =
                          bsl::is_same<VECTOR, bsl::vector<MEMBER> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                      || bsl::is_same<VECTOR, std::pmr::vector<MEMBER> >::value
+                      || bsl::is_same<VECTOR, std::experimental::pmr::vector<MEMBER> >::value
 #endif
                       || bsl::is_same<VECTOR, std::vector<MEMBER> >::value;
 };
@@ -729,7 +729,7 @@ int PublicationScheduler::getCategorySchedule(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 int PublicationScheduler::getCategorySchedule(
-                 std::pmr::vector<std::pair<const Category *,
+                 std::experimental::pmr::vector<std::pair<const Category *,
                                             bsls::TimeInterval>> *result) const
 {
     return u::getCategoryScheduleImp(result, &d_mutex, d_categories);

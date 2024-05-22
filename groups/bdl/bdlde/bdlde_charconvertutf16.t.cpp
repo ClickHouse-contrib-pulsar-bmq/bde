@@ -5882,7 +5882,7 @@ void TestDriver::testCase16(bdlde::ByteOrder::Enum byteOrder)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         utf8CodePointsC = -1;
-        std::pmr::string utf8P(std::pmr::new_delete_resource());
+        std::experimental::pmr::string utf8P(std::experimental::pmr::new_delete_resource());
         utf8P.reserve(4092);
         rc = Util::utf16ToUtf8(&utf8P,
                                utf16.data(),
@@ -6269,8 +6269,8 @@ void TestDriver::testCase14(bdlde::ByteOrder::Enum byteOrder)
         if (veryVerbose) cout << displayUtf16(&utf16s[0], byteOrder) <<endl;
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        std::pmr::vector<unsigned short> utf16p(
-                                              std::pmr::new_delete_resource());
+        std::experimental::pmr::vector<unsigned short> utf16p(
+                                              std::experimental::pmr::new_delete_resource());
         utf16p.reserve(4092);
         utf16CodePoints = -1;
         rc = Util::utf8ToUtf16(&utf16p,
@@ -6374,7 +6374,7 @@ void TestDriver::testCase14(bdlde::ByteOrder::Enum byteOrder)
 #endif
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        std::pmr::u16string utf16U16sp(std::pmr::new_delete_resource());
+        std::experimental::pmr::u16string utf16U16sp(std::experimental::pmr::new_delete_resource());
         utf16U16sp.reserve(4092);
         utf16CodePoints = -1;
         rc = Util::utf8ToUtf16(&utf16U16sp,
@@ -6930,7 +6930,7 @@ void TestDriver::testCase12()
                         // TODO: Replace the following two assertions with the
                         // single one: 'ASSERT(utf8In == utf8Out);' as soon as
                         // 'bsl::string::operator==' overload for
-                        // 'std::pmr:string' is implemented.
+                        // 'std::experimental::pmr:string' is implemented.
 
                         ASSERT(utf8In.length() == utf8Out.length())
                         if (utf8In.length() == utf8Out.length()) {
@@ -8070,20 +8070,20 @@ int main(int argc, char**argv)
         if (verbose)
             cout << "\tTesting pmr containers\n";
 
-        TestDriver::testCase13<std::pmr::string,
-                               std::pmr::wstring,
-                               std::pmr::vector<char>,
-                               std::pmr::vector<wchar_t>,
-                               std::pmr::vector<unsigned short> >();
+        TestDriver::testCase13<std::experimental::pmr::string,
+                               std::experimental::pmr::wstring,
+                               std::experimental::pmr::vector<char>,
+                               std::experimental::pmr::vector<wchar_t>,
+                               std::experimental::pmr::vector<unsigned short> >();
 
         if (verbose)
             cout << "\tTesting pmr containers\n";
 
-        TestDriver::testCase13<std::pmr::string,
-                               std::pmr::u16string,
-                               std::pmr::vector<char>,
-                               std::pmr::vector<wchar_t>,
-                               std::pmr::vector<unsigned short> >();
+        TestDriver::testCase13<std::experimental::pmr::string,
+                               std::experimental::pmr::u16string,
+                               std::experimental::pmr::vector<char>,
+                               std::experimental::pmr::vector<wchar_t>,
+                               std::experimental::pmr::vector<unsigned short> >();
 #endif
       } break;
       case 12: {
@@ -8128,8 +8128,8 @@ int main(int argc, char**argv)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         if (verbose) cout << "\tTesting pmr containers\n";
 
-        TestDriver::testCase12<std::pmr::string, std::pmr::wstring>();
-        TestDriver::testCase12<std::pmr::string, bsl::u16string>();
+        TestDriver::testCase12<std::experimental::pmr::string, std::experimental::pmr::wstring>();
+        TestDriver::testCase12<std::experimental::pmr::string, bsl::u16string>();
 #endif
       } break;
       case 11: {
@@ -8188,11 +8188,11 @@ int main(int argc, char**argv)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         if (verbose) cout << "\tTesting pmr containers\n";
 
-        TestDriver::testCase11<std::pmr::vector<char>,
-                               std::pmr::string,
+        TestDriver::testCase11<std::experimental::pmr::vector<char>,
+                               std::experimental::pmr::string,
                                wchar_t>();
-        TestDriver::testCase11<std::pmr::vector<char>,
-                               std::pmr::string,
+        TestDriver::testCase11<std::experimental::pmr::vector<char>,
+                               std::experimental::pmr::string,
                                char16_t>();
 #endif
       } break;
@@ -8246,9 +8246,9 @@ int main(int argc, char**argv)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         if (verbose) cout << "\tTesting pmr containers\n";
 
-        TestDriver::testCase10<std::pmr::vector<unsigned short>,
-                               std::pmr::wstring>();
-        TestDriver::testCase10<std::pmr::vector<unsigned short>,
+        TestDriver::testCase10<std::experimental::pmr::vector<unsigned short>,
+                               std::experimental::pmr::wstring>();
+        TestDriver::testCase10<std::experimental::pmr::vector<unsigned short>,
                                bsl::u16string>();
 #endif
       } break;
@@ -8908,7 +8908,7 @@ int main(int argc, char**argv)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         {
-            std::pmr::wstring utf16Wstring(std::pmr::new_delete_resource());
+            std::experimental::pmr::wstring utf16Wstring(std::experimental::pmr::new_delete_resource());
 
             bsl::size_t numCodePoints16Wstring = 0;
 
@@ -9049,7 +9049,7 @@ int main(int argc, char**argv)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
         {
-            std::pmr::vector<char> utf8VecP(std::pmr::new_delete_resource());
+            std::experimental::pmr::vector<char> utf8VecP(std::experimental::pmr::new_delete_resource());
             {
                 bsl::size_t numCodePoints8 = 0;
 
@@ -9224,8 +9224,8 @@ int main(int argc, char**argv)
             }
 # ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
             {
-                std::pmr::vector<char> utf8Vecs(
-                                              std::pmr::new_delete_resource());
+                std::experimental::pmr::vector<char> utf8Vecs(
+                                              std::experimental::pmr::new_delete_resource());
                 bsl::size_t numCodePoints8 = 0;
 
                 rc = Util::utf16ToUtf8(&utf8Vecs,
@@ -9243,8 +9243,8 @@ int main(int argc, char**argv)
 
                 numCodePoints8 = -1;
 
-                std::pmr::vector<char> utf8VecB(
-                                              std::pmr::new_delete_resource());
+                std::experimental::pmr::vector<char> utf8VecB(
+                                              std::experimental::pmr::new_delete_resource());
                 rc = Util::utf16ToUtf8(&utf8VecB,
                                        bsl::u16string_view(
                                                        utf16C16,
@@ -9418,7 +9418,7 @@ int main(int argc, char**argv)
 #endif
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
             {
-                std::pmr::string utf8String(std::pmr::new_delete_resource());
+                std::experimental::pmr::string utf8String(std::experimental::pmr::new_delete_resource());
 
                 bsl::size_t numCodePoints8 = 0;
 
@@ -9438,7 +9438,7 @@ int main(int argc, char**argv)
                 ASSERT(0 == utf16W[numWords16W - 1]);
 
                 numCodePoints8 = -1;
-                std::pmr::string utf8StringB(std::pmr::new_delete_resource());
+                std::experimental::pmr::string utf8StringB(std::experimental::pmr::new_delete_resource());
                 rc = Util::utf16ToUtf8(&utf8StringB,
                                        bsl::u16string_view(
                                                         utf16C16,

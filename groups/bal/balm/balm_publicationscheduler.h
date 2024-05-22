@@ -149,7 +149,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <vector>                   // 'std::vector', 'std::pmr::vector'
+#include <vector>                   // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 
@@ -399,7 +399,7 @@ class PublicationScheduler {
                                           bsls::TimeInterval> > *result) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     int getCategorySchedule(
-                std::pmr::vector<std::pair<const Category *,
+                std::experimental::pmr::vector<std::pair<const Category *,
                                            bsls::TimeInterval>> *result) const;
 #endif
         // Load into the specified 'result' a representation of the current

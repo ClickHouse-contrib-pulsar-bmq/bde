@@ -486,7 +486,7 @@ struct IsVector {
     static const bool value =
                          bsl::is_same<VECTOR, bsl::vector<MEMBER> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                      || bsl::is_same<VECTOR, std::pmr::vector<MEMBER> >::value
+                      || bsl::is_same<VECTOR, std::experimental::pmr::vector<MEMBER> >::value
 #endif
                       || bsl::is_same<VECTOR, std::vector<MEMBER> >::value;
 };
@@ -495,7 +495,7 @@ template <class SET, class KEY = typename SET::key_type>
 struct IsSet {
     static const bool value = bsl::is_same<SET, bsl::set<KEY> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                           || bsl::is_same<SET, std::pmr::set<KEY> >::value
+                           || bsl::is_same<SET, std::experimental::pmr::set<KEY> >::value
 #endif
                            || bsl::is_same<SET, std::set<KEY> >::value;
 };
@@ -1233,7 +1233,7 @@ void MetricsManager::publish(const std::set<const Category *>& categories,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-void MetricsManager::publish(const std::pmr::set<const Category *>& categories,
+void MetricsManager::publish(const std::experimental::pmr::set<const Category *>& categories,
                              bool                                   resetFlag)
 {
     MetricsManager_PublicationHelper::publish(this, categories.begin(),
@@ -1270,7 +1270,7 @@ void MetricsManager::publishAll(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 void MetricsManager::publishAll(
-                     const std::pmr::set<const Category *>& excludedCategories,
+                     const std::experimental::pmr::set<const Category *>& excludedCategories,
                      bool                                   resetFlag)
 {
     MetricsManager_PublicationHelper::publishAll(this,
@@ -1338,7 +1338,7 @@ int MetricsManager::findGeneralPublishers(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 int MetricsManager::findGeneralPublishers(
-                               std::pmr::vector<Publisher *> *publishers) const
+                               std::experimental::pmr::vector<Publisher *> *publishers) const
 {
     bslmt::ReadLockGuard<bslmt::RWMutex> guard(&d_rwLock);
     return d_publishers->findGeneralPublishers(publishers);
@@ -1363,7 +1363,7 @@ int MetricsManager::findSpecificPublishers(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 int MetricsManager::findSpecificPublishers(
-                                 std::pmr::vector<Publisher *> *publishers,
+                                 std::experimental::pmr::vector<Publisher *> *publishers,
                                  const Category                *category) const
 {
     bslmt::ReadLockGuard<bslmt::RWMutex> guard(&d_rwLock);

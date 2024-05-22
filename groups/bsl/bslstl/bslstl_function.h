@@ -93,11 +93,11 @@ BSLS_IDENT("$Id: $")
 // 'std::function'.  This specification was never implemented by any vendor or
 // popular open-source standard library and allocator support was removed from
 // the 2017 standard version of 'std::function'.  A new design for
-// allocator support using 'std::pmr::polymorphic_allocator' instead of type
+// allocator support using 'std::experimental::pmr::polymorphic_allocator' instead of type
 // erasure is currently part of version 3 of the Library Fundamentals Technical
 // Specification (LFTS 3), after acceptance of paper P0987
 // (http://wg21.link/P0987).  This component follows the P0987 specification,
-// substituting 'bsl::allocator' for 'std::pmr::polymorphic_allocator'.
+// substituting 'bsl::allocator' for 'std::experimental::pmr::polymorphic_allocator'.
 //
 // 'bsl::function' meets the requirements for an allocator-aware type.
 // Specifically:

@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
         const std::vector<bdlt::Date> SCHEDULE_STD(SCHEDULE.begin(),
                                                    SCHEDULE.end());
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        const std::pmr::vector<bdlt::Date> SCHEDULE_PMR(SCHEDULE.begin(),
+        const std::experimental::pmr::vector<bdlt::Date> SCHEDULE_PMR(SCHEDULE.begin(),
                                                         SCHEDULE.end());
 #endif
 
@@ -446,7 +446,7 @@ int main(int argc, char *argv[])
 
             typedef std::vector<bdlt::Date>      StdVector;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            typedef std::pmr::vector<bdlt::Date> PmrVector;
+            typedef std::experimental::pmr::vector<bdlt::Date> PmrVector;
 #endif
 
             // 'periodDate' with no errors

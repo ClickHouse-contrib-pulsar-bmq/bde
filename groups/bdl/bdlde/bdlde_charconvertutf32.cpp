@@ -1895,7 +1895,7 @@ int CharConvertUtf32::utf8ToUtf32(std::vector<unsigned int> *dstVector,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-int CharConvertUtf32::utf8ToUtf32(std::pmr::vector<unsigned int> *dstVector,
+int CharConvertUtf32::utf8ToUtf32(std::experimental::pmr::vector<unsigned int> *dstVector,
                                   const char                     *srcString,
                                   unsigned int                    errorWord,
                                   ByteOrder::Enum                 byteOrder)
@@ -1933,7 +1933,7 @@ int CharConvertUtf32::utf8ToUtf32(std::vector<unsigned int> *dstVector,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-int CharConvertUtf32::utf8ToUtf32(std::pmr::vector<unsigned int> *dstVector,
+int CharConvertUtf32::utf8ToUtf32(std::experimental::pmr::vector<unsigned int> *dstVector,
                                   const bsl::string_view&         srcString,
                                   unsigned int                    errorWord,
                                   ByteOrder::Enum                 byteOrder)
@@ -2071,7 +2071,7 @@ int CharConvertUtf32::utf32ToUtf8(std::string           *dstString,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int CharConvertUtf32::utf32ToUtf8(std::pmr::string   *dstString,
+int CharConvertUtf32::utf32ToUtf8(std::experimental::pmr::string   *dstString,
                                   const unsigned int *srcString,
                                   bsl::size_t        *numCodePointsWritten,
                                   unsigned char       errorByte,
@@ -2128,7 +2128,7 @@ int CharConvertUtf32::utf32ToUtf8(std::string           *dstString,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int CharConvertUtf32::utf32ToUtf8(std::pmr::string   *dstString,
+int CharConvertUtf32::utf32ToUtf8(std::experimental::pmr::string   *dstString,
                                   const unsigned int *srcString,
                                   bsl::size_t         srcStringLength,
                                   bsl::size_t        *numCodePointsWritten,
@@ -2183,7 +2183,7 @@ int CharConvertUtf32::utf32ToUtf8(std::vector<char>  *dstVector,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-int CharConvertUtf32::utf32ToUtf8(std::pmr::vector<char> *dstVector,
+int CharConvertUtf32::utf32ToUtf8(std::experimental::pmr::vector<char> *dstVector,
                                   const unsigned int     *srcString,
                                   bsl::size_t            *numCodePointsWritten,
                                   unsigned char           errorByte,
@@ -2240,7 +2240,7 @@ int CharConvertUtf32::utf32ToUtf8(std::vector<char>  *dstVector,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-int CharConvertUtf32::utf32ToUtf8(std::pmr::vector<char> *dstVector,
+int CharConvertUtf32::utf32ToUtf8(std::experimental::pmr::vector<char> *dstVector,
                                   const unsigned int     *srcString,
                                   bsl::size_t             srcStringLength,
                                   bsl::size_t            *numCodePointsWritten,

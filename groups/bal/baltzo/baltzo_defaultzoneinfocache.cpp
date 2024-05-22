@@ -32,7 +32,7 @@ struct IsCCharVector {
              bsl::is_same<CCHAR_VECTOR, bsl::vector<const char *> >::value
           || bsl::is_same<CCHAR_VECTOR, std::vector<const char *> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-          || bsl::is_same<CCHAR_VECTOR, std::pmr::vector<const char *> >::value
+          || bsl::is_same<CCHAR_VECTOR, std::experimental::pmr::vector<const char *> >::value
 #endif
     ;
 };
@@ -165,7 +165,7 @@ void DefaultZoneinfoCache::loadDefaultZoneinfoDataLocations(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 void DefaultZoneinfoCache::loadDefaultZoneinfoDataLocations(
-                                     std::pmr::vector<const char *> *locations)
+                                     std::experimental::pmr::vector<const char *> *locations)
 {
     u::loadDefaultZoneinfoDataLocationsImp(locations);
 }

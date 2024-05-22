@@ -477,7 +477,7 @@ class ObjectCatalog {
     void removeAll(bsl::vector<TYPE>      *buffer);
     void removeAll(std::vector<TYPE>      *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void removeAll(std::pmr::vector<TYPE> *buffer);
+    void removeAll(std::experimental::pmr::vector<TYPE> *buffer);
 #endif
         // Remove all objects that are currently held in this catalog and
         // optionally load into the optionally specified 'buffer' the removed
@@ -705,7 +705,7 @@ void ObjectCatalog<TYPE>::removeAllImp(VECTOR *buffer)
     static const bool isVector =
                             bsl::is_same<bsl::vector<TYPE>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                         || bsl::is_same<std::pmr::vector<TYPE>, VECTOR>::value
+                         || bsl::is_same<std::experimental::pmr::vector<TYPE>, VECTOR>::value
 #endif
                          || bsl::is_same<std::vector<TYPE>, VECTOR>::value;
     BSLMF_ASSERT(isVector);
@@ -922,7 +922,7 @@ void ObjectCatalog<TYPE>::removeAll(std::vector<TYPE> *buffer)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
 inline
-void ObjectCatalog<TYPE>::removeAll(std::pmr::vector<TYPE> *buffer)
+void ObjectCatalog<TYPE>::removeAll(std::experimental::pmr::vector<TYPE> *buffer)
 {
     removeAllImp(buffer);
 }

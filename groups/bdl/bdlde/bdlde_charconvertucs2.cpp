@@ -746,7 +746,7 @@ int CharConvertUcs2::utf8ToUcs2(std::vector<unsigned short> *result,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 int CharConvertUcs2::utf8ToUcs2(
-                              std::pmr::vector<unsigned short> *result,
+                              std::experimental::pmr::vector<unsigned short> *result,
                               const char                       *srcString,
                               unsigned short                    errorCharacter)
 {
@@ -870,7 +870,7 @@ int CharConvertUcs2::ucs2ToUtf8(std::string          *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int CharConvertUcs2::ucs2ToUtf8(std::pmr::string     *result,
+int CharConvertUcs2::ucs2ToUtf8(std::experimental::pmr::string     *result,
                                 const unsigned short *srcString,
                                 bsl::size_t          *numCharsWritten)
 {

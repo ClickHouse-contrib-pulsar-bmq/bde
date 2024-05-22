@@ -1322,7 +1322,7 @@ class SkipList {
     int removeAll(bsl::vector<PairHandle>      *removed);
     int removeAll(std::vector<PairHandle>      *removed);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    int removeAll(std::pmr::vector<PairHandle> *removed);
+    int removeAll(std::experimental::pmr::vector<PairHandle> *removed);
 #endif
         // Remove all items from this list.  Optionally specify 'removed', a
         // vector to which to append handles to the removed nodes.  The items
@@ -1335,7 +1335,7 @@ class SkipList {
     int removeAllRaw(bsl::vector<Pair *>      *removed);
     int removeAllRaw(std::vector<Pair *>      *removed);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    int removeAllRaw(std::pmr::vector<Pair *> *removed);
+    int removeAllRaw(std::experimental::pmr::vector<Pair *> *removed);
 #endif
         // Remove all items from this list.  Append to the specified
         // 'removed' vector pointers that can be used to refer to the removed
@@ -1638,14 +1638,14 @@ template <class KEY, class DATA>
 template <class VECTOR, class VALUE_TYPE>
 class SkipList<KEY, DATA>::IsVector {
     // This 'struct' has a 'value' that evaluates to 'true' if the specified
-    // 'VECTOR' is a 'bsl', 'std', or 'std::pmr' 'vector<VALUE_TYPE>'.
+    // 'VECTOR' is a 'bsl', 'std', or 'std::experimental::pmr' 'vector<VALUE_TYPE>'.
 
   public:
     // PUBLIC CLASS DATA
     static const bool value =
                       bsl::is_same<bsl::vector<VALUE_TYPE>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                   || bsl::is_same<std::pmr::vector<VALUE_TYPE>, VECTOR>::value
+                   || bsl::is_same<std::experimental::pmr::vector<VALUE_TYPE>, VECTOR>::value
 #endif
                    || bsl::is_same<std::vector<VALUE_TYPE>, VECTOR>::value;
 };
@@ -3198,7 +3198,7 @@ int SkipList<KEY, DATA>::removeAll(std::vector<PairHandle> *removed)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template<class KEY, class DATA>
 inline
-int SkipList<KEY, DATA>::removeAll(std::pmr::vector<PairHandle> *removed)
+int SkipList<KEY, DATA>::removeAll(std::experimental::pmr::vector<PairHandle> *removed)
 {
     return removeAllImp(removed);
 }
@@ -3221,7 +3221,7 @@ int SkipList<KEY, DATA>::removeAllRaw(std::vector<Pair *> *removed)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template<class KEY, class DATA>
 inline
-int SkipList<KEY, DATA>::removeAllRaw(std::pmr::vector<Pair *> *removed)
+int SkipList<KEY, DATA>::removeAllRaw(std::experimental::pmr::vector<Pair *> *removed)
 {
     return removeAllImp(removed);
 }

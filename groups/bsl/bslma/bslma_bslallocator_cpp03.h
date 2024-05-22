@@ -52,7 +52,7 @@ class allocator : public polymorphic_allocator<TYPE> {
     // underlying mechanism object of a type derived from 'bslma::Allocator'.
     // This class template adheres to the allocator requirements defined in
     // section [allocator.requirements] and implements a superset of the
-    // 'std::pmr::polymorphic_allocator' class template described in section
+    // 'std::experimental::pmr::polymorphic_allocator' class template described in section
     // [mem.poly.allocator.class] of the C++ standard and may be used to
     // instantiate any [container] class template that follows the STL
     // allocator protocol.  The allocation mechanism is chosen at run-time,

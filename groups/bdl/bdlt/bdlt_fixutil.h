@@ -625,34 +625,34 @@ struct FixUtil {
                         const FixUtilConfiguration&  configuration);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const Date&                  object);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const Date&                  object,
                         const FixUtilConfiguration&  configuration);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const Time&                  object);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const Time&                  object,
                         const FixUtilConfiguration&  configuration);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const Datetime&              object);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const Datetime&              object,
                         const FixUtilConfiguration&  configuration);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const DateTz&                object);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const DateTz&                object,
                         const FixUtilConfiguration&  configuration);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const TimeTz&                object);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const TimeTz&                object,
                         const FixUtilConfiguration&  configuration);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const DatetimeTz&            object);
-    static int generate(std::pmr::string            *string,
+    static int generate(std::experimental::pmr::string            *string,
                         const DatetimeTz&            object,
                         const FixUtilConfiguration&  configuration);
 #endif
@@ -1142,7 +1142,7 @@ int FixUtil::generate(std::string *string, const DatetimeTz& object)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-int FixUtil::generate(std::pmr::string *string, const Date& object)
+int FixUtil::generate(std::experimental::pmr::string *string, const Date& object)
 {
     return generate(string,
                     object,
@@ -1150,7 +1150,7 @@ int FixUtil::generate(std::pmr::string *string, const Date& object)
 }
 
 inline
-int FixUtil::generate(std::pmr::string *string, const Time& object)
+int FixUtil::generate(std::experimental::pmr::string *string, const Time& object)
 {
     return generate(string,
                     object,
@@ -1158,7 +1158,7 @@ int FixUtil::generate(std::pmr::string *string, const Time& object)
 }
 
 inline
-int FixUtil::generate(std::pmr::string *string, const Datetime& object)
+int FixUtil::generate(std::experimental::pmr::string *string, const Datetime& object)
 {
     return generate(string,
                     object,
@@ -1166,7 +1166,7 @@ int FixUtil::generate(std::pmr::string *string, const Datetime& object)
 }
 
 inline
-int FixUtil::generate(std::pmr::string *string, const DateTz& object)
+int FixUtil::generate(std::experimental::pmr::string *string, const DateTz& object)
 {
     return generate(string,
                     object,
@@ -1174,7 +1174,7 @@ int FixUtil::generate(std::pmr::string *string, const DateTz& object)
 }
 
 inline
-int FixUtil::generate(std::pmr::string *string, const TimeTz& object)
+int FixUtil::generate(std::experimental::pmr::string *string, const TimeTz& object)
 {
     return generate(string,
                     object,
@@ -1182,7 +1182,7 @@ int FixUtil::generate(std::pmr::string *string, const TimeTz& object)
 }
 
 inline
-int FixUtil::generate(std::pmr::string *string, const DatetimeTz& object)
+int FixUtil::generate(std::experimental::pmr::string *string, const DatetimeTz& object)
 {
     return generate(string,
                     object,

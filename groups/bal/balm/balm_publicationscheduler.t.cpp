@@ -285,7 +285,7 @@ struct IsVector {
     static const bool value =
                          bsl::is_same<VECTOR, bsl::vector<MEMBER> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                      || bsl::is_same<VECTOR, std::pmr::vector<MEMBER> >::value
+                      || bsl::is_same<VECTOR, std::experimental::pmr::vector<MEMBER> >::value
 #endif
                       || bsl::is_same<VECTOR, std::vector<MEMBER> >::value;
 };
@@ -1814,7 +1814,7 @@ int main(int argc, char *argv[])
             ASSERT(equalSchedule(intervalMap, scheduleStd));
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-            std::pmr::vector<PairStd> schedulePmr;
+            std::experimental::pmr::vector<PairStd> schedulePmr;
             ASSERT(static_cast<int>(intervalMap.size()) ==
                                          MX.getCategorySchedule(&schedulePmr));
             ASSERT(equalSchedule(intervalMap, schedulePmr));

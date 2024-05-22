@@ -311,7 +311,7 @@ struct GuidUtil {
     static void guidToString(bsl::string *result, const Guid& guid);
     static void guidToString(std::string *result, const Guid& guid);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void guidToString(std::pmr::string *result, const Guid& guid);
+    static void guidToString(std::experimental::pmr::string *result, const Guid& guid);
 #endif
         // Serialize the specified 'guid' into the specified 'result'.  The
         // 'result' string will be in a format suitable for 'guidFromString'.

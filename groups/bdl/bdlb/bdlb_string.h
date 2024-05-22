@@ -22,7 +22,7 @@ BSLS_IDENT("$Id: $")
 //
 //@DESCRIPTION: This component defines a utility 'struct', 'bdlb::String', that
 // provides a suite of functions operating on STL-style strings ('bsl::string',
-// 'std::string', 'std::pmr::string'), C-style strings (necessarily
+// 'std::string', 'std::experimental::pmr::string'), C-style strings (necessarily
 // null-terminated), and strings specified by a '(const char *, int)' or
 // '(char *, int)' pair.
 //
@@ -41,7 +41,7 @@ BSLS_IDENT("$Id: $")
 // case-sensitive and case-insensitive comparisons, case conversions, trimming
 // functions, and other length-related operations.  Most of the methods are
 // overloaded to work on three string styles: (1) STL-style ('bsl::string',
-// 'std::string', 'std::pmr::string'), (2) C-style, and (3) a
+// 'std::string', 'std::experimental::pmr::string'), (2) C-style, and (3) a
 // '(const char *, int)' or '(char *, int)' pair.  These overloaded methods are
 // indicated schematically with a pseudo-argument 'STR' representing any of the
 // three possible string styles.  Note that the pseudo-signature
@@ -85,7 +85,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_cstring.h>
 #include <bsl_string.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace bdlb {
@@ -96,7 +96,7 @@ namespace bdlb {
 
 struct String {
     // This 'struct' provides a namespace for a suite of functions on STL-style
-    // strings ('bsl::string', 'std::string', 'std::pmr::string'), C-style
+    // strings ('bsl::string', 'std::string', 'std::experimental::pmr::string'), C-style
     // strings, and strings specified by a '(const char *, int)' or
     // '(char *, int)' pair.
 
@@ -202,7 +202,7 @@ struct String {
     static void ltrim(bsl::string *string);
     static void ltrim(std::string *string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void ltrim(std::pmr::string *string);
+    static void ltrim(std::experimental::pmr::string *string);
 #endif
         // Remove all leading whitespace characters from the specified
         // 'string'.  If 'string' consists of only whitespace then it will be
@@ -230,8 +230,8 @@ struct String {
         // is undefined unless '0 <= length'.
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void pad(std::pmr::string            *string,
-                    std::pmr::string::size_type  length,
+    static void pad(std::experimental::pmr::string            *string,
+                    std::experimental::pmr::string::size_type  length,
                     char                         padChar = ' ');
         // Append repeatedly to the specified 'string' the optionally specified
         // 'padChar' until 'string' has the specified 'length'.  If 'padChar'
@@ -243,7 +243,7 @@ struct String {
     static void rtrim(bsl::string *string);
     static void rtrim(std::string *string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void rtrim(std::pmr::string *string);
+    static void rtrim(std::experimental::pmr::string *string);
 #endif
         // Remove all trailing whitespace characters from the specified
         // 'string'.  If 'string' consists of only whitespace then it will be
@@ -341,7 +341,7 @@ struct String {
     static void toLower(bsl::string *string);
     static void toLower(std::string *string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void toLower(std::pmr::string *string);
+    static void toLower(std::experimental::pmr::string *string);
 #endif
         // Replace all upper case characters in the specified 'string' having
         // the optionally specified 'length' with their lower-case equivalent.
@@ -353,7 +353,7 @@ struct String {
     static void toUpper(bsl::string *string);
     static void toUpper(std::string *string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void toUpper(std::pmr::string *string);
+    static void toUpper(std::experimental::pmr::string *string);
 #endif
         // Replace all lower case characters in the specified 'string' having
         // the optionally specified 'length' with their upper-case equivalent.
@@ -364,7 +364,7 @@ struct String {
     static void trim(bsl::string *string);
     static void trim(std::string *string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void trim(std::pmr::string *string);
+    static void trim(std::experimental::pmr::string *string);
 #endif
         // Remove all leading and trailing whitespace characters from the
         // specified 'string'.  If 'string' consists of only whitespace then it
@@ -653,7 +653,7 @@ void String::ltrim(std::string *string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-void String::ltrim(std::pmr::string *string)
+void String::ltrim(std::experimental::pmr::string *string)
 {
     BSLS_ASSERT(string);
     BSLS_ASSERT(string->size() <= INT_MAX);
@@ -689,8 +689,8 @@ void String::pad(std::string *string, int length, char padChar)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-void String::pad(std::pmr::string            *string,
-                 std::pmr::string::size_type  length,
+void String::pad(std::experimental::pmr::string            *string,
+                 std::experimental::pmr::string::size_type  length,
                  char                         padChar)
 {
     BSLS_ASSERT(string);
@@ -727,7 +727,7 @@ void String::rtrim(std::string *string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-void String::rtrim(std::pmr::string *string)
+void String::rtrim(std::experimental::pmr::string *string)
 {
     BSLS_ASSERT(string);
     BSLS_ASSERT(string->size() <= INT_MAX);
@@ -759,7 +759,7 @@ void String::toLower(std::string *string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-void String::toLower(std::pmr::string *string)
+void String::toLower(std::experimental::pmr::string *string)
 {
     BSLS_ASSERT(string);
     BSLS_ASSERT(string->size() <= INT_MAX);
@@ -788,7 +788,7 @@ void String::toUpper(std::string *string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-void String::toUpper(std::pmr::string *string)
+void String::toUpper(std::experimental::pmr::string *string)
 {
     BSLS_ASSERT(string);
     BSLS_ASSERT(string->size() <= INT_MAX);
@@ -836,7 +836,7 @@ void String::trim(std::string *string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-void String::trim(std::pmr::string *string)
+void String::trim(std::experimental::pmr::string *string)
 {
     BSLS_ASSERT(string);
     BSLS_ASSERT(string->size() <= INT_MAX);

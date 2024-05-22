@@ -1049,7 +1049,7 @@ class StripedUnorderedContainerImpl {
     bsl::size_t getValue(bsl::vector<VALUE> *valuesPtr, const KEY& key) const;
     bsl::size_t getValue(std::vector<VALUE> *valuesPtr, const KEY& key) const;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    bsl::size_t getValue(std::pmr::vector<VALUE> *valuesPtr, const KEY& key)
+    bsl::size_t getValue(std::experimental::pmr::vector<VALUE> *valuesPtr, const KEY& key)
                                                                          const;
 #endif
         // Load, into the specified '*valuesPtr', the value attributes of every
@@ -2251,7 +2251,7 @@ StripedUnorderedContainerImpl<KEY, VALUE, HASH, EQUAL>::getValueImpl(
     static const bool isVector =
                            bsl::is_same<bsl::vector<VALUE>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                        || bsl::is_same<std::pmr::vector<VALUE>, VECTOR>::value
+                        || bsl::is_same<std::experimental::pmr::vector<VALUE>, VECTOR>::value
 #endif
                         || bsl::is_same<std::vector<VALUE>, VECTOR>::value;
     BSLMF_ASSERT(isVector);
@@ -2858,7 +2858,7 @@ bsl::size_t StripedUnorderedContainerImpl<KEY, VALUE, HASH, EQUAL>::getValue(
 template <class KEY, class VALUE, class HASH, class EQUAL>
 inline
 bsl::size_t StripedUnorderedContainerImpl<KEY, VALUE, HASH, EQUAL>::getValue(
-                                            std::pmr::vector<VALUE> *valuesPtr,
+                                            std::experimental::pmr::vector<VALUE> *valuesPtr,
                                             const KEY&               key) const
 {
     return getValueImpl(valuesPtr, key);

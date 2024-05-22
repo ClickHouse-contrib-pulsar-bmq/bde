@@ -610,7 +610,7 @@ int main(int argc, char *argv[])
                     bsl::vector<balm::MetricRecord> recordsBsl(Z);
                     std::vector<balm::MetricRecord> recordsStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                    std::pmr::vector<balm::MetricRecord> recordsPmr;
+                    std::experimental::pmr::vector<balm::MetricRecord> recordsPmr;
 #endif
                     balm::MetricRecord *recordsBegin = 0, *recordsEnd = 0;
 
@@ -1066,7 +1066,7 @@ int main(int argc, char *argv[])
                     bsl::vector<balm::MetricRecord> recordsBsl(Z);
                     std::vector<balm::MetricRecord> recordsStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                    std::pmr::vector<balm::MetricRecord> recordsPmr;
+                    std::experimental::pmr::vector<balm::MetricRecord> recordsPmr;
 #endif
                     balm::MetricRecord *recordsBegin = 0, *recordsEnd = 0;
 

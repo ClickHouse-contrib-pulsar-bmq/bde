@@ -628,7 +628,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_ostream.h>
 #include <bsl_string.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace bsls {
@@ -927,54 +927,54 @@ struct Iso8601Util {
                         const GenerateConfiguration&     configuration);
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const bsls::TimeInterval&        object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const bsls::TimeInterval&        object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const Date&                      object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const Date&                      object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const Time&                      object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const Time&                      object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const Datetime&                  object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const Datetime&                  object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DateTz&                    object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DateTz&                    object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const TimeTz&                    object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const TimeTz&                    object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DatetimeTz&                object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DatetimeTz&                object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DateOrDateTz&              object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DateOrDateTz&              object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const TimeOrTimeTz&              object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const TimeOrTimeTz&              object,
                         const GenerateConfiguration&     configuration);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DatetimeOrDatetimeTz&      object);
-    static int generate(std::pmr::string                *string,
+    static int generate(std::experimental::pmr::string                *string,
                         const DatetimeOrDatetimeTz&      object,
                         const GenerateConfiguration&     configuration);
         // Load the ISO 8601 representation of the specified 'object' into the
@@ -2169,62 +2169,62 @@ int Iso8601Util::generate(std::string                 *string,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-int Iso8601Util::generate(std::pmr::string         *string,
+int Iso8601Util::generate(std::experimental::pmr::string         *string,
                           const bsls::TimeInterval& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const Date& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const Date& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const Time& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const Time& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const Datetime& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const Datetime& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const DateTz& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const DateTz& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const TimeTz& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const TimeTz& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const DatetimeTz& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const DatetimeTz& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const DateOrDateTz& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const DateOrDateTz& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string *string, const TimeOrTimeTz& object)
+int Iso8601Util::generate(std::experimental::pmr::string *string, const TimeOrTimeTz& object)
 {
     return generate(string, object, defaultConfiguration());
 }
 
 inline
-int Iso8601Util::generate(std::pmr::string            *string,
+int Iso8601Util::generate(std::experimental::pmr::string            *string,
                           const DatetimeOrDatetimeTz&  object)
 {
     return generate(string, object, defaultConfiguration());

@@ -401,7 +401,7 @@ class StringRefImp : public StringRefData<CHAR_TYPE> {
     StringRefImp(const std::basic_string<CHAR_TYPE>& str);          // IMPLICIT
     StringRefImp(const bsl::basic_string<CHAR_TYPE>& str);          // IMPLICIT
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    StringRefImp(const std::pmr::basic_string<CHAR_TYPE>& str);     // IMPLICIT
+    StringRefImp(const std::experimental::pmr::basic_string<CHAR_TYPE>& str);     // IMPLICIT
 #endif
         // Create a string-reference object having a valid 'std::string' value,
         // whose external representation is defined by the specified 'str'
@@ -739,7 +739,7 @@ StringRefImp<CHAR_TYPE>::StringRefImp(const std::basic_string<CHAR_TYPE>& str)
 template <class CHAR_TYPE>
 inline
 StringRefImp<CHAR_TYPE>::StringRefImp(
-                                  const std::pmr::basic_string<CHAR_TYPE>& str)
+                                  const std::experimental::pmr::basic_string<CHAR_TYPE>& str)
 : Base(str.data(), str.data() + str.length())
 {
 }

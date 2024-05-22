@@ -22,7 +22,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_string.h>
 #include <bsl_string_view.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace bdlb {
@@ -61,7 +61,7 @@ struct LiteralUtil {
         // than Unicode code points for escapes.
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void createQuotedEscapedCString(std::pmr::string         *result,
+    static void createQuotedEscapedCString(std::experimental::pmr::string         *result,
                                            const bsl::string_view&   input);
         // Load into the specified 'result' string the '"' delimited and
         // escaped C/C++ string literal equivalent representing the same value

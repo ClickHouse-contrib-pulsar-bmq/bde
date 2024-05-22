@@ -1256,7 +1256,7 @@ int main(int argc, char *argv[])
         TC::test2<bsl::vector<const char *> >();
         TC::test2<std::vector<const char *> >();
 #if defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR)
-        TC::test2<std::pmr::vector<const char *> >();
+        TC::test2<std::experimental::pmr::vector<const char *> >();
 #endif
       } break;
       case 1: {

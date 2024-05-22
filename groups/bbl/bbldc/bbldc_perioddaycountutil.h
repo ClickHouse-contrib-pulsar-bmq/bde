@@ -139,7 +139,7 @@ struct PeriodDayCountUtil {
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     static double yearsDiff(const bdlt::Date&                   beginDate,
                             const bdlt::Date&                   endDate,
-                            const std::pmr::vector<bdlt::Date>& periodDate,
+                            const std::experimental::pmr::vector<bdlt::Date>& periodDate,
                             double                              periodYearDiff,
                             DayCountConvention::Enum            convention);
 #endif
@@ -212,7 +212,7 @@ inline
 double PeriodDayCountUtil::yearsDiff(
                             const bdlt::Date&                   beginDate,
                             const bdlt::Date&                   endDate,
-                            const std::pmr::vector<bdlt::Date>& periodDate,
+                            const std::experimental::pmr::vector<bdlt::Date>& periodDate,
                             double                              periodYearDiff,
                             DayCountConvention::Enum            convention)
 {

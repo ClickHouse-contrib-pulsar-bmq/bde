@@ -166,7 +166,7 @@ bsl::ostream& operator<<(bsl::ostream& stream, u::VecType value)
 {
     stream << (u::e_BSL == value ? "bsl"      :
                u::e_STD == value ? "std"      :
-               u::e_PMR == value ? "std::pmr" : "unk");
+               u::e_PMR == value ? "std::experimental::pmr" : "unk");
 
     return stream;
 }
@@ -638,7 +638,7 @@ void testCasePopLE()
                             bsl::is_same<bsl::vector<Item>, VECTOR>::value
                           ? u::e_BSL
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                          : bsl::is_same<std::pmr::vector<Item>, VECTOR>::value
+                          : bsl::is_same<std::experimental::pmr::vector<Item>, VECTOR>::value
                           ? u::e_PMR
 #endif
                           : bsl::is_same<std::vector<Item>, VECTOR>::value
@@ -2472,7 +2472,7 @@ int main(int argc, char *argv[])
         TC::testCasePopLE<bsl::vector<Item> >();
         TC::testCasePopLE<std::vector<Item> >();
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        TC::testCasePopLE<std::pmr::vector<Item> >();
+        TC::testCasePopLE<std::experimental::pmr::vector<Item> >();
 #endif
       } break;
       case 6: {

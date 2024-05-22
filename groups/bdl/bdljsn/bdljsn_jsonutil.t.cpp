@@ -90,8 +90,8 @@ using bsl::ends;
 // [ 5] static int write(bsl::streambuf*, const Json&, const WriteOptions&);
 // [ 5] static int write(bsl::string*, const Json&);
 // [ 5] static int write(bsl::string*, const Json&, const WriteOptions&);
-// [ 5] static int write(std::pmr::string*, const Json&);
-// [ 5] static int write(std::pmr::string*, const Json&, const WriteOptions&);
+// [ 5] static int write(std::experimental::pmr::string*, const Json&);
+// [ 5] static int write(std::experimental::pmr::string*, const Json&, const WriteOptions&);
 // [ 5] static int write(std::string*, const Json&);
 // [ 5] static int write(std::string*, const Json&, const WriteOptions&);
 // [ 6] static ostream& printError(ostream&, streambuf *, const Error&);
@@ -1157,8 +1157,8 @@ int main(int argc, char *argv[])
         //                    const WriteOptions&);
         //   static int write(bsl::string*, const Json&);
         //   static int write(bsl::string*, const Json&, const WriteOptions&);
-        //   static int write(std::pmr::string*, const Json&);
-        //   static int write(std::pmr::string*, const Json&,
+        //   static int write(std::experimental::pmr::string*, const Json&);
+        //   static int write(std::experimental::pmr::string*, const Json&,
         //                    const WriteOptions&);
         //   static int write(std::string*, const Json&);
         //   static int write(std::string         *output,
@@ -1282,11 +1282,11 @@ int main(int argc, char *argv[])
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         if (verbose)
-            cout << "Testing 'static int write(std::pmr::string*, const "
+            cout << "Testing 'static int write(std::experimental::pmr::string*, const "
                     "Json&);'"
                  << endl;
         {
-            std::pmr::string outputStr;
+            std::experimental::pmr::string outputStr;
 
             int rc = Util::write(&outputStr, JSON_OBJECT);
             ASSERTV(rc, 0 == rc);
@@ -1295,11 +1295,11 @@ int main(int argc, char *argv[])
 
         if (verbose)
             cout
-                << "Testing 'static int write(std::pmr::string*, const Json&, "
+                << "Testing 'static int write(std::experimental::pmr::string*, const Json&, "
                    "const WriteOptions&);'"
                 << endl;
         {
-            std::pmr::string outputStr;
+            std::experimental::pmr::string outputStr;
 
             int rc = Util::write(&outputStr, JSON_OBJECT, OPTIONS_IIL_0_SPL_0);
             ASSERTV(rc, 0 == rc);

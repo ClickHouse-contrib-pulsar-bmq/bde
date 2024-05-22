@@ -894,7 +894,7 @@ void testLocking()
         bslmt::ThreadUtil::create(&handle, workThread, &tdWrite);
         smp.wait();
 
-        std::pmr::vector<bsl::string> values;
+        std::experimental::pmr::vector<bsl::string> values;
         bsl::size_t                   rc = strip.getValue(&values, key);
         (void) rc;
 

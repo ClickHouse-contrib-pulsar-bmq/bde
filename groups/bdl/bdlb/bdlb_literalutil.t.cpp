@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
         bsl::string      bslResult("garbage", &ta);
         std::string      stdResult("garbage");
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        std::pmr::string pmrResult("garbage", &ta);
+        std::experimental::pmr::string pmrResult("garbage", &ta);
 #endif
 
         // 'bsl::string_view' input
@@ -312,10 +312,10 @@ int main(int argc, char *argv[])
 #endif
         }
 
-        // 'std::pmr::string' input
+        // 'std::experimental::pmr::string' input
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
         {
-            const std::pmr::string inPmr(inArray, sizeof(inArray) - 1, &ta);
+            const std::experimental::pmr::string inPmr(inArray, sizeof(inArray) - 1, &ta);
 
             bslResult = "garbage";
             stdResult = "garbage";

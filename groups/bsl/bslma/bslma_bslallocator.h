@@ -76,20 +76,20 @@ BSLS_IDENT("$Id: $")
 ///Relationship to 'bsl::polymorphic_allocator'
 ///--------------------------------------------
 // The 'bsl::allocator' class template was the inspiration for the C++17
-// 'std::pmr::polymorphic_allocator' class template (section 23.12.3,
+// 'std::experimental::pmr::polymorphic_allocator' class template (section 23.12.3,
 // [mem.poly.allocator.class] in the C++17 Standard) and 'bslma::Allocator' was
-// the inspiration for the C++17 'std::pmr::memory_resource' (section 23.12.2,
+// the inspiration for the C++17 'std::experimental::pmr::memory_resource' (section 23.12.2,
 // mem.res.class] in the C++17 Standard).  For compatibility with the C++17
 // standard, 'bsl::allocator' is derived from 'bsl::polymorphic_allocator'
 // which, when using a C++17 library, is identical to
-// 'std::pmr::polymorphic_allocator'.  Similarly, 'bslma::Allocator' is derived
+// 'std::experimental::pmr::polymorphic_allocator'.  Similarly, 'bslma::Allocator' is derived
 // from 'bsl::memory_resource', which is identical to
-// 'std::pmr::memory_resource'.  These inheritance relationships ensure that a
+// 'std::experimental::pmr::memory_resource'.  These inheritance relationships ensure that a
 // 'bsl::allocator' instance can be passed to any type that is instantiated
-// with a 'std::pmr::polymorphic_allocator', including 'pmr' containers from
+// with a 'std::experimental::pmr::polymorphic_allocator', including 'pmr' containers from
 // the platform library.  Similarly, a pointer to 'bslma::Allocator' is
-// implicitly convertible to both 'std::pmr::memory_resource *' and
-// 'std::pmr::polymorphic_allocator'.
+// implicitly convertible to both 'std::experimental::pmr::memory_resource *' and
+// 'std::experimental::pmr::polymorphic_allocator'.
 //
 ///C++03 Restrictions on Allocator Usage
 ///--------------------------------------
@@ -518,7 +518,7 @@ class allocator : public polymorphic_allocator<TYPE> {
     // underlying mechanism object of a type derived from 'bslma::Allocator'.
     // This class template adheres to the allocator requirements defined in
     // section [allocator.requirements] and implements a superset of the
-    // 'std::pmr::polymorphic_allocator' class template described in section
+    // 'std::experimental::pmr::polymorphic_allocator' class template described in section
     // [mem.poly.allocator.class] of the C++ standard and may be used to
     // instantiate any [container] class template that follows the STL
     // allocator protocol.  The allocation mechanism is chosen at run-time,

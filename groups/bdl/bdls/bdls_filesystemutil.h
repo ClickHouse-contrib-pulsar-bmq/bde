@@ -299,7 +299,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_vector.h>
 #include <bsl_cstddef.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 #include <vector>
 
 #include <sys/types.h>
@@ -497,7 +497,7 @@ struct FilesystemUtil {
         //: o 'e_WRITE_ONLY
         //: o 'e_READ_WRITE'
         // The parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
 
@@ -510,7 +510,7 @@ struct FilesystemUtil {
     static int getWorkingDirectory(bsl::string *path);
     static int getWorkingDirectory(std::string *path);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getWorkingDirectory(std::pmr::string *path);
+    static int getWorkingDirectory(std::experimental::pmr::string *path);
 #endif
         // Load into the specified 'path' the absolute pathname of the current
         // working directory.  Return 0 on success and a non-zero value
@@ -522,7 +522,7 @@ struct FilesystemUtil {
         // Set the working directory of the current process to the specified
         // 'path'.  Return 0 on success and a non-zero value otherwise.  The
         // parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static bool exists(const char *path);
@@ -533,7 +533,7 @@ struct FilesystemUtil {
         // the result of this function is platform dependent. On POSIX/Unix
         // platforms this method dereferences symlinks, while on Windows it
         // does not.  The parameterized 'STRING_TYPE' must be one of
-        // 'bsl::string', 'std::string', 'std::pmr::string' (if supported), or
+        // 'bsl::string', 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static bool isRegularFile(const char *path, bool followLinksFlag = false);
@@ -550,7 +550,7 @@ struct FilesystemUtil {
         // negative test on the "directory" attribute, i.e., on Windows,
         // everything that exists and is not a directory is a regular file.
         // The parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static bool isDirectory(const char *path, bool followLinksFlag = false);
@@ -563,7 +563,7 @@ struct FilesystemUtil {
         // is 'true' (otherwise return 'false').  Platform-specific note: On
         // Windows, a "shortcut" is not a symbolic link.  The parameterized
         // 'STRING_TYPE' must be one of 'bsl::string', 'std::string',
-        // 'std::pmr::string' (if supported), or 'bslstl::StringRef'.
+        // 'std::experimental::pmr::string' (if supported), or 'bslstl::StringRef'.
 
     static bool isSymbolicLink(const char *path);
     template <class STRING_TYPE>
@@ -572,7 +572,7 @@ struct FilesystemUtil {
         // specified 'path', and 'false' otherwise.  Windows directory
         // junctions are treated as directory symbolic links.  The
         // parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static int getLastModificationTime(bdlt::Datetime *time, const char *path);
@@ -583,7 +583,7 @@ struct FilesystemUtil {
         // file at the specified 'path', as reported by the filesystem.  Return
         // 0 on success, and a non-zero value otherwise.  The time is reported
         // in UTC.  The parameterized 'STRING_TYPE' must be one of
-        // 'bsl::string', 'std::string', 'std::pmr::string' (if supported), or
+        // 'bsl::string', 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static int getLastModificationTime(bdlt::Datetime *time,
@@ -610,7 +610,7 @@ struct FilesystemUtil {
         // component used as a directory in 'path' exists but is not a
         // directory, and a negative value for any other kind of error.  The
         // parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static int createPrivateDirectory(const char *path);
@@ -626,13 +626,13 @@ struct FilesystemUtil {
         // caller's userid only.  Note that directories created on Microsoft
         // Windows may receive default, not restricted permissions.  The
         // parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static int getSystemTemporaryDirectory(bsl::string *path);
     static int getSystemTemporaryDirectory(std::string *path);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getSystemTemporaryDirectory(std::pmr::string *path);
+    static int getSystemTemporaryDirectory(std::experimental::pmr::string *path);
 #endif
         // Load a valid path to the system temporary directory to the specified
         // 'path'.  Return 0 on success, and a non-zero value otherwise.  A
@@ -645,7 +645,7 @@ struct FilesystemUtil {
     static FileDescriptor createTemporaryFile(std::string             *outPath,
                                               const bsl::string_view&  prefix);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static FileDescriptor createTemporaryFile(std::pmr::string        *outPath,
+    static FileDescriptor createTemporaryFile(std::experimental::pmr::string        *outPath,
                                               const bsl::string_view&  prefix);
 #endif
         // Create and open a new file with a name constructed by appending an
@@ -667,7 +667,7 @@ struct FilesystemUtil {
     static int createTemporaryDirectory(std::string             *outPath,
                                         const bsl::string_view&  prefix);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int createTemporaryDirectory(std::pmr::string        *outPath,
+    static int createTemporaryDirectory(std::experimental::pmr::string        *outPath,
                                         const bsl::string_view&  prefix);
 #endif
         // Create a new directory with a name constructed by appending an
@@ -691,7 +691,7 @@ struct FilesystemUtil {
                                         const bsl::string_view&  prefix);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static int createTemporarySubdirectory(
-                                        std::pmr::string        *outPath,
+                                        std::experimental::pmr::string        *outPath,
                                         const bsl::string_view&  rootDirectory,
                                         const bsl::string_view&  prefix);
 #endif
@@ -711,7 +711,7 @@ struct FilesystemUtil {
     static void makeUnsafeTemporaryFilename(std::string             *outPath,
                                             const bsl::string_view&  prefix);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void makeUnsafeTemporaryFilename(std::pmr::string        *outPath,
+    static void makeUnsafeTemporaryFilename(std::experimental::pmr::string        *outPath,
                                             const bsl::string_view&  prefix);
 #endif
         // Construct a file name by appending an automatically-generated suffix
@@ -743,7 +743,7 @@ struct FilesystemUtil {
         // visited.  See 'findMatchingPaths' for a discussion of how 'pattern'
         // is interpreted.  Also note that '.' and '..' are never matched by
         // wild cards.  The parameterized 'STRING_TYPE' must be one of
-        // 'bsl::string', 'std::string', 'std::pmr::string' (if supported), or
+        // 'bsl::string', 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
         //
         // IBM-SPECIFIC WARNING: This function is not thread-safe.  The AIX
@@ -796,10 +796,10 @@ struct FilesystemUtil {
     static int findMatchingPaths(std::vector<std::string> *result,
                                  const STRING_TYPE&        pattern);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int findMatchingPaths(std::pmr::vector<std::pmr::string> *result,
+    static int findMatchingPaths(std::experimental::pmr::vector<std::experimental::pmr::string> *result,
                                  const char                         *pattern);
     template <class STRING_TYPE>
-    static int findMatchingPaths(std::pmr::vector<std::pmr::string> *result,
+    static int findMatchingPaths(std::experimental::pmr::vector<std::experimental::pmr::string> *result,
                                  const STRING_TYPE&                  pattern);
 #endif
         // Load into the specified 'result' vector all paths in the filesystem
@@ -815,7 +815,7 @@ struct FilesystemUtil {
         // negative value otherwise; if a negative value is returned, the
         // contents of '*result' are undefined.  The parameterized
         // 'STRING_TYPE' must be one of 'bsl::string', 'std::string',
-        // 'std::pmr::string' (if supported), or 'bslstl::StringRef'.
+        // 'std::experimental::pmr::string' (if supported), or 'bslstl::StringRef'.
         //
         // WINDOWS-SPECIFIC NOTE: To support DOS idioms, the OS-provided search
         // function has behavior that we have chosen not to work around: an
@@ -839,7 +839,7 @@ struct FilesystemUtil {
         // system where the file or directory with the specified 'path'
         // resides, or a negative value if an error occurs.  The parameterized
         // 'STRING_TYPE' must be one of 'bsl::string', 'std::string',
-        // 'std::pmr::string' (if supported), or 'bslstl::StringRef'.
+        // 'std::experimental::pmr::string' (if supported), or 'bslstl::StringRef'.
 
     static Offset getAvailableSpace(FileDescriptor descriptor);
         // Return the number of bytes available for allocation in the file
@@ -853,7 +853,7 @@ struct FilesystemUtil {
         // 'path', or a negative value if an error occurs.  Note that the size
         // of a symbolic link is the size of the file or directory to which it
         // points.  The parameterized 'STRING_TYPE' must be one of
-        // 'bsl::string', 'std::string', 'std::pmr::string' (if supported), or
+        // 'bsl::string', 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static Offset getFileSize(FileDescriptor descriptor);
@@ -880,10 +880,10 @@ struct FilesystemUtil {
     static int getSymbolicLinkTarget(std::string        *result,
                                      const STRING_TYPE&  path);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getSymbolicLinkTarget(std::pmr::string *result,
+    static int getSymbolicLinkTarget(std::experimental::pmr::string *result,
                                      const char       *path);
     template <class STRING_TYPE>
-    static int getSymbolicLinkTarget(std::pmr::string   *result,
+    static int getSymbolicLinkTarget(std::experimental::pmr::string   *result,
                                      const STRING_TYPE&  path);
 #endif
         // Load, into the specified 'result', the target of the symbolic link
@@ -893,7 +893,7 @@ struct FilesystemUtil {
         // junctions are treated as directory symbolic links.  If 'path' is a
         // relative path, it is evaluated against the current working
         // directory.  The parameterized 'STRING_TYPE' must be one of
-        // 'bsl::string', 'std::string', 'std::pmr::string' (if supported), or
+        // 'bsl::string', 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
 
     static int lock(FileDescriptor descriptor, bool lockWriteFlag);
@@ -1034,7 +1034,7 @@ struct FilesystemUtil {
         // note that if the function fails when 'recursive' is 'true', it may
         // or may not have removed *some* files or directories before failing.
         // The parameterized 'STRING_TYPE' must be one of 'bsl::string',
-        // 'std::string', 'std::pmr::string' (if supported), or
+        // 'std::string', 'std::experimental::pmr::string' (if supported), or
         // 'bslstl::StringRef'.
         //
         // IBM-SPECIFIC WARNING: This function is not thread-safe.  The AIX
@@ -1071,7 +1071,7 @@ struct FilesystemUtil {
         // link, while Windows will return an error status ('GetLastError' will
         // report 'ERROR_ALREADY_EXISTS').  The parameterized 'OLD_STRING_TYPE'
         // and 'NEW_STRING_TYPE' must be one of 'bsl::string', 'std::string',
-        // 'std::pmr::string' (if supported), or 'bslstl::StringRef'.
+        // 'std::experimental::pmr::string' (if supported), or 'bslstl::StringRef'.
 
     static int write(FileDescriptor  descriptor,
                      const void     *buffer,
@@ -1141,7 +1141,7 @@ struct FilesystemUtil_CStringUtil {
     static const char *flatten(const bsl::string& string);
     static const char *flatten(const std::string& string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static const char *flatten(const std::pmr::string& string);
+    static const char *flatten(const std::experimental::pmr::string& string);
 #endif
         // Return the result of invoking 'c_str()' on the specified 'string'.
 
@@ -1278,7 +1278,7 @@ int FilesystemUtil::findMatchingPaths(std::vector<std::string> *result,
 template <class STRING_TYPE>
 inline
 int FilesystemUtil::findMatchingPaths(
-                                   std::pmr::vector<std::pmr::string> *result,
+                                   std::experimental::pmr::vector<std::experimental::pmr::string> *result,
                                    const STRING_TYPE&                  pattern)
 {
     return FilesystemUtil::findMatchingPaths(
@@ -1324,7 +1324,7 @@ int FilesystemUtil::getSymbolicLinkTarget(std::string        *result,
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 template <class STRING_TYPE>
 inline
-int FilesystemUtil::getSymbolicLinkTarget(std::pmr::string   *result,
+int FilesystemUtil::getSymbolicLinkTarget(std::experimental::pmr::string   *result,
                                           const STRING_TYPE&  path)
 {
     return FilesystemUtil::getSymbolicLinkTarget(
@@ -1383,7 +1383,7 @@ const char *FilesystemUtil_CStringUtil::flatten(const std::string& string)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-const char *FilesystemUtil_CStringUtil::flatten(const std::pmr::string& string)
+const char *FilesystemUtil_CStringUtil::flatten(const std::experimental::pmr::string& string)
 {
     return string.c_str();
 }

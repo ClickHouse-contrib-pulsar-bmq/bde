@@ -225,9 +225,9 @@ int OsUtil::getOsInfo(std::string *osName,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int OsUtil::getOsInfo(std::pmr::string *osName,
-                      std::pmr::string *osVersion,
-                      std::pmr::string *osPatch)
+int OsUtil::getOsInfo(std::experimental::pmr::string *osName,
+                      std::experimental::pmr::string *osVersion,
+                      std::experimental::pmr::string *osPatch)
 {
     return u_OsUtil_getOsInfo(osName, osVersion, osPatch);
 }

@@ -456,7 +456,7 @@ int PathUtil::appendIfValid(std::string             *path,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PathUtil::appendIfValid(std::pmr::string        *path,
+int PathUtil::appendIfValid(std::experimental::pmr::string        *path,
                             const bsl::string_view&  filename)
 {
     return u_appendIfValid(path, filename);
@@ -480,7 +480,7 @@ void PathUtil::appendRaw(std::string *path,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-void PathUtil::appendRaw(std::pmr::string *path,
+void PathUtil::appendRaw(std::experimental::pmr::string *path,
                          const char  *filename,
                          int          length,
                          int          rootEnd)
@@ -500,7 +500,7 @@ int PathUtil::popLeaf(std::string *path, int rootEnd)
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PathUtil::popLeaf(std::pmr::string *path, int rootEnd)
+int PathUtil::popLeaf(std::experimental::pmr::string *path, int rootEnd)
 {
     return u_popLeaf(path, rootEnd);
 }
@@ -521,7 +521,7 @@ int PathUtil::getLeaf(std::string             *leaf,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PathUtil::getLeaf(std::pmr::string        *leaf,
+int PathUtil::getLeaf(std::experimental::pmr::string        *leaf,
                       const bsl::string_view&  path,
                       int                      rootEnd)
 {
@@ -544,7 +544,7 @@ int PathUtil::getExtension(std::string             *extension,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PathUtil::getExtension(std::pmr::string        *extension,
+int PathUtil::getExtension(std::experimental::pmr::string        *extension,
                            const bsl::string_view&  path,
                            int                      rootEnd)
 {
@@ -567,7 +567,7 @@ int PathUtil::getDirname(std::string             *dirname,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PathUtil::getDirname(std::pmr::string             *dirname,
+int PathUtil::getDirname(std::experimental::pmr::string             *dirname,
                          const bsl::string_view&  path,
                          int                      rootEnd)
 {
@@ -590,7 +590,7 @@ int PathUtil::getRoot(std::string             *root,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int PathUtil::getRoot(std::pmr::string             *root,
+int PathUtil::getRoot(std::experimental::pmr::string             *root,
                       const bsl::string_view&  path,
                       int                      rootEnd)
 {

@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                 {
-                    std::pmr::string   tnsReal;
+                    std::experimental::pmr::string   tnsReal;
                     bsl::istringstream is(xsd);
 
                     bool rc = balxml::Util::extractNamespaceFromXsd(is.rdbuf(),
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
                 {
-                    std::pmr::string tnsReal;
+                    std::experimental::pmr::string tnsReal;
 
                     bool rc = balxml::Util::extractNamespaceFromXsd(xsd,
                                                                     &tnsReal);

@@ -2876,7 +2876,7 @@ int FilesystemUtil::getSymbolicLinkTarget(std::string *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int FilesystemUtil::getSymbolicLinkTarget(std::pmr::string *result,
+int FilesystemUtil::getSymbolicLinkTarget(std::experimental::pmr::string *result,
                                           const char       *path)
 {
     return u_getSymbolicLinkTarget(result, path);
@@ -2894,7 +2894,7 @@ int FilesystemUtil::getWorkingDirectory(std::string *path)
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int FilesystemUtil::getWorkingDirectory(std::pmr::string *path)
+int FilesystemUtil::getWorkingDirectory(std::experimental::pmr::string *path)
 {
     return u_getWorkingDirectory(path);
 }
@@ -2911,7 +2911,7 @@ int FilesystemUtil::getSystemTemporaryDirectory(std::string *path)
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int FilesystemUtil::getSystemTemporaryDirectory(std::pmr::string *path)
+int FilesystemUtil::getSystemTemporaryDirectory(std::experimental::pmr::string *path)
 {
     return u_getSystemTemporaryDirectory(path);
 }
@@ -2990,10 +2990,10 @@ int FilesystemUtil::findMatchingPaths(std::vector<std::string> *result,
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 int FilesystemUtil::findMatchingPaths(
-                                   std::pmr::vector<std::pmr::string> *result,
+                                   std::experimental::pmr::vector<std::experimental::pmr::string> *result,
                                    const char                         *pattern)
 {
-    return u_findMatchingPaths<std::pmr::vector<std::pmr::string> >(result,
+    return u_findMatchingPaths<std::experimental::pmr::vector<std::experimental::pmr::string> >(result,
                                                                     pattern);
 }
 #endif
@@ -3141,7 +3141,7 @@ FilesystemUtil::FileDescriptor FilesystemUtil::createTemporaryFile(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 FilesystemUtil::FileDescriptor FilesystemUtil::createTemporaryFile(
-                                              std::pmr::string        *outPath,
+                                              std::experimental::pmr::string        *outPath,
                                               const bsl::string_view&  prefix)
 {
     return u_createTemporaryFile(outPath, prefix);
@@ -3164,7 +3164,7 @@ void FilesystemUtil::makeUnsafeTemporaryFilename(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 void FilesystemUtil::makeUnsafeTemporaryFilename(
-                                              std::pmr::string        *outPath,
+                                              std::experimental::pmr::string        *outPath,
                                               const bsl::string_view&  prefix)
 {
     u_makeUnsafeTemporaryFilename(outPath, prefix);
@@ -3184,7 +3184,7 @@ int FilesystemUtil::createTemporaryDirectory(std::string             *outPath,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int FilesystemUtil::createTemporaryDirectory(std::pmr::string        *outPath,
+int FilesystemUtil::createTemporaryDirectory(std::experimental::pmr::string        *outPath,
                                              const bsl::string_view&  prefix)
 {
     return u_createTemporaryDirectory(outPath, prefix);
@@ -3209,7 +3209,7 @@ int FilesystemUtil::createTemporarySubdirectory(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 int FilesystemUtil::createTemporarySubdirectory(
-                                        std::pmr::string        *outPath,
+                                        std::experimental::pmr::string        *outPath,
                                         const bsl::string_view&  rootDirectory,
                                         const bsl::string_view&  prefix)
 {

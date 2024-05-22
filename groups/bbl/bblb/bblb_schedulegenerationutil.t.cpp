@@ -158,7 +158,7 @@ void toString(bsl::ostringstream *output,
     static const bool isVector =
                   bsl::is_same<VECTOR, bsl::vector<bdlt::Date> >::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-               || bsl::is_same<VECTOR, std::pmr::vector<bdlt::Date> >::value
+               || bsl::is_same<VECTOR, std::experimental::pmr::vector<bdlt::Date> >::value
 #endif
                || bsl::is_same<VECTOR, std::vector<bdlt::Date> >::value;
     BSLMF_ASSERT(isVector);
@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
         bsl::vector<bdlt::Date>      scheduleBsl;
         std::vector<bdlt::Date>      scheduleStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        std::pmr::vector<bdlt::Date> schedulePmr;
+        std::experimental::pmr::vector<bdlt::Date> schedulePmr;
 #endif
 
         for (int ivt = e_BEGIN; ivt < e_END; ++ivt) {
@@ -657,7 +657,7 @@ int main(int argc, char *argv[])
         bsl::vector<bdlt::Date>      scheduleBsl;
         std::vector<bdlt::Date>      scheduleStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        std::pmr::vector<bdlt::Date> schedulePmr;
+        std::experimental::pmr::vector<bdlt::Date> schedulePmr;
 #endif
 
         for (int ivt = e_BEGIN; ivt < e_END; ++ivt) {
@@ -1006,7 +1006,7 @@ int main(int argc, char *argv[])
         bsl::vector<bdlt::Date>      scheduleBsl;
         std::vector<bdlt::Date>      scheduleStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        std::pmr::vector<bdlt::Date> schedulePmr;
+        std::experimental::pmr::vector<bdlt::Date> schedulePmr;
 #endif
 
         for (int ivt = e_BEGIN; ivt < e_END; ++ivt) {
@@ -1297,7 +1297,7 @@ int main(int argc, char *argv[])
         bsl::vector<bdlt::Date>      scheduleBsl;
         std::vector<bdlt::Date>      scheduleStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        std::pmr::vector<bdlt::Date> schedulePmr;
+        std::experimental::pmr::vector<bdlt::Date> schedulePmr;
 #endif
 
         for (int ivt = e_BEGIN; ivt < e_END; ++ivt) {
@@ -1619,7 +1619,7 @@ int main(int argc, char *argv[])
         bsl::vector<bdlt::Date>      scheduleBsl;
         std::vector<bdlt::Date>      scheduleStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        std::pmr::vector<bdlt::Date> schedulePmr;
+        std::experimental::pmr::vector<bdlt::Date> schedulePmr;
 #endif
 
         for (int ivt = e_BEGIN; ivt < e_END; ++ivt) {

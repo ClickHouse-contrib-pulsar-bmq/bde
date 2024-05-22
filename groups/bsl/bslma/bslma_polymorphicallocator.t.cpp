@@ -54,7 +54,7 @@ using namespace BloombergLP;
 // that its rebound versions do as well.
 //
 // Another concern is standards conformance.  In a C++17 or later build, the
-// platform library's 'std::pmr::polymorphic_allocator' template is used, so
+// platform library's 'std::experimental::pmr::polymorphic_allocator' template is used, so
 // conformance to the C++17 standard (C++17 section 20.5.3.5
 // [allocator.requirements]) is assured.  On pre C++17 platforms, we must
 // ensure that, in addition to the C++17 requirements, all the requirements of

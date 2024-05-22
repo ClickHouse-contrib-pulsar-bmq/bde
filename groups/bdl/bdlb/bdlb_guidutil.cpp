@@ -478,7 +478,7 @@ void GuidUtil::guidToString(std::string *result, const Guid& guid)
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-void GuidUtil::guidToString(std::pmr::string *result, const Guid& guid)
+void GuidUtil::guidToString(std::experimental::pmr::string *result, const Guid& guid)
 {
     guidToStringImpl(result, guid);
 }

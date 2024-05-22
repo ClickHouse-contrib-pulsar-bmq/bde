@@ -903,7 +903,7 @@ bsl::ostream& operator<<(bsl::ostream& stream, u::VecType value)
     stream << (u::e_BSL == value ? "bsl"      :
                u::e_STD == value ? "std"      :
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-               u::e_PMR == value ? "std::pmr" :
+               u::e_PMR == value ? "std::experimental::pmr" :
 #endif
                "unk");
 
@@ -3028,7 +3028,7 @@ void testForcePushRemoveAllAux(const bool       match,
     bsl::vector<ELEMENT> vBsl(&va);
     std::vector<ELEMENT> vStd;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    std::pmr::vector<ELEMENT> vPmr(&va);
+    std::experimental::pmr::vector<ELEMENT> vPmr(&va);
 #endif
 
     switch (vecType) {
@@ -3725,7 +3725,7 @@ class TestPopFront {
                          bsl::is_same<bsl::vector<ELEMENT>, VECTOR>::value
                        ? u::e_BSL
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                       : bsl::is_same<std::pmr::vector<ELEMENT>, VECTOR>::value
+                       : bsl::is_same<std::experimental::pmr::vector<ELEMENT>, VECTOR>::value
                        ? u::e_PMR
 #endif
                        : u::e_STD;
@@ -3808,7 +3808,7 @@ class TestPopBack {
                          bsl::is_same<bsl::vector<ELEMENT>, VECTOR>::value
                        ? u::e_BSL
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                       : bsl::is_same<std::pmr::vector<ELEMENT>, VECTOR>::value
+                       : bsl::is_same<std::experimental::pmr::vector<ELEMENT>, VECTOR>::value
                        ? u::e_PMR
 #endif
                        : u::e_STD;
@@ -3919,7 +3919,7 @@ void testMultiThreadedTryPop()
               } break;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
               case u::e_PMR: {
-                TestPopFront<std::pmr::vector<ELEMENT> > frontFunc(&mX, &ta);
+                TestPopFront<std::experimental::pmr::vector<ELEMENT> > frontFunc(&mX, &ta);
                 bslmt::ThreadUtil::create(&handle, frontFunc);
               } break;
 #endif
@@ -3953,7 +3953,7 @@ void testMultiThreadedTryPop()
               } break;
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
               case u::e_PMR: {
-                TestPopBack<std::pmr::vector<ELEMENT> > backFunc(&mX, &ta);
+                TestPopBack<std::experimental::pmr::vector<ELEMENT> > backFunc(&mX, &ta);
                 bslmt::ThreadUtil::create(&handle, backFunc);
               } break;
 #endif
@@ -4284,7 +4284,7 @@ void testSingleThreadedTryPop()
     const int vecType = bsl::is_same<bsl::vector<ELEMENT>, VECTOR>::value
                       ? u::e_BSL
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                      : bsl::is_same<std::pmr::vector<ELEMENT>, VECTOR>::value
+                      : bsl::is_same<std::experimental::pmr::vector<ELEMENT>, VECTOR>::value
                       ? u::e_PMR
 #endif
                       : u::e_STD;
@@ -6953,10 +6953,10 @@ int main(int argc, char *argv[])
         TC::testSingleThreadedTryPop<std::vector<MCElement> >();
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        TC::testSingleThreadedTryPop<std::pmr::vector<Element> >();
-        TC::testSingleThreadedTryPop<std::pmr::vector<AElement> >();
-        TC::testSingleThreadedTryPop<std::pmr::vector<MElement> >();
-        TC::testSingleThreadedTryPop<std::pmr::vector<MCElement> >();
+        TC::testSingleThreadedTryPop<std::experimental::pmr::vector<Element> >();
+        TC::testSingleThreadedTryPop<std::experimental::pmr::vector<AElement> >();
+        TC::testSingleThreadedTryPop<std::experimental::pmr::vector<MElement> >();
+        TC::testSingleThreadedTryPop<std::experimental::pmr::vector<MCElement> >();
 #endif
       } break;
       case 8: {
@@ -7090,10 +7090,10 @@ int main(int argc, char *argv[])
         }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-        if (verbose) cout << "std::pmr::vector\n";
+        if (verbose) cout << "std::experimental::pmr::vector\n";
         {
             AObj                       mX(&ta);
-            std::pmr::vector<AElement> buffer(&ta);
+            std::experimental::pmr::vector<AElement> buffer(&ta);
 
             mX.pushBack(VA);
             mX.pushBack(VB);
@@ -7108,7 +7108,7 @@ int main(int argc, char *argv[])
         }
         {
             AObj                       mX(&ta);
-            std::pmr::vector<AElement> buffer(&ta);
+            std::experimental::pmr::vector<AElement> buffer(&ta);
 
             buffer.push_back(VA);
             buffer.push_back(VB);

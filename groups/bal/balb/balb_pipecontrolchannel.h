@@ -231,7 +231,7 @@ BSLS_IDENT("$Id: $")
 #include <bslalg_typetraits.h>
 #endif // BDE_DONT_ALLOW_TRANSITIVE_INCLUDES
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string>           // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 namespace balb {
@@ -354,7 +354,7 @@ class PipeControlChannel {
         // non-zero value if the pipe cannot be opened or if it is detected
         // that another process is reading from the pipe.  'pipeName' must be
         // of the types 'const char *', 'char *', 'bsl::string', 'std::string',
-        // 'std::pmr::string' (if supported), or 'bslstl::StringRef'.
+        // 'std::experimental::pmr::string' (if supported), or 'bslstl::StringRef'.
 
     void shutdown();
         // Stop reading from the pipe and dispatching messages.  If the
@@ -422,7 +422,7 @@ struct PipeControlChannel_CStringUtil {
     static const char *flatten(const bsl::string& string);
     static const char *flatten(const std::string& string);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static const char *flatten(const std::pmr::string& string);
+    static const char *flatten(const std::experimental::pmr::string& string);
 #endif
         // Return the result of invoking 'c_str()' on the specified 'string'.
 
@@ -507,7 +507,7 @@ const char *PipeControlChannel_CStringUtil::flatten(const std::string& string)
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
 const char *PipeControlChannel_CStringUtil::flatten(
-                                                const std::pmr::string& string)
+                                                const std::experimental::pmr::string& string)
 {
     return string.c_str();
 }

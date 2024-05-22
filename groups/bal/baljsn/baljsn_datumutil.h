@@ -349,7 +349,7 @@ struct DatumUtil {
     static int encode(std::string         *result,
                       const bdld::Datum&   datum);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int encode(std::pmr::string   *result,
+    static int encode(std::experimental::pmr::string   *result,
                       const bdld::Datum&  datum);
 #endif
     static int encode(bsl::string                *result,
@@ -359,7 +359,7 @@ struct DatumUtil {
                       const bdld::Datum&          datum,
                       const DatumEncoderOptions&  options);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int encode(std::pmr::string           *result,
+    static int encode(std::experimental::pmr::string           *result,
                       const bdld::Datum&          datum,
                       const DatumEncoderOptions&  options);
 #endif
@@ -474,7 +474,7 @@ int DatumUtil::encode(std::string *result, const bdld::Datum& datum)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 inline
-int DatumUtil::encode(std::pmr::string   *result,
+int DatumUtil::encode(std::experimental::pmr::string   *result,
                       const bdld::Datum&  datum)
 {
     return encode(result, datum, DatumEncoderOptions());

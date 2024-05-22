@@ -108,7 +108,7 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>                   // 'std::string', 'std::pmr::string'
+#include <string>                   // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP  {
 namespace balxml {
@@ -129,7 +129,7 @@ struct Util {
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static bool extractNamespaceFromXsd(
                                      const bsl::string_view&  xsdSource,
-                                     std::pmr::string        *targetNamespace);
+                                     std::experimental::pmr::string        *targetNamespace);
 #endif
 
     static bool extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
@@ -138,7 +138,7 @@ struct Util {
                                         std::string      *targetNamespace);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
     static bool extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
-                                        std::pmr::string *targetNamespace);
+                                        std::experimental::pmr::string *targetNamespace);
 #endif
         // Extract the target namespace from the XSD schema in the specified
         // 'xsdSource' and load it into the specified 'targetNamespace'.

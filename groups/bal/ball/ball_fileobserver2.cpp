@@ -861,7 +861,7 @@ bool FileObserver2::isFileLoggingEnabled(std::string *result) const
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-bool FileObserver2::isFileLoggingEnabled(std::pmr::string *result) const
+bool FileObserver2::isFileLoggingEnabled(std::experimental::pmr::string *result) const
 {
     return isFileLoggingEnabledImpl(result);
 }

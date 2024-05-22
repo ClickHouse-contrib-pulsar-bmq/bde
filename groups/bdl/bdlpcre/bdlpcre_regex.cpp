@@ -933,13 +933,13 @@ int RegEx::match(std::vector<bsl::string_view> *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-int RegEx::match(std::pmr::vector<bsl::string_view> *result,
+int RegEx::match(std::experimental::pmr::vector<bsl::string_view> *result,
                 const bsl::string_view&             subject,
                 size_t                              subjectOffset) const
 {
     BSLS_ASSERT(result);
 
-    typedef VectorExtractor<std::pmr::vector<bsl::string_view> > Extractor;
+    typedef VectorExtractor<std::experimental::pmr::vector<bsl::string_view> > Extractor;
 
     return matchImp(Extractor(result),
                     subject.data(),
@@ -1065,13 +1065,13 @@ int RegEx::matchRaw(std::vector<bsl::string_view> *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-int RegEx::matchRaw(std::pmr::vector<bsl::string_view> *result,
+int RegEx::matchRaw(std::experimental::pmr::vector<bsl::string_view> *result,
                     const bsl::string_view&             subject,
                     size_t                              subjectOffset) const
 {
     BSLS_ASSERT(result);
 
-    typedef VectorExtractor<std::pmr::vector<bsl::string_view> > Extractor;
+    typedef VectorExtractor<std::experimental::pmr::vector<bsl::string_view> > Extractor;
 
     return matchImp(Extractor(result),
                     subject.data(),
@@ -1110,7 +1110,7 @@ int RegEx::replace(std::string             *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int RegEx::replace(std::pmr::string        *result,
+int RegEx::replace(std::experimental::pmr::string        *result,
                    int                     *errorOffset,
                    const bsl::string_view&  subject,
                    const bsl::string_view&  replacement,
@@ -1154,7 +1154,7 @@ int RegEx::replaceRaw(std::string             *result,
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int RegEx::replaceRaw(std::pmr::string        *result,
+int RegEx::replaceRaw(std::experimental::pmr::string        *result,
                       int                     *errorOffset,
                       const bsl::string_view&  subject,
                       const bsl::string_view&  replacement,
@@ -1183,7 +1183,7 @@ void RegEx::namedSubpatterns(
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 void RegEx::namedSubpatterns(
-             std::pmr::vector<std::pair<bsl::string_view, int> > *result) const
+             std::experimental::pmr::vector<std::pair<bsl::string_view, int> > *result) const
 {
     namedSubpatternsImp(result);
 }

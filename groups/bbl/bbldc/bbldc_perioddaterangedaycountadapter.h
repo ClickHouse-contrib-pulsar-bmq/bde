@@ -145,7 +145,7 @@ class PeriodDateRangeDayCountAdapter : public DateRangeDayCount {
                       bslma::Allocator                    *basicAllocator = 0);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
     PeriodDateRangeDayCountAdapter(
-                      const std::pmr::vector<bdlt::Date>&  periodDate,
+                      const std::experimental::pmr::vector<bdlt::Date>&  periodDate,
                       double                               periodYearDiff,
                       bslma::Allocator                    *basicAllocator = 0);
 #endif
@@ -265,7 +265,7 @@ PeriodDateRangeDayCountAdapter<CONVENTION>::PeriodDateRangeDayCountAdapter(
 template <class CONVENTION>
 inline
 PeriodDateRangeDayCountAdapter<CONVENTION>::PeriodDateRangeDayCountAdapter(
-                           const std::pmr::vector<bdlt::Date>&  periodDate,
+                           const std::experimental::pmr::vector<bdlt::Date>&  periodDate,
                            double                               periodYearDiff,
                            bslma::Allocator                    *basicAllocator)
 : d_periodDate(periodDate.begin(), periodDate.end(), basicAllocator)
