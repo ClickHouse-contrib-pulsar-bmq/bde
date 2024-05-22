@@ -27,7 +27,7 @@ BSLS_IDENT("$Id: $")
 // functions will honor 'strlcpy' semantics and null-terminate any output
 // buffer having a non-zero length.
 //
-///History and Motivation
+/// History and Motivation
 ///----------------------
 // UTF-8 is a character encoding that allows 32-bit character sets like Unicode
 // to be represented using null-terminated (8-bit) byte strings (NTBS), while
@@ -59,12 +59,12 @@ BSLS_IDENT("$Id: $")
 // (where characters that could be expressed in one octet are encoded using two
 // octets).
 //
-///Usage
+/// Usage
 ///- - -
 // This section illustrates intended use of this component.
 //
-///Example 1: C-Style Interface
-/// - - - - - - - - - - - - - -
+/// Example 1: C-Style Interface
+///  - - - - - - - - - - - - - -
 // The following snippet of code illustrates a typical use of the
 // 'bdlde::CharConvertUcs2' struct's C-style utility functions, converting a
 // simple UTF-8 string to UCS-2.
@@ -92,7 +92,7 @@ BSLS_IDENT("$Id: $")
 // }
 //..
 //
-///Example 2: C-Style Round-Trip
+/// Example 2: C-Style Round-Trip
 ///- - - - - - - - - - - - - - -
 // The following snippet of code illustrates another typical use of the
 // 'bdlde::CharConvertUcs2' struct's C-style utility functions, converting a
@@ -190,8 +190,8 @@ BSLS_IDENT("$Id: $")
 // }
 //..
 //
-///Example 3: C++-Style Interface
-/// - - - - - - - - - - - - - - -
+/// Example 3: C++-Style Interface
+///  - - - - - - - - - - - - - - -
 // The following snippet of code illustrates a typical use of the
 // 'bdlde::CharConvertUcs2' struct's C++-style utility functions, converting a
 // simple UTF-8 string to UCS-2.
@@ -271,153 +271,147 @@ BSLS_IDENT("$Id: $")
 
 #include <bdlde_charconvertstatus.h>
 
-#include <bsl_cstddef.h>            // 'bsl::size_t'
+#include <bsl_cstddef.h> // 'bsl::size_t'
 #include <bsl_string.h>
 #include <bsl_vector.h>
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>                  // 'std::string', 'std::pmr::string'
-#include <vector>                  // 'std::vector', 'std::pmr::vector'
+#include <string> // 'std::string', 'std::experimental::pmr::string'
+#include <vector> // 'std::vector', 'std::experimental::pmr::vector'
 
 namespace BloombergLP {
 
 namespace bdlde {
-                           // ======================
-                           // struct CharConvertUcs2
-                           // ======================
+// ======================
+// struct CharConvertUcs2
+// ======================
 
 struct CharConvertUcs2 {
-    // This 'struct' provides a namespace for a suite of pure procedures to
-    // convert character buffers between UTF-8 and UCS-2.  UCS-2 conversions
-    // are performed to/from the full '2 ^ 16' bit space (the "UTF-16" hole
-    // U+D800-U+DFFF is not treated as a special case).  Note that all C-style
-    // routines in this component honor *strlcpy* semantics, meaning that all
-    // returned C-style strings will be null-terminated as long as the return
-    // buffer size is positive (i.e., 'dstCapacity > 0').  Note that since all
-    // UCS-2 operations take place as 'unsigned short's, byte order is not
-    // taken into consideration, and Byte Order Mark (BOM) characters are not
-    // generated.  If a BOM is present in the input, it will be translated into
-    // the output.
+  // This 'struct' provides a namespace for a suite of pure procedures to
+  // convert character buffers between UTF-8 and UCS-2.  UCS-2 conversions
+  // are performed to/from the full '2 ^ 16' bit space (the "UTF-16" hole
+  // U+D800-U+DFFF is not treated as a special case).  Note that all C-style
+  // routines in this component honor *strlcpy* semantics, meaning that all
+  // returned C-style strings will be null-terminated as long as the return
+  // buffer size is positive (i.e., 'dstCapacity > 0').  Note that since all
+  // UCS-2 operations take place as 'unsigned short's, byte order is not
+  // taken into consideration, and Byte Order Mark (BOM) characters are not
+  // generated.  If a BOM is present in the input, it will be translated into
+  // the output.
 
-    // CLASS METHODS
-    static int utf8ToUcs2(unsigned short *dstBuffer,
-                          bsl::size_t     dstCapacity,
-                          const char     *srcString,
-                          bsl::size_t    *numCharsWritten = 0,
-                          unsigned short  errorCharacter  = '?');
-        // Load, into the specified 'dstBuffer' of the specified 'dstCapacity',
-        // the result of converting the specified null-terminated UTF-8
-        // 'srcString' to its UCS-2 equivalent.  Optionally specify
-        // 'numCharsWritten' which (if non-zero) indicates the modifiable
-        // integer into which the number of characters written (including the
-        // null terminator) is to be loaded.  Optionally specify
-        // 'errorCharacter' to be substituted for invalid (i.e., not
-        // convertible to UCS-2) input characters.  If 'errorCharacter' is 0,
-        // invalid input characters are ignored (i.e., produce no corresponding
-        // output characters).  Return 0 on success and a bitwise-or of the
-        // masks specified by 'CharConvertStatus::Enum' otherwise, with
-        // 'CharConvertStatus::k_INVALID_INPUT_BIT' set to indicate that at
-        // least one invalid input sequence was encountered, and
-        // 'CharConvertStatus::k_OUT_OF_SPACE_BIT' set to indicate that
-        // 'dstCapacity' was insufficient to accommodate the output.  If
-        // 'dstCapacity' was insufficient, the maximal null-terminated prefix
-        // of the properly converted result string is loaded into 'dstBuffer',
-        // and (unless null) '*numCharsWritten' is set to 'dstCapacity'.  The
-        // behavior is undefined unless '0 <= dstCapacity', 'dstBuffer' refers
-        // to an array of at least 'dstCapacity' elements, and 'srcString' is
-        // null-terminated.  Note that if 'dstCapacity' is 0, this function
-        // returns exactly 2 and '*numCharsWritten' (if specified) is loaded
-        // with 0 (since there is insufficient space for the null terminator
-        // even for an empty input string).
+  // CLASS METHODS
+  static int utf8ToUcs2(unsigned short *dstBuffer, bsl::size_t dstCapacity,
+                        const char *srcString, bsl::size_t *numCharsWritten = 0,
+                        unsigned short errorCharacter = '?');
+  // Load, into the specified 'dstBuffer' of the specified 'dstCapacity',
+  // the result of converting the specified null-terminated UTF-8
+  // 'srcString' to its UCS-2 equivalent.  Optionally specify
+  // 'numCharsWritten' which (if non-zero) indicates the modifiable
+  // integer into which the number of characters written (including the
+  // null terminator) is to be loaded.  Optionally specify
+  // 'errorCharacter' to be substituted for invalid (i.e., not
+  // convertible to UCS-2) input characters.  If 'errorCharacter' is 0,
+  // invalid input characters are ignored (i.e., produce no corresponding
+  // output characters).  Return 0 on success and a bitwise-or of the
+  // masks specified by 'CharConvertStatus::Enum' otherwise, with
+  // 'CharConvertStatus::k_INVALID_INPUT_BIT' set to indicate that at
+  // least one invalid input sequence was encountered, and
+  // 'CharConvertStatus::k_OUT_OF_SPACE_BIT' set to indicate that
+  // 'dstCapacity' was insufficient to accommodate the output.  If
+  // 'dstCapacity' was insufficient, the maximal null-terminated prefix
+  // of the properly converted result string is loaded into 'dstBuffer',
+  // and (unless null) '*numCharsWritten' is set to 'dstCapacity'.  The
+  // behavior is undefined unless '0 <= dstCapacity', 'dstBuffer' refers
+  // to an array of at least 'dstCapacity' elements, and 'srcString' is
+  // null-terminated.  Note that if 'dstCapacity' is 0, this function
+  // returns exactly 2 and '*numCharsWritten' (if specified) is loaded
+  // with 0 (since there is insufficient space for the null terminator
+  // even for an empty input string).
 
-    static int utf8ToUcs2(bsl::vector<unsigned short> *result,
-                          const char                  *srcString,
-                          unsigned short               errorCharacter  = '?');
-    static int utf8ToUcs2(std::vector<unsigned short> *result,
-                          const char                  *srcString,
-                          unsigned short               errorCharacter  = '?');
+  static int utf8ToUcs2(bsl::vector<unsigned short> *result,
+                        const char *srcString,
+                        unsigned short errorCharacter = '?');
+  static int utf8ToUcs2(std::vector<unsigned short> *result,
+                        const char *srcString,
+                        unsigned short errorCharacter = '?');
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    static int utf8ToUcs2(
-                      std::pmr::vector<unsigned short> *result,
-                      const char                       *srcString,
-                      unsigned short                    errorCharacter  = '?');
+  static int utf8ToUcs2(std::experimental::pmr::vector<unsigned short> *result,
+                        const char *srcString,
+                        unsigned short errorCharacter = '?');
 #endif
-        // Load into the specified 'result' the conversion of the specified
-        // null-terminated UTF-8 'srcString' to its null-terminated UCS-2
-        // equivalent.  Optionally specify 'errorCharacter' to be substituted
-        // for invalid (i.e., not convertible to UCS-2) input characters.  If
-        // 'errorCharacter' is 0, invalid input characters are ignored (i.e.,
-        // produce no corresponding output characters).  Return 0 on success
-        // and 'CharConvertStatus::k_INVALILD_CHARS_BIT' otherwise, meaning
-        // that at least one sequence of characters was encountered that could
-        // not be translated to UCS-2.  If 'result & 1' is non-zero, one or
-        // more input characters are invalid (in which case the conversion
-        // continues).  The behavior is undefined unless 'srcString' is
-        // null-terminated.  Note that the null-terminating word counts towards
-        // 'result->size()'.
+  // Load into the specified 'result' the conversion of the specified
+  // null-terminated UTF-8 'srcString' to its null-terminated UCS-2
+  // equivalent.  Optionally specify 'errorCharacter' to be substituted
+  // for invalid (i.e., not convertible to UCS-2) input characters.  If
+  // 'errorCharacter' is 0, invalid input characters are ignored (i.e.,
+  // produce no corresponding output characters).  Return 0 on success
+  // and 'CharConvertStatus::k_INVALILD_CHARS_BIT' otherwise, meaning
+  // that at least one sequence of characters was encountered that could
+  // not be translated to UCS-2.  If 'result & 1' is non-zero, one or
+  // more input characters are invalid (in which case the conversion
+  // continues).  The behavior is undefined unless 'srcString' is
+  // null-terminated.  Note that the null-terminating word counts towards
+  // 'result->size()'.
 
-    static int ucs2ToUtf8(char                 *dstBuffer,
-                          bsl::size_t           dstCapacity,
-                          const unsigned short *srcString,
-                          bsl::size_t          *numCharsWritten = 0,
-                          bsl::size_t          *numBytesWritten = 0);
-        // Load, into the specified 'dstBuffer' of the specified 'dstCapacity',
-        // the result of converting the specified null-terminated UCS-2
-        // 'srcString' to its UTF-8 equivalent.  Optionally specify
-        // 'numCharsWritten' which (if not 0) indicates the modifiable integer
-        // into which the number of *UTF-8 characters* written (including the
-        // null terminator) is to be loaded.  Optionally specify
-        // 'numBytesWritten' which (if not 0) indicates the modifiable integer
-        // into which the number of *bytes* written (including the null
-        // terminator) is to be loaded.  Return 0 on success and a bitwise-or
-        // of the masks specified by 'CharConvertStatus::Enum' otherwise,
-        // with 'CharConvertStatus::k_INVALID_INPUT_BIT' set to indicate that
-        // at least one invalid input sequence was encountered, and
-        // 'CharConvertStatus::k_OUT_OF_SPACE_BIT' set to indicate that
-        // 'dstCapacity' was insufficient to accommodate the output.  If
-        // 'dstCapacity' was insufficient, the maximal null-terminated prefix
-        // of the properly converted result string is loaded into 'dstBuffer'.
-        // The behavior is undefined unless '0 <= dstCapacity', 'dstBuffer'
-        // refers to an array of at least 'dstCapacity' elements, and
-        // 'srcString' is null-terminated.  Note that if 'dstCapacity' is 0,
-        // this function returns exactly 2 and '*numCharsWritten' and
-        // '*numBytesWritten' (if not null) are loaded with 0 (since there is
-        // insufficient space for the null terminator even for an empty input
-        // string).  Also note that since UTF-8 is a variable-length encoding,
-        // it is possible for 'numBytesWritten' to be greater than
-        // 'numCharsWritten', and therefore that an input 'srcString' of
-        // 'dstCapacity - 1' *characters* may not fit into 'dstBuffer'.
+  static int ucs2ToUtf8(char *dstBuffer, bsl::size_t dstCapacity,
+                        const unsigned short *srcString,
+                        bsl::size_t *numCharsWritten = 0,
+                        bsl::size_t *numBytesWritten = 0);
+  // Load, into the specified 'dstBuffer' of the specified 'dstCapacity',
+  // the result of converting the specified null-terminated UCS-2
+  // 'srcString' to its UTF-8 equivalent.  Optionally specify
+  // 'numCharsWritten' which (if not 0) indicates the modifiable integer
+  // into which the number of *UTF-8 characters* written (including the
+  // null terminator) is to be loaded.  Optionally specify
+  // 'numBytesWritten' which (if not 0) indicates the modifiable integer
+  // into which the number of *bytes* written (including the null
+  // terminator) is to be loaded.  Return 0 on success and a bitwise-or
+  // of the masks specified by 'CharConvertStatus::Enum' otherwise,
+  // with 'CharConvertStatus::k_INVALID_INPUT_BIT' set to indicate that
+  // at least one invalid input sequence was encountered, and
+  // 'CharConvertStatus::k_OUT_OF_SPACE_BIT' set to indicate that
+  // 'dstCapacity' was insufficient to accommodate the output.  If
+  // 'dstCapacity' was insufficient, the maximal null-terminated prefix
+  // of the properly converted result string is loaded into 'dstBuffer'.
+  // The behavior is undefined unless '0 <= dstCapacity', 'dstBuffer'
+  // refers to an array of at least 'dstCapacity' elements, and
+  // 'srcString' is null-terminated.  Note that if 'dstCapacity' is 0,
+  // this function returns exactly 2 and '*numCharsWritten' and
+  // '*numBytesWritten' (if not null) are loaded with 0 (since there is
+  // insufficient space for the null terminator even for an empty input
+  // string).  Also note that since UTF-8 is a variable-length encoding,
+  // it is possible for 'numBytesWritten' to be greater than
+  // 'numCharsWritten', and therefore that an input 'srcString' of
+  // 'dstCapacity - 1' *characters* may not fit into 'dstBuffer'.
 
-    static int ucs2ToUtf8(bsl::string          *result,
-                          const unsigned short *srcString,
-                          bsl::size_t          *numCharsWritten = 0);
-    static int ucs2ToUtf8(std::string          *result,
-                          const unsigned short *srcString,
-                          bsl::size_t          *numCharsWritten = 0);
+  static int ucs2ToUtf8(bsl::string *result, const unsigned short *srcString,
+                        bsl::size_t *numCharsWritten = 0);
+  static int ucs2ToUtf8(std::string *result, const unsigned short *srcString,
+                        bsl::size_t *numCharsWritten = 0);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int ucs2ToUtf8(std::pmr::string     *result,
-                          const unsigned short *srcString,
-                          bsl::size_t          *numCharsWritten = 0);
+  static int ucs2ToUtf8(std::experimental::pmr::string *result,
+                        const unsigned short *srcString,
+                        bsl::size_t *numCharsWritten = 0);
 #endif
-        // Load, into the specified 'result', the conversion of the specified
-        // null-terminated UCS-2 'srcString' to its UTF-8 equivalent.
-        // Optionally specify 'numCharsWritten' which (if not 0) indicates the
-        // modifiable integer into which the number of *characters* written
-        // (including the null terminator) is to be loaded.  Return 0 on
-        // success and 'CharConvertStatus::k_INVALILD_CHARS_BIT' otherwise,
-        // meaning that at least one sequence of characters was encountered
-        // that could not be translated to UTF-8.  The behavior is undefined
-        // unless 'srcString' is null-terminated.  Note that the
-        // null-terminating character is not counted in 'result->length()'.
-        // Also note that this function does not currently implement failure
-        // modes; however, this could change if UTF-8 input validation is
-        // added.
+  // Load, into the specified 'result', the conversion of the specified
+  // null-terminated UCS-2 'srcString' to its UTF-8 equivalent.
+  // Optionally specify 'numCharsWritten' which (if not 0) indicates the
+  // modifiable integer into which the number of *characters* written
+  // (including the null terminator) is to be loaded.  Return 0 on
+  // success and 'CharConvertStatus::k_INVALILD_CHARS_BIT' otherwise,
+  // meaning that at least one sequence of characters was encountered
+  // that could not be translated to UTF-8.  The behavior is undefined
+  // unless 'srcString' is null-terminated.  Note that the
+  // null-terminating character is not counted in 'result->length()'.
+  // Also note that this function does not currently implement failure
+  // modes; however, this could change if UTF-8 input validation is
+  // added.
 };
 
-}  // close package namespace
+} // namespace bdlde
 
-}  // close enterprise namespace
+} // namespace BloombergLP
 
 #endif
 

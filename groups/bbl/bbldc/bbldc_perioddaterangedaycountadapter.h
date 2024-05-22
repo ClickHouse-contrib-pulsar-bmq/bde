@@ -36,11 +36,11 @@ BSLS_IDENT("$Id: $")
 // computations.  For "period" day-count implementations, the valid date range
 // is from the first to the last period date.
 //
-///Usage
+/// Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-///Example 1: Adapting 'bbldc::PeriodIcmaActualActual'
+/// Example 1: Adapting 'bbldc::PeriodIcmaActualActual'
 ///- - - - - - - - - - - - - - - - - - - - - - - - - -
 // This example shows the procedure for using
 // 'bbldc::PeriodDateRangeDayCountAdapter' to adapt the
@@ -104,237 +104,214 @@ BSLS_IDENT("$Id: $")
 namespace BloombergLP {
 namespace bbldc {
 
-                   // ====================================
-                   // class PeriodDateRangeDayCountAdapter
-                   // ====================================
+// ====================================
+// class PeriodDateRangeDayCountAdapter
+// ====================================
 
 template <class CONVENTION>
 class PeriodDateRangeDayCountAdapter : public DateRangeDayCount {
-    // This 'class' provides an "adapter" from the specified 'CONVENTION', that
-    // requires a set of periods to compute the year fraction, to the
-    // 'bbldc::DateRangeDayCount' protocol that can be used for determining
-    // values based on dates according to the day-count 'CONVENTION'.
+  // This 'class' provides an "adapter" from the specified 'CONVENTION', that
+  // requires a set of periods to compute the year fraction, to the
+  // 'bbldc::DateRangeDayCount' protocol that can be used for determining
+  // values based on dates according to the day-count 'CONVENTION'.
 
-    // DATA
-    bsl::vector<bdlt::Date> d_periodDate;      // period starting dates
+  // DATA
+  bsl::vector<bdlt::Date> d_periodDate; // period starting dates
 
-    double                  d_periodYearDiff;  // years for each period
+  double d_periodYearDiff; // years for each period
 
-  private:
-    // PRIVATE ACCESSORS
-    bool isSortedAndUnique(const bsl::vector<bdlt::Date>& periodDate) const;
-        // Return 'true' if all values contained in the specified 'periodDate'
-        // are unique and sorted from minimum to maximum value, and 'false'
-        // otherwise.
+private:
+  // PRIVATE ACCESSORS
+  bool isSortedAndUnique(const bsl::vector<bdlt::Date> &periodDate) const;
+  // Return 'true' if all values contained in the specified 'periodDate'
+  // are unique and sorted from minimum to maximum value, and 'false'
+  // otherwise.
 
-  private:
-    // NOT IMPLEMENTED
-    PeriodDateRangeDayCountAdapter(const PeriodDateRangeDayCountAdapter&);
-    PeriodDateRangeDayCountAdapter& operator=(
-                                        const PeriodDateRangeDayCountAdapter&);
+private:
+  // NOT IMPLEMENTED
+  PeriodDateRangeDayCountAdapter(const PeriodDateRangeDayCountAdapter &);
+  PeriodDateRangeDayCountAdapter &
+  operator=(const PeriodDateRangeDayCountAdapter &);
 
-  public:
-    // CREATORS
-    PeriodDateRangeDayCountAdapter(
-                      const bsl::vector<bdlt::Date>&       periodDate,
-                      double                               periodYearDiff,
-                      bslma::Allocator                    *basicAllocator = 0);
-    PeriodDateRangeDayCountAdapter(
-                      const std::vector<bdlt::Date>&       periodDate,
-                      double                               periodYearDiff,
-                      bslma::Allocator                    *basicAllocator = 0);
+public:
+  // CREATORS
+  PeriodDateRangeDayCountAdapter(const bsl::vector<bdlt::Date> &periodDate,
+                                 double periodYearDiff,
+                                 bslma::Allocator *basicAllocator = 0);
+  PeriodDateRangeDayCountAdapter(const std::vector<bdlt::Date> &periodDate,
+                                 double periodYearDiff,
+                                 bslma::Allocator *basicAllocator = 0);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    PeriodDateRangeDayCountAdapter(
-                      const std::pmr::vector<bdlt::Date>&  periodDate,
-                      double                               periodYearDiff,
-                      bslma::Allocator                    *basicAllocator = 0);
+  PeriodDateRangeDayCountAdapter(
+      const std::experimental::pmr::vector<bdlt::Date> &periodDate,
+      double periodYearDiff, bslma::Allocator *basicAllocator = 0);
 #endif
-        // Create a day-count adapter that uses the specified 'periodDate' and
-        // 'periodYearDiff' during invocations of 'yearsDiff'.  'periodDate'
-        // provides the period starting dates and 'periodYearDiff' defines the
-        // duration of each period (e.g., 0.25 for quarterly periods).
-        // Optionally specify a 'basicAllocator' used to supply memory.  If
-        // 'basicAllocator' is 0, the currently installed default allocator is
-        // used.  The behavior is undefined unless 'periodDate.size() >= 2' and
-        // the values contained in 'periodDate' are unique and sorted from
-        // minimum to maximum.
+  // Create a day-count adapter that uses the specified 'periodDate' and
+  // 'periodYearDiff' during invocations of 'yearsDiff'.  'periodDate'
+  // provides the period starting dates and 'periodYearDiff' defines the
+  // duration of each period (e.g., 0.25 for quarterly periods).
+  // Optionally specify a 'basicAllocator' used to supply memory.  If
+  // 'basicAllocator' is 0, the currently installed default allocator is
+  // used.  The behavior is undefined unless 'periodDate.size() >= 2' and
+  // the values contained in 'periodDate' are unique and sorted from
+  // minimum to maximum.
 
-    virtual ~PeriodDateRangeDayCountAdapter();
-        // Destroy this object.
+  virtual ~PeriodDateRangeDayCountAdapter();
+  // Destroy this object.
 
-    // ACCESSORS
-    int daysDiff(const bdlt::Date& beginDate, const bdlt::Date& endDate) const;
-        // Return the (signed) number of days between the specified 'beginDate'
-        // and 'endDate' as per the 'CONVENTION' template policy.  If
-        // 'beginDate <= endDate', then the result is non-negative.  Note that
-        // reversing the order of 'beginDate' and 'endDate' negates the result.
+  // ACCESSORS
+  int daysDiff(const bdlt::Date &beginDate, const bdlt::Date &endDate) const;
+  // Return the (signed) number of days between the specified 'beginDate'
+  // and 'endDate' as per the 'CONVENTION' template policy.  If
+  // 'beginDate <= endDate', then the result is non-negative.  Note that
+  // reversing the order of 'beginDate' and 'endDate' negates the result.
 
-    const bdlt::Date& firstDate() const;
-        // Return a reference providing non-modifiable access to
-        // 'periodDate.front()' for the 'periodDate' provided at construction.
-        // Note that this value is the earliest date in the valid range of this
-        // day-count convention adaptation.
+  const bdlt::Date &firstDate() const;
+  // Return a reference providing non-modifiable access to
+  // 'periodDate.front()' for the 'periodDate' provided at construction.
+  // Note that this value is the earliest date in the valid range of this
+  // day-count convention adaptation.
 
-    const bdlt::Date& lastDate() const;
-        // Return a reference providing non-modifiable access to
-        // 'periodDate.back()' for the 'periodDate' provided at construction.
-        // Note that this value is the latest date in the valid range of this
-        // day-count convention adaptation.
+  const bdlt::Date &lastDate() const;
+  // Return a reference providing non-modifiable access to
+  // 'periodDate.back()' for the 'periodDate' provided at construction.
+  // Note that this value is the latest date in the valid range of this
+  // day-count convention adaptation.
 
-    double yearsDiff(const bdlt::Date& beginDate,
-                     const bdlt::Date& endDate) const;
-        // Return the (signed fractional) number of years between the specified
-        // 'beginDate' and 'endDate' as per the 'CONVENTION' template policy.
-        // If 'beginDate <= endDate', then the result is non-negative.  The
-        // behavior is undefined unless, for the 'periodDate' provided at
-        // construction, 'periodDate.front() <= beginDate <= periodDate.back()'
-        // and 'periodDate.front() <= endDate <= periodDate.back()'.  Note that
-        // reversing the order of 'beginDate' and 'endDate' negates the result;
-        // specifically, '|yearsDiff(b, e) + yearsDiff(e, b)| <= 1.0e-15' for
-        // all dates 'b' and 'e'.
+  double yearsDiff(const bdlt::Date &beginDate,
+                   const bdlt::Date &endDate) const;
+  // Return the (signed fractional) number of years between the specified
+  // 'beginDate' and 'endDate' as per the 'CONVENTION' template policy.
+  // If 'beginDate <= endDate', then the result is non-negative.  The
+  // behavior is undefined unless, for the 'periodDate' provided at
+  // construction, 'periodDate.front() <= beginDate <= periodDate.back()'
+  // and 'periodDate.front() <= endDate <= periodDate.back()'.  Note that
+  // reversing the order of 'beginDate' and 'endDate' negates the result;
+  // specifically, '|yearsDiff(b, e) + yearsDiff(e, b)| <= 1.0e-15' for
+  // all dates 'b' and 'e'.
 
-                                  // Aspects
+  // Aspects
 
-    bslma::Allocator *allocator() const;
-        // Return the allocator used by this adapter to supply memory.
+  bslma::Allocator *allocator() const;
+  // Return the allocator used by this adapter to supply memory.
 };
 
 // ============================================================================
 //                             INLINE DEFINITIONS
 // ============================================================================
 
-                   // ------------------------------------
-                   // class PeriodDateRangeDayCountAdapter
-                   // ------------------------------------
+// ------------------------------------
+// class PeriodDateRangeDayCountAdapter
+// ------------------------------------
 
 // PRIVATE ACCESSORS
 template <class CONVENTION>
 bool PeriodDateRangeDayCountAdapter<CONVENTION>::isSortedAndUnique(
-                               const bsl::vector<bdlt::Date>& periodDate) const
-{
-    bsl::vector<bdlt::Date>::const_iterator begin = periodDate.begin();
-    bsl::vector<bdlt::Date>::const_iterator end   = periodDate.end();
+    const bsl::vector<bdlt::Date> &periodDate) const {
+  bsl::vector<bdlt::Date>::const_iterator begin = periodDate.begin();
+  bsl::vector<bdlt::Date>::const_iterator end = periodDate.end();
 
-    if (begin == end) {
-        return true;                                                  // RETURN
+  if (begin == end) {
+    return true; // RETURN
+  }
+
+  bsl::vector<bdlt::Date>::const_iterator prev = begin;
+  bsl::vector<bdlt::Date>::const_iterator at = begin + 1;
+
+  while (at != end) {
+    if (*prev >= *at) {
+      return false; // RETURN
     }
+    prev = at++;
+  }
 
-    bsl::vector<bdlt::Date>::const_iterator prev = begin;
-    bsl::vector<bdlt::Date>::const_iterator at   = begin + 1;
-
-    while (at != end) {
-        if (*prev >= *at) {
-            return false;                                             // RETURN
-        }
-        prev = at++;
-    }
-
-    return true;
+  return true;
 }
 
 // CREATORS
 template <class CONVENTION>
-inline
-PeriodDateRangeDayCountAdapter<CONVENTION>::PeriodDateRangeDayCountAdapter(
-                                const bsl::vector<bdlt::Date>&  periodDate,
-                                double                          periodYearDiff,
-                                bslma::Allocator               *basicAllocator)
-: d_periodDate(periodDate, basicAllocator)
-, d_periodYearDiff(periodYearDiff)
-{
-    BSLS_ASSERT(d_periodDate.size() >= 2);
+inline PeriodDateRangeDayCountAdapter<CONVENTION>::
+    PeriodDateRangeDayCountAdapter(const bsl::vector<bdlt::Date> &periodDate,
+                                   double periodYearDiff,
+                                   bslma::Allocator *basicAllocator)
+    : d_periodDate(periodDate, basicAllocator),
+      d_periodYearDiff(periodYearDiff) {
+  BSLS_ASSERT(d_periodDate.size() >= 2);
 
-    BSLS_ASSERT_SAFE(isSortedAndUnique(d_periodDate));
+  BSLS_ASSERT_SAFE(isSortedAndUnique(d_periodDate));
 }
 
 template <class CONVENTION>
-inline
-PeriodDateRangeDayCountAdapter<CONVENTION>::PeriodDateRangeDayCountAdapter(
-                                const std::vector<bdlt::Date>&  periodDate,
-                                double                          periodYearDiff,
-                                bslma::Allocator               *basicAllocator)
-: d_periodDate(periodDate.begin(), periodDate.end(), basicAllocator)
-, d_periodYearDiff(periodYearDiff)
-{
-    BSLS_ASSERT(d_periodDate.size() >= 2);
+inline PeriodDateRangeDayCountAdapter<CONVENTION>::
+    PeriodDateRangeDayCountAdapter(const std::vector<bdlt::Date> &periodDate,
+                                   double periodYearDiff,
+                                   bslma::Allocator *basicAllocator)
+    : d_periodDate(periodDate.begin(), periodDate.end(), basicAllocator),
+      d_periodYearDiff(periodYearDiff) {
+  BSLS_ASSERT(d_periodDate.size() >= 2);
 
-    BSLS_ASSERT_SAFE(isSortedAndUnique(d_periodDate));
+  BSLS_ASSERT_SAFE(isSortedAndUnique(d_periodDate));
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class CONVENTION>
-inline
-PeriodDateRangeDayCountAdapter<CONVENTION>::PeriodDateRangeDayCountAdapter(
-                           const std::pmr::vector<bdlt::Date>&  periodDate,
-                           double                               periodYearDiff,
-                           bslma::Allocator                    *basicAllocator)
-: d_periodDate(periodDate.begin(), periodDate.end(), basicAllocator)
-, d_periodYearDiff(periodYearDiff)
-{
-    BSLS_ASSERT(d_periodDate.size() >= 2);
+inline PeriodDateRangeDayCountAdapter<CONVENTION>::
+    PeriodDateRangeDayCountAdapter(
+        const std::experimental::pmr::vector<bdlt::Date> &periodDate,
+        double periodYearDiff, bslma::Allocator *basicAllocator)
+    : d_periodDate(periodDate.begin(), periodDate.end(), basicAllocator),
+      d_periodYearDiff(periodYearDiff) {
+  BSLS_ASSERT(d_periodDate.size() >= 2);
 
-    BSLS_ASSERT_SAFE(isSortedAndUnique(d_periodDate));
+  BSLS_ASSERT_SAFE(isSortedAndUnique(d_periodDate));
 }
 #endif
 
 template <class CONVENTION>
-inline
-PeriodDateRangeDayCountAdapter<CONVENTION>::~PeriodDateRangeDayCountAdapter()
-{
-}
+inline PeriodDateRangeDayCountAdapter<
+    CONVENTION>::~PeriodDateRangeDayCountAdapter() {}
 
 // ACCESSORS
 template <class CONVENTION>
-inline
-int PeriodDateRangeDayCountAdapter<CONVENTION>::daysDiff(
-                                               const bdlt::Date& beginDate,
-                                               const bdlt::Date& endDate) const
-{
-    return CONVENTION::daysDiff(beginDate, endDate);
+inline int PeriodDateRangeDayCountAdapter<CONVENTION>::daysDiff(
+    const bdlt::Date &beginDate, const bdlt::Date &endDate) const {
+  return CONVENTION::daysDiff(beginDate, endDate);
 }
 
 template <class CONVENTION>
-inline
-const bdlt::Date& PeriodDateRangeDayCountAdapter<CONVENTION>::firstDate() const
-{
-    return d_periodDate.front();
+inline const bdlt::Date &
+PeriodDateRangeDayCountAdapter<CONVENTION>::firstDate() const {
+  return d_periodDate.front();
 }
 
 template <class CONVENTION>
-inline
-const bdlt::Date& PeriodDateRangeDayCountAdapter<CONVENTION>::lastDate() const
-{
-    return d_periodDate.back();
+inline const bdlt::Date &
+PeriodDateRangeDayCountAdapter<CONVENTION>::lastDate() const {
+  return d_periodDate.back();
 }
 
 template <class CONVENTION>
-inline
-double PeriodDateRangeDayCountAdapter<CONVENTION>::yearsDiff(
-                                               const bdlt::Date& beginDate,
-                                               const bdlt::Date& endDate) const
-{
-    BSLS_ASSERT(d_periodDate.front() <= beginDate);
-    BSLS_ASSERT(                        beginDate <= d_periodDate.back());
-    BSLS_ASSERT(d_periodDate.front() <= endDate);
-    BSLS_ASSERT(                        endDate   <= d_periodDate.back());
+inline double PeriodDateRangeDayCountAdapter<CONVENTION>::yearsDiff(
+    const bdlt::Date &beginDate, const bdlt::Date &endDate) const {
+  BSLS_ASSERT(d_periodDate.front() <= beginDate);
+  BSLS_ASSERT(beginDate <= d_periodDate.back());
+  BSLS_ASSERT(d_periodDate.front() <= endDate);
+  BSLS_ASSERT(endDate <= d_periodDate.back());
 
-    return CONVENTION::yearsDiff(beginDate,
-                                 endDate,
-                                 d_periodDate,
-                                 d_periodYearDiff);
+  return CONVENTION::yearsDiff(beginDate, endDate, d_periodDate,
+                               d_periodYearDiff);
 }
 
-                                  // Aspects
+// Aspects
 
 template <class CONVENTION>
-inline
-bslma::Allocator *PeriodDateRangeDayCountAdapter<CONVENTION>::allocator() const
-{
-    return d_periodDate.get_allocator().mechanism();
+inline bslma::Allocator *
+PeriodDateRangeDayCountAdapter<CONVENTION>::allocator() const {
+  return d_periodDate.get_allocator().mechanism();
 }
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace bbldc
+} // namespace BloombergLP
 
 // TRAITS
 
@@ -342,11 +319,11 @@ namespace BloombergLP {
 namespace bslma {
 
 template <class CONVENTION>
-struct UsesBslmaAllocator<bbldc::PeriodDateRangeDayCountAdapter<CONVENTION> >
-                                                           : bsl::true_type {};
+struct UsesBslmaAllocator<bbldc::PeriodDateRangeDayCountAdapter<CONVENTION>>
+    : bsl::true_type {};
 
-}  // close namespace bslma
-}  // close enterprise namespace
+} // namespace bslma
+} // namespace BloombergLP
 
 #endif
 

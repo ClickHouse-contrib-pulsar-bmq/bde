@@ -28,7 +28,7 @@ BSLS_IDENT("$Id: $")
 // effectively a thread-enabled handle for 'bdlc::Queue', whose interface is
 // also made available through 'bdlcc::Queue'.
 //
-///Thread-Enabled Idioms in the 'bdlcc::Queue' Interface
+/// Thread-Enabled Idioms in the 'bdlcc::Queue' Interface
 ///-----------------------------------------------------
 // The thread-enabled 'bdlcc::Queue' is similar to 'bdlc::Queue' in many
 // regards, but there are several differences in method behavior and signature
@@ -60,7 +60,7 @@ BSLS_IDENT("$Id: $")
 // that this design decision makes the high-water mark concept a suggestion and
 // not an invariant.
 //
-///Use of the 'bdlc::Queue' Interface
+/// Use of the 'bdlc::Queue' Interface
 ///----------------------------------
 // Class 'bdlcc::Queue' provides access to an underlying 'bdlc::Queue', so
 // clients of 'bdlcc::Queue' have full access to the interface behavior of
@@ -110,7 +110,7 @@ BSLS_IDENT("$Id: $")
 // will be deprecated.  In the meanwhile, the user should be careful to use the
 // 'bdlc::Queue' and the synchronization objects properly.
 //
-///WARNING: Synchronization Required on Destruction
+/// WARNING: Synchronization Required on Destruction
 ///------------------------------------------------
 // The behavior for the destructor is undefined unless all access or
 // modification of the object is completed prior to its destruction.  Some form
@@ -123,11 +123,11 @@ BSLS_IDENT("$Id: $")
 // instance, signal waiting threads after the element is considered added to
 // the queue).
 //
-///Usage
+/// Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-///Example 1: Simple Thread Pool
+/// Example 1: Simple Thread Pool
 ///- - - - - - - - - - - - - - -
 // The following example demonstrates a typical usage of a 'bdlcc::Queue'.
 //
@@ -250,8 +250,8 @@ BSLS_IDENT("$Id: $")
 //  }
 //..
 //
-///Example 2: Multi-Threaded Observer
-/// - - - - - - - - - - - - - - - - -
+/// Example 2: Multi-Threaded Observer
+///  - - - - - - - - - - - - - - - - -
 // The previous example shows a simple mechanism for distributing work requests
 // over multiple threads.  This approach works well for large tasks that can be
 // decomposed into discrete, independent tasks that can benefit from parallel
@@ -419,376 +419,365 @@ BSLS_IDENT("$Id: $")
 namespace BloombergLP {
 namespace bdlcc {
 
-                                // ===========
-                                // class Queue
-                                // ===========
+// ===========
+// class Queue
+// ===========
 
-template <class TYPE>
-class Queue {
-    // This class provides a thread-enabled implementation of an efficient,
-    // in-place, indexable, double-ended queue of parameterized 'TYPE' values.
-    // Very efficient access to the underlying 'bdlc::Queue' object is
-    // provided, as well as to a 'bslmt::Mutex' and a 'bslmt::Condition'
-    // variable, to facilitate thread-safe use of the 'bdlc::Queue'.  Note that
-    // 'Queue' is not a value-semantic type, but the underlying 'bdlc::Queue'
-    // is.  In this regard, 'Queue' is a thread-enabled handle for a
-    // 'bdlc::Queue'.
+template <class TYPE> class Queue {
+  // This class provides a thread-enabled implementation of an efficient,
+  // in-place, indexable, double-ended queue of parameterized 'TYPE' values.
+  // Very efficient access to the underlying 'bdlc::Queue' object is
+  // provided, as well as to a 'bslmt::Mutex' and a 'bslmt::Condition'
+  // variable, to facilitate thread-safe use of the 'bdlc::Queue'.  Note that
+  // 'Queue' is not a value-semantic type, but the underlying 'bdlc::Queue'
+  // is.  In this regard, 'Queue' is a thread-enabled handle for a
+  // 'bdlc::Queue'.
 
-    // PRIVATE TYPES
-    typedef typename bdlc::Queue<TYPE>::InitialCapacity QueueCapacity;
-                                           // We need this typedef to work
-                                           // around a bug in Sun WorkShop 6
-                                           // update 1: if the typedef is
-                                           // replaced by its actual definition
-                                           // in the two constructors
-                                           // initialization list, the compiler
-                                           // erroneously reports a syntax
-                                           // error ("Expected an expression").
+  // PRIVATE TYPES
+  typedef typename bdlc::Queue<TYPE>::InitialCapacity QueueCapacity;
+  // We need this typedef to work
+  // around a bug in Sun WorkShop 6
+  // update 1: if the typedef is
+  // replaced by its actual definition
+  // in the two constructors
+  // initialization list, the compiler
+  // erroneously reports a syntax
+  // error ("Expected an expression").
 
-    template <class VECTOR>
-    struct IsVector;
+  template <class VECTOR> struct IsVector;
+
+  // DATA
+  mutable bslmt::Mutex d_mutex; // mutex object used to synchronize
+                                // access to this queue
+
+  bslmt::Condition d_notEmptyCondition; // condition variable used to signal
+                                        // that new data is available in the
+                                        // queue
+
+  bslmt::Condition d_notFullCondition; // condition variable used to signal
+                                       // when there is room available to
+                                       // add new data to the queue
+
+  bdlc::Queue<TYPE> d_queue; // the queue, with allocator as last
+                             // data member
+
+  const int d_highWaterMark; // positive maximum number of items
+                             // that can be queued before
+                             // insertions will be blocked, or
+                             // -1 if unlimited
+
+private:
+  // NOT IMPLEMENTED
+  Queue(const Queue<TYPE> &);
+  Queue<TYPE> &operator=(const Queue<TYPE> &);
+
+  // PRIVATE MANIPULATORS
+  template <class VECTOR> void removeAllImp(VECTOR *buffer = 0);
+  // Remove all the items in this queue.  If the optionally specified
+  // 'buffer' is not 0, load into 'buffer' a copy of the items removed in
+  // front to back order of the queue prior to 'removeAll'.
+
+  template <class VECTOR> void tryPopFrontImp(int maxNumItems, VECTOR *buffer);
+  // Remove up to the specified 'maxNumItems' from the front of this
+  // queue.  Optionally specify a 'buffer' into which the items removed
+  // from the queue are loaded.  If 'buffer' is non-null, the removed
+  // items are appended to it as if by repeated application of
+  // 'buffer->push_back(popFront())' while the queue is not empty and
+  // 'maxNumItems' have not yet been removed.  The behavior is undefined
+  // unless 'maxNumItems >= 0'.  This method never blocks.
+
+  template <class VECTOR> void tryPopBackImp(int maxNumItems, VECTOR *buffer);
+  // Remove up to the specified 'maxNumItems' from the back of this
+  // queue.  Optionally specify a 'buffer' into which the items removed
+  // from the queue are loaded.  If 'buffer' is non-null, the removed
+  // items are appended to it as if by repeated application of
+  // 'buffer->push_back(popBack())' while the queue is not empty and
+  // 'maxNumItems' have not yet been removed.  This method never blocks.
+  // The behavior is undefined unless 'maxNumItems >= 0'.  Note that the
+  // ordering of the items in '*buffer' after the call is the reverse of
+  // the ordering they had in the queue.
+
+public:
+  // TRAITS
+  BSLMF_NESTED_TRAIT_DECLARATION(Queue, bslma::UsesBslmaAllocator);
+
+  // TYPES
+  struct InitialCapacity {
+    // Enable uniform use of an optional integral constructor argument to
+    // specify the initial internal capacity (in items).  For example,
+    //..
+    //   const Queue<int>::InitialCapacity NUM_ITEMS(8));
+    //   Queue<int> x(NUM_ITEMS);
+    //..
+    // defines an instance 'x' with an initial capacity of 8 items, but
+    // with a logical length of 0 items.
 
     // DATA
-    mutable
-    bslmt::Mutex      d_mutex;             // mutex object used to synchronize
-                                           // access to this queue
-
-    bslmt::Condition  d_notEmptyCondition; // condition variable used to signal
-                                           // that new data is available in the
-                                           // queue
-
-    bslmt::Condition  d_notFullCondition;  // condition variable used to signal
-                                           // when there is room available to
-                                           // add new data to the queue
-
-    bdlc::Queue<TYPE> d_queue;             // the queue, with allocator as last
-                                           // data member
-
-    const int         d_highWaterMark;     // positive maximum number of items
-                                           // that can be queued before
-                                           // insertions will be blocked, or
-                                           // -1 if unlimited
-
-  private:
-    // NOT IMPLEMENTED
-    Queue(const Queue<TYPE>&);
-    Queue<TYPE>& operator=(const Queue<TYPE>&);
-
-    // PRIVATE MANIPULATORS
-    template <class VECTOR>
-    void removeAllImp(VECTOR *buffer = 0);
-        // Remove all the items in this queue.  If the optionally specified
-        // 'buffer' is not 0, load into 'buffer' a copy of the items removed in
-        // front to back order of the queue prior to 'removeAll'.
-
-    template <class VECTOR>
-    void tryPopFrontImp(int maxNumItems, VECTOR *buffer);
-        // Remove up to the specified 'maxNumItems' from the front of this
-        // queue.  Optionally specify a 'buffer' into which the items removed
-        // from the queue are loaded.  If 'buffer' is non-null, the removed
-        // items are appended to it as if by repeated application of
-        // 'buffer->push_back(popFront())' while the queue is not empty and
-        // 'maxNumItems' have not yet been removed.  The behavior is undefined
-        // unless 'maxNumItems >= 0'.  This method never blocks.
-
-    template <class VECTOR>
-    void tryPopBackImp(int maxNumItems, VECTOR *buffer);
-        // Remove up to the specified 'maxNumItems' from the back of this
-        // queue.  Optionally specify a 'buffer' into which the items removed
-        // from the queue are loaded.  If 'buffer' is non-null, the removed
-        // items are appended to it as if by repeated application of
-        // 'buffer->push_back(popBack())' while the queue is not empty and
-        // 'maxNumItems' have not yet been removed.  This method never blocks.
-        // The behavior is undefined unless 'maxNumItems >= 0'.  Note that the
-        // ordering of the items in '*buffer' after the call is the reverse of
-        // the ordering they had in the queue.
-
-  public:
-    // TRAITS
-    BSLMF_NESTED_TRAIT_DECLARATION(Queue, bslma::UsesBslmaAllocator);
-
-    // TYPES
-    struct InitialCapacity {
-        // Enable uniform use of an optional integral constructor argument to
-        // specify the initial internal capacity (in items).  For example,
-        //..
-        //   const Queue<int>::InitialCapacity NUM_ITEMS(8));
-        //   Queue<int> x(NUM_ITEMS);
-        //..
-        // defines an instance 'x' with an initial capacity of 8 items, but
-        // with a logical length of 0 items.
-
-        // DATA
-        unsigned int d_i;
-
-        // CREATORS
-        explicit InitialCapacity(int i)
-        : d_i(i)
-            // Create an object with the specified value 'i'.
-        {}
-    };
+    unsigned int d_i;
 
     // CREATORS
-    explicit
-    Queue(bslma::Allocator *basicAllocator = 0);
-        // Create a queue of objects of parameterized 'TYPE'.  Optionally
-        // specify a 'basicAllocator' used to supply memory.  If
-        // 'basicAllocator' is 0, the currently installed default allocator is
-        // used.
+    explicit InitialCapacity(int i)
+        : d_i(i)
+    // Create an object with the specified value 'i'.
+    {}
+  };
 
-    explicit
-    Queue(int highWaterMark, bslma::Allocator *basicAllocator = 0);
-        // Create a queue of objects of parameterized 'TYPE' having either the
-        // specified 'highWaterMark' suggested maximum length if
-        // 'highWaterMark' is positive, or no maximum length if 'highWaterMark'
-        // is negative.  Optionally specify a 'basicAllocator' used to supply
-        // memory.  If 'basicAllocator' is 0, the currently installed default
-        // allocator is used.  The behavior is undefined unless
-        // 'highWaterMark != 0'.
+  // CREATORS
+  explicit Queue(bslma::Allocator *basicAllocator = 0);
+  // Create a queue of objects of parameterized 'TYPE'.  Optionally
+  // specify a 'basicAllocator' used to supply memory.  If
+  // 'basicAllocator' is 0, the currently installed default allocator is
+  // used.
 
-    explicit
-    Queue(const InitialCapacity&  numItems,
-          bslma::Allocator       *basicAllocator = 0);
-        // Create a queue of objects of parameterized 'TYPE' with sufficient
-        // initial capacity to accommodate up to the specified 'numItems'
-        // values without subsequent reallocation.  Optionally specify a
-        // 'basicAllocator' used to supply memory.  If 'basicAllocator' is 0,
-        // the currently installed default allocator is used.
+  explicit Queue(int highWaterMark, bslma::Allocator *basicAllocator = 0);
+  // Create a queue of objects of parameterized 'TYPE' having either the
+  // specified 'highWaterMark' suggested maximum length if
+  // 'highWaterMark' is positive, or no maximum length if 'highWaterMark'
+  // is negative.  Optionally specify a 'basicAllocator' used to supply
+  // memory.  If 'basicAllocator' is 0, the currently installed default
+  // allocator is used.  The behavior is undefined unless
+  // 'highWaterMark != 0'.
 
-    Queue(const InitialCapacity&  numItems,
-          int                     highWaterMark,
-          bslma::Allocator       *basicAllocator = 0);
-        // Create a queue of objects of parameterized 'TYPE' with sufficient
-        // initial capacity to accommodate up to the specified 'numItems'
-        // values without subsequent reallocation and having either the
-        // specified 'highWaterMark' suggested maximum length if
-        // 'highWaterMark' is positive, or no maximum length if 'highWaterMark'
-        // is negative.  Optionally specify a 'basicAllocator' used to supply
-        // memory.  If 'basicAllocator' is 0, the currently installed default
-        // allocator is used.  The behavior is undefined unless
-        // 'highWaterMark != 0'.
+  explicit Queue(const InitialCapacity &numItems,
+                 bslma::Allocator *basicAllocator = 0);
+  // Create a queue of objects of parameterized 'TYPE' with sufficient
+  // initial capacity to accommodate up to the specified 'numItems'
+  // values without subsequent reallocation.  Optionally specify a
+  // 'basicAllocator' used to supply memory.  If 'basicAllocator' is 0,
+  // the currently installed default allocator is used.
 
-    Queue(const bdlc::Queue<TYPE>&  srcQueue,
-          bslma::Allocator         *basicAllocator = 0);            // IMPLICIT
-        // Create a queue of objects of parameterized 'TYPE' containing the
-        // sequence of 'TYPE' values from the specified 'srcQueue'.  Optionally
-        // specify a 'basicAllocator' used to supply memory.  If
-        // 'basicAllocator' is 0, the currently installed default allocator is
-        // used.
+  Queue(const InitialCapacity &numItems, int highWaterMark,
+        bslma::Allocator *basicAllocator = 0);
+  // Create a queue of objects of parameterized 'TYPE' with sufficient
+  // initial capacity to accommodate up to the specified 'numItems'
+  // values without subsequent reallocation and having either the
+  // specified 'highWaterMark' suggested maximum length if
+  // 'highWaterMark' is positive, or no maximum length if 'highWaterMark'
+  // is negative.  Optionally specify a 'basicAllocator' used to supply
+  // memory.  If 'basicAllocator' is 0, the currently installed default
+  // allocator is used.  The behavior is undefined unless
+  // 'highWaterMark != 0'.
 
-    Queue(const bdlc::Queue<TYPE>&  srcQueue,
-          int                       highWaterMark,
-          bslma::Allocator         *basicAllocator = 0);
-        // Create a queue of objects of parameterized 'TYPE' containing the
-        // sequence of 'TYPE' values from the specified 'srcQueue' and having
-        // either the specified 'highWaterMark' suggested maximum length if
-        // 'highWaterMark' is positive, or no maximum length if 'highWaterMark'
-        // is negative.  Optionally specify a 'basicAllocator' used to supply
-        // memory.  If 'basicAllocator' is 0, the currently installed default
-        // allocator is used.  The behavior is undefined unless
-        // 'highWaterMark != 0'.
+  Queue(const bdlc::Queue<TYPE> &srcQueue,
+        bslma::Allocator *basicAllocator = 0); // IMPLICIT
+  // Create a queue of objects of parameterized 'TYPE' containing the
+  // sequence of 'TYPE' values from the specified 'srcQueue'.  Optionally
+  // specify a 'basicAllocator' used to supply memory.  If
+  // 'basicAllocator' is 0, the currently installed default allocator is
+  // used.
 
-    ~Queue();
-        // Destroy this container.  The behavior is undefined unless all access
-        // or modification of the container has completed prior to this call.
+  Queue(const bdlc::Queue<TYPE> &srcQueue, int highWaterMark,
+        bslma::Allocator *basicAllocator = 0);
+  // Create a queue of objects of parameterized 'TYPE' containing the
+  // sequence of 'TYPE' values from the specified 'srcQueue' and having
+  // either the specified 'highWaterMark' suggested maximum length if
+  // 'highWaterMark' is positive, or no maximum length if 'highWaterMark'
+  // is negative.  Optionally specify a 'basicAllocator' used to supply
+  // memory.  If 'basicAllocator' is 0, the currently installed default
+  // allocator is used.  The behavior is undefined unless
+  // 'highWaterMark != 0'.
 
-    // MANIPULATORS
-    void popBack(TYPE *buffer);
-        // Remove the last item in this queue and load that item into the
-        // specified 'buffer'.  If this queue is empty, block until an item is
-        // available.
+  ~Queue();
+  // Destroy this container.  The behavior is undefined unless all access
+  // or modification of the container has completed prior to this call.
 
-    TYPE popBack();
-        // Remove the last item in this queue and return that item value.  If
-        // this queue is empty, block until an item is available.
+  // MANIPULATORS
+  void popBack(TYPE *buffer);
+  // Remove the last item in this queue and load that item into the
+  // specified 'buffer'.  If this queue is empty, block until an item is
+  // available.
 
-    int timedPopBack(TYPE *buffer, const bsls::TimeInterval& timeout);
-        // Remove the last item in this queue and load that item value into the
-        // specified 'buffer'.  If this queue is empty, block until an item is
-        // available or until the specified 'timeout' (expressed as the
-        // !ABSOLUTE! time from 00:00:00 UTC, January 1, 1970) expires.  Return
-        // 0 on success, and a non-zero value if the call timed out before an
-        // item was available.
+  TYPE popBack();
+  // Remove the last item in this queue and return that item value.  If
+  // this queue is empty, block until an item is available.
 
-    void popFront(TYPE *buffer);
-        // Remove the first item in this queue and load that item into the
-        // specified 'buffer'.  If the queue is empty, block until an item is
-        // available.
+  int timedPopBack(TYPE *buffer, const bsls::TimeInterval &timeout);
+  // Remove the last item in this queue and load that item value into the
+  // specified 'buffer'.  If this queue is empty, block until an item is
+  // available or until the specified 'timeout' (expressed as the
+  // !ABSOLUTE! time from 00:00:00 UTC, January 1, 1970) expires.  Return
+  // 0 on success, and a non-zero value if the call timed out before an
+  // item was available.
 
-    TYPE popFront();
-        // Remove the first item in this queue and return that item value.  If
-        // the queue is empty, block until an item is available.
+  void popFront(TYPE *buffer);
+  // Remove the first item in this queue and load that item into the
+  // specified 'buffer'.  If the queue is empty, block until an item is
+  // available.
 
-    int timedPopFront(TYPE *buffer, const bsls::TimeInterval& timeout);
-        // Remove the first item in this queue and load that item value into
-        // the specified 'buffer'.  If this queue is empty, block until an item
-        // is available or until the specified 'timeout' (expressed as the
-        // !ABSOLUTE! time from 00:00:00 UTC, January 1, 1970) expires.  Return
-        // 0 on success, and a non-zero value if the call timed out before an
-        // item was available.
+  TYPE popFront();
+  // Remove the first item in this queue and return that item value.  If
+  // the queue is empty, block until an item is available.
 
-    void removeAll();
-    void removeAll(bsl::vector<TYPE>      *buffer);
-    void removeAll(std::vector<TYPE>      *buffer);
+  int timedPopFront(TYPE *buffer, const bsls::TimeInterval &timeout);
+  // Remove the first item in this queue and load that item value into
+  // the specified 'buffer'.  If this queue is empty, block until an item
+  // is available or until the specified 'timeout' (expressed as the
+  // !ABSOLUTE! time from 00:00:00 UTC, January 1, 1970) expires.  Return
+  // 0 on success, and a non-zero value if the call timed out before an
+  // item was available.
+
+  void removeAll();
+  void removeAll(bsl::vector<TYPE> *buffer);
+  void removeAll(std::vector<TYPE> *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void removeAll(std::pmr::vector<TYPE> *buffer);
+  void removeAll(std::experimental::pmr::vector<TYPE> *buffer);
 #endif
-        // Remove all the items in this queue.  If the optionally specified
-        // 'buffer' is not 0, load into 'buffer' a copy of the items removed in
-        // front to back order of the queue prior to 'removeAll'.
+  // Remove all the items in this queue.  If the optionally specified
+  // 'buffer' is not 0, load into 'buffer' a copy of the items removed in
+  // front to back order of the queue prior to 'removeAll'.
 
-    void pushBack(const TYPE& item);
-        // Append the specified 'item' to the back of this queue.  If the
-        // high-water mark is non-negative and the number of items in this
-        // queue is greater than or equal to the high-water mark, then block
-        // until the number of items in this queue is less than the high-water
-        // mark.
+  void pushBack(const TYPE &item);
+  // Append the specified 'item' to the back of this queue.  If the
+  // high-water mark is non-negative and the number of items in this
+  // queue is greater than or equal to the high-water mark, then block
+  // until the number of items in this queue is less than the high-water
+  // mark.
 
-    void pushFront(const TYPE& item);
-        // Append the specified 'item' to the front of this queue.  If the
-        // high-water mark is non-negative and the number of items in this
-        // queue is greater than or equal to the high-water mark, then block
-        // until the number of items in this queue is less than the high-water
-        // mark.
+  void pushFront(const TYPE &item);
+  // Append the specified 'item' to the front of this queue.  If the
+  // high-water mark is non-negative and the number of items in this
+  // queue is greater than or equal to the high-water mark, then block
+  // until the number of items in this queue is less than the high-water
+  // mark.
 
-    int timedPushBack(const TYPE& item, const bsls::TimeInterval& timeout);
-        // Append the specified 'item' to the back of this queue.  If the
-        // high-water mark is non-negative and the number of items in this
-        // queue is greater than or equal to the high-water mark, then block
-        // until the number of items in this queue is less than the high-water
-        // mark or until the specified 'timeout' (expressed as the !ABSOLUTE!
-        // time from 00:00:00 UTC, January 1, 1970) expires.  Return 0 on
-        // success, and a non-zero value if the call timed out before the
-        // number of items in this queue fell below the high-water mark.
+  int timedPushBack(const TYPE &item, const bsls::TimeInterval &timeout);
+  // Append the specified 'item' to the back of this queue.  If the
+  // high-water mark is non-negative and the number of items in this
+  // queue is greater than or equal to the high-water mark, then block
+  // until the number of items in this queue is less than the high-water
+  // mark or until the specified 'timeout' (expressed as the !ABSOLUTE!
+  // time from 00:00:00 UTC, January 1, 1970) expires.  Return 0 on
+  // success, and a non-zero value if the call timed out before the
+  // number of items in this queue fell below the high-water mark.
 
-    int timedPushFront(const TYPE& item, const bsls::TimeInterval& timeout);
-        // Append the specified 'item' to the front of this queue.  If the high
-        // water mark is non-negative and the number of items in this queue is
-        // greater than or equal to the high-water mark, then block until the
-        // number of items in this queue is less than the high-water mark or
-        // until the specified 'timeout' (expressed as the !ABSOLUTE! time from
-        // 00:00:00 UTC, January 1, 1970) expires.  Return 0 on success, and a
-        // non-zero value if the call timed out before the number of items in
-        // this queue fell below the high-water mark.
+  int timedPushFront(const TYPE &item, const bsls::TimeInterval &timeout);
+  // Append the specified 'item' to the front of this queue.  If the high
+  // water mark is non-negative and the number of items in this queue is
+  // greater than or equal to the high-water mark, then block until the
+  // number of items in this queue is less than the high-water mark or
+  // until the specified 'timeout' (expressed as the !ABSOLUTE! time from
+  // 00:00:00 UTC, January 1, 1970) expires.  Return 0 on success, and a
+  // non-zero value if the call timed out before the number of items in
+  // this queue fell below the high-water mark.
 
-    void forcePushFront(const TYPE& item);
-        // Append the specified 'item' to the front of this queue without
-        // regard for the high-water mark.  Note that this method is provided
-        // to allow high priority items to be inserted when the queue is full
-        // (i.e., has a number of items greater than or equal to its high-water
-        // mark); 'pushFront' and 'pushBack' should be used for general use.
+  void forcePushFront(const TYPE &item);
+  // Append the specified 'item' to the front of this queue without
+  // regard for the high-water mark.  Note that this method is provided
+  // to allow high priority items to be inserted when the queue is full
+  // (i.e., has a number of items greater than or equal to its high-water
+  // mark); 'pushFront' and 'pushBack' should be used for general use.
 
-    int tryPopFront(TYPE *buffer);
-        // If this queue is non-empty, remove the first item, load that item
-        // into the specified 'buffer', and return 0 indicating success.  If
-        // this queue is empty, return a non-zero value with no effect on
-        // 'buffer' or the state of this queue.  This method never blocks.
+  int tryPopFront(TYPE *buffer);
+  // If this queue is non-empty, remove the first item, load that item
+  // into the specified 'buffer', and return 0 indicating success.  If
+  // this queue is empty, return a non-zero value with no effect on
+  // 'buffer' or the state of this queue.  This method never blocks.
 
-    void tryPopFront(int maxNumItems);
-    void tryPopFront(int maxNumItems, bsl::vector<TYPE>      *buffer);
-    void tryPopFront(int maxNumItems, std::vector<TYPE>      *buffer);
+  void tryPopFront(int maxNumItems);
+  void tryPopFront(int maxNumItems, bsl::vector<TYPE> *buffer);
+  void tryPopFront(int maxNumItems, std::vector<TYPE> *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void tryPopFront(int maxNumItems, std::pmr::vector<TYPE> *buffer);
+  void tryPopFront(int maxNumItems,
+                   std::experimental::pmr::vector<TYPE> *buffer);
 #endif
-        // Remove up to the specified 'maxNumItems' from the front of this
-        // queue.  Optionally specify a 'buffer' into which the items removed
-        // from the queue are loaded.  If 'buffer' is non-null, the removed
-        // items are appended to it as if by repeated application of
-        // 'buffer->push_back(popFront())' while the queue is not empty and
-        // 'maxNumItems' have not yet been removed.  The behavior is undefined
-        // unless 'maxNumItems >= 0'.  This method never blocks.
+  // Remove up to the specified 'maxNumItems' from the front of this
+  // queue.  Optionally specify a 'buffer' into which the items removed
+  // from the queue are loaded.  If 'buffer' is non-null, the removed
+  // items are appended to it as if by repeated application of
+  // 'buffer->push_back(popFront())' while the queue is not empty and
+  // 'maxNumItems' have not yet been removed.  The behavior is undefined
+  // unless 'maxNumItems >= 0'.  This method never blocks.
 
-    int tryPopBack(TYPE *buffer);
-        // If this queue is non-empty, remove the last item, load that item
-        // into the specified 'buffer', and return 0 indicating success.  If
-        // this queue is empty, return a non-zero value with no effect on
-        // 'buffer' or the state of this queue.  This method never blocks.
+  int tryPopBack(TYPE *buffer);
+  // If this queue is non-empty, remove the last item, load that item
+  // into the specified 'buffer', and return 0 indicating success.  If
+  // this queue is empty, return a non-zero value with no effect on
+  // 'buffer' or the state of this queue.  This method never blocks.
 
-    void tryPopBack(int maxNumItems);
-    void tryPopBack(int maxNumItems, bsl::vector<TYPE>      *buffer);
-    void tryPopBack(int maxNumItems, std::vector<TYPE>      *buffer);
+  void tryPopBack(int maxNumItems);
+  void tryPopBack(int maxNumItems, bsl::vector<TYPE> *buffer);
+  void tryPopBack(int maxNumItems, std::vector<TYPE> *buffer);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    void tryPopBack(int maxNumItems, std::pmr::vector<TYPE> *buffer);
+  void tryPopBack(int maxNumItems,
+                  std::experimental::pmr::vector<TYPE> *buffer);
 #endif
-        // Remove up to the specified 'maxNumItems' from the back of this
-        // queue.  Optionally specify a 'buffer' into which the items removed
-        // from the queue are loaded.  If 'buffer' is non-null, the removed
-        // items are appended to it as if by repeated application of
-        // 'buffer->push_back(popBack())' while the queue is not empty and
-        // 'maxNumItems' have not yet been removed.  This method never blocks.
-        // The behavior is undefined unless 'maxNumItems >= 0'.  Note that the
-        // ordering of the items in '*buffer' after the call is the reverse of
-        // the ordering they had in the queue.
+  // Remove up to the specified 'maxNumItems' from the back of this
+  // queue.  Optionally specify a 'buffer' into which the items removed
+  // from the queue are loaded.  If 'buffer' is non-null, the removed
+  // items are appended to it as if by repeated application of
+  // 'buffer->push_back(popBack())' while the queue is not empty and
+  // 'maxNumItems' have not yet been removed.  This method never blocks.
+  // The behavior is undefined unless 'maxNumItems >= 0'.  Note that the
+  // ordering of the items in '*buffer' after the call is the reverse of
+  // the ordering they had in the queue.
 
-    // *** Modifiable access to the mutex, condition variable, and queue ***
+  // *** Modifiable access to the mutex, condition variable, and queue ***
 
-    bslmt::Condition& condition();
-        // Return a reference to the modifiable condition variable used by this
-        // queue to signal that the queue is not empty.
-        //
-        // *DEPRECATED* Use 'notEmptyCondition' instead.
+  bslmt::Condition &condition();
+  // Return a reference to the modifiable condition variable used by this
+  // queue to signal that the queue is not empty.
+  //
+  // *DEPRECATED* Use 'notEmptyCondition' instead.
 
-    bslmt::Condition& insertCondition();
-        // Return a reference to the modifiable condition variable used by this
-        // queue to signal that the queue is not full (i.e., has fewer items
-        // than its high-water mark).
-        //
-        // *DEPRECATED* Use 'notFullCondition' instead.
+  bslmt::Condition &insertCondition();
+  // Return a reference to the modifiable condition variable used by this
+  // queue to signal that the queue is not full (i.e., has fewer items
+  // than its high-water mark).
+  //
+  // *DEPRECATED* Use 'notFullCondition' instead.
 
-    bslmt::Mutex& mutex();
-        // Return a reference to the modifiable mutex used by this queue to
-        // synchronize access to its underlying 'bdlc::Queue' object.
+  bslmt::Mutex &mutex();
+  // Return a reference to the modifiable mutex used by this queue to
+  // synchronize access to its underlying 'bdlc::Queue' object.
 
-    bslmt::Condition& notEmptyCondition();
-        // Return the condition variable used by this queue to signal that the
-        // queue is not empty.
+  bslmt::Condition &notEmptyCondition();
+  // Return the condition variable used by this queue to signal that the
+  // queue is not empty.
 
-    bslmt::Condition& notFullCondition();
-        // Return the condition variable used by this queue to signal that the
-        // queue is not full (i.e., has fewer items than its high-water mark).
+  bslmt::Condition &notFullCondition();
+  // Return the condition variable used by this queue to signal that the
+  // queue is not full (i.e., has fewer items than its high-water mark).
 
-    bdlc::Queue<TYPE>& queue();
-        // Return a reference to the modifiable underlying 'bdlc::Queue' object
-        // used by this queue.  Any access to the returned queue MUST first
-        // lock the associated mutex object (see the 'mutex' method) in a
-        // multi-threaded environment.  And when items are directly added to
-        // the queue returned by this method, the associated condition variable
-        // (see the 'condition' method) should be signaled to notify any
-        // waiting threads of the availability of the new data.
-        //
-        // The (error-prone) usage of this method will be replaced by an
-        // appropriate smart-pointer-like proctor object in the future.
-        // Meanwhile, use this method with caution.
+  bdlc::Queue<TYPE> &queue();
+  // Return a reference to the modifiable underlying 'bdlc::Queue' object
+  // used by this queue.  Any access to the returned queue MUST first
+  // lock the associated mutex object (see the 'mutex' method) in a
+  // multi-threaded environment.  And when items are directly added to
+  // the queue returned by this method, the associated condition variable
+  // (see the 'condition' method) should be signaled to notify any
+  // waiting threads of the availability of the new data.
+  //
+  // The (error-prone) usage of this method will be replaced by an
+  // appropriate smart-pointer-like proctor object in the future.
+  // Meanwhile, use this method with caution.
 
-    // ACCESSORS
-    int highWaterMark() const;
-        // Return the high-water mark value for this queue.  Note that a
-        // negative value indicates no suggested-maximum capacity, and is not
-        // necessarily the same negative value that was passed to the
-        // constructor.
+  // ACCESSORS
+  int highWaterMark() const;
+  // Return the high-water mark value for this queue.  Note that a
+  // negative value indicates no suggested-maximum capacity, and is not
+  // necessarily the same negative value that was passed to the
+  // constructor.
 
-    int length() const;
-        // Return the number of elements in this queue.  Note that if other
-        // threads are manipulating the queue, this information may be obsolete
-        // by the time it is returned.
+  int length() const;
+  // Return the number of elements in this queue.  Note that if other
+  // threads are manipulating the queue, this information may be obsolete
+  // by the time it is returned.
 };
 
-                        // ======================
-                        // struct Queue::IsVector
-                        // ======================
+// ======================
+// struct Queue::IsVector
+// ======================
 
-template <class TYPE>
-template <class VECTOR>
-struct Queue<TYPE>::IsVector {
-    // This 'struct' has a 'value' that evaluates to 'true' if the specified
-    // 'VECTOR' is a 'bsl', 'std', or 'std::pmr' 'vector<TYPE>'.
+template <class TYPE> template <class VECTOR> struct Queue<TYPE>::IsVector {
+  // This 'struct' has a 'value' that evaluates to 'true' if the specified
+  // 'VECTOR' is a 'bsl', 'std', or 'std::experimental::pmr' 'vector<TYPE>'.
 
-    static const bool value =
-                            bsl::is_same<bsl::vector<TYPE>, VECTOR>::value
+  static const bool value =
+      bsl::is_same<bsl::vector<TYPE>, VECTOR>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-                         || bsl::is_same<std::pmr::vector<TYPE>, VECTOR>::value
+      || bsl::is_same<std::experimental::pmr::vector<TYPE>, VECTOR>::value
 #endif
-                         || bsl::is_same<std::vector<TYPE>, VECTOR>::value;
+      || bsl::is_same<std::vector<TYPE>, VECTOR>::value;
 };
 
 // ============================================================================
@@ -798,564 +787,473 @@ struct Queue<TYPE>::IsVector {
 // PRIVATE MANIPULATORS
 template <class TYPE>
 template <class VECTOR>
-void Queue<TYPE>::removeAllImp(VECTOR *buffer)
-{
-    BSLMF_ASSERT(IsVector<VECTOR>::value);
+void Queue<TYPE>::removeAllImp(VECTOR *buffer) {
+  BSLMF_ASSERT(IsVector<VECTOR>::value);
 
+  bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+  bool wasFull = d_highWaterMark > 0 && d_queue.length() >= d_highWaterMark;
+
+  if (buffer) {
+    for (int ii = 0, len = d_queue.length(); ii < len; ++ii) {
+      buffer->push_back(bslmf::MovableRefUtil::move(d_queue[ii]));
+    }
+  }
+  d_queue.removeAll();
+
+  lock.release()->unlock();
+
+  if (wasFull) {
+    for (int i = 0; d_highWaterMark > i; ++i) {
+      d_notFullCondition.signal();
+    }
+  }
+}
+
+template <class TYPE>
+template <class VECTOR>
+void Queue<TYPE>::tryPopFrontImp(int maxNumItems, VECTOR *buffer) {
+  BSLMF_ASSERT(IsVector<VECTOR>::value);
+
+  int numSignal = 0;
+  {
     bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-    bool wasFull = d_highWaterMark > 0 && d_queue.length() >= d_highWaterMark;
 
-    if (buffer) {
-        for (int ii = 0, len = d_queue.length(); ii < len; ++ii) {
-            buffer->push_back(bslmf::MovableRefUtil::move(d_queue[ii]));
-        }
+    int length = d_queue.length();
+    const bool wasFull = d_highWaterMark > 0 && length >= d_highWaterMark;
+
+    for (; d_queue.length() > 0 && maxNumItems > 0; --maxNumItems) {
+      if (buffer) {
+        buffer->push_back(bslmf::MovableRefUtil::move(d_queue.front()));
+      }
+      d_queue.popFront();
+      --length;
     }
-    d_queue.removeAll();
 
-    lock.release()->unlock();
-
-    if (wasFull) {
-        for (int i = 0; d_highWaterMark > i; ++i) {
-            d_notFullCondition.signal();
-        }
+    if (wasFull && length < d_highWaterMark) {
+      numSignal = d_highWaterMark - length;
     }
+  }
+
+  for (; 0 < numSignal; --numSignal) {
+    d_notFullCondition.signal();
+  }
 }
 
 template <class TYPE>
 template <class VECTOR>
-void Queue<TYPE>::tryPopFrontImp(int maxNumItems, VECTOR *buffer)
-{
-    BSLMF_ASSERT(IsVector<VECTOR>::value);
+void Queue<TYPE>::tryPopBackImp(int maxNumItems, VECTOR *buffer) {
+  BSLMF_ASSERT(IsVector<VECTOR>::value);
 
-    int numSignal = 0;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+  int numSignal = 0;
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
-        int        length  = d_queue.length();
-        const bool wasFull = d_highWaterMark > 0 && length >= d_highWaterMark;
+    int length = d_queue.length();
+    const bool wasFull = d_highWaterMark > 0 && length >= d_highWaterMark;
 
-        for (; d_queue.length() > 0 && maxNumItems > 0; --maxNumItems) {
-            if (buffer) {
-                buffer->push_back(
-                                 bslmf::MovableRefUtil::move(d_queue.front()));
-            }
-            d_queue.popFront();
-            --length;
-        }
-
-        if (wasFull && length < d_highWaterMark) {
-            numSignal = d_highWaterMark - length;
-        }
+    for (; d_queue.length() > 0 && maxNumItems > 0; --maxNumItems) {
+      if (buffer) {
+        buffer->push_back(bslmf::MovableRefUtil::move(d_queue.back()));
+      }
+      d_queue.popBack();
+      --length;
     }
 
-    for (; 0 < numSignal; --numSignal) {
-        d_notFullCondition.signal();
+    if (wasFull && length < d_highWaterMark) {
+      numSignal = d_highWaterMark - length;
     }
-}
+  }
 
-template <class TYPE>
-template <class VECTOR>
-void Queue<TYPE>::tryPopBackImp(int maxNumItems, VECTOR *buffer)
-{
-    BSLMF_ASSERT(IsVector<VECTOR>::value);
-
-    int numSignal = 0;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-
-        int        length  = d_queue.length();
-        const bool wasFull = d_highWaterMark > 0 && length >= d_highWaterMark;
-
-        for (; d_queue.length() > 0 && maxNumItems > 0; --maxNumItems) {
-            if (buffer) {
-                buffer->push_back(bslmf::MovableRefUtil::move(d_queue.back()));
-            }
-            d_queue.popBack();
-            --length;
-        }
-
-        if (wasFull && length < d_highWaterMark) {
-            numSignal = d_highWaterMark - length;
-        }
-    }
-
-    for (; 0 < numSignal; --numSignal) {
-        d_notFullCondition.signal();
-    }
+  for (; 0 < numSignal; --numSignal) {
+    d_notFullCondition.signal();
+  }
 }
 
 // CREATORS
 template <class TYPE>
-inline
-Queue<TYPE>::Queue(bslma::Allocator *basicAllocator)
-: d_queue(basicAllocator)
-, d_highWaterMark(-1)
-{
-}
+inline Queue<TYPE>::Queue(bslma::Allocator *basicAllocator)
+    : d_queue(basicAllocator), d_highWaterMark(-1) {}
 
 template <class TYPE>
-inline
-Queue<TYPE>:: Queue(const InitialCapacity&  numItems,
-                    bslma::Allocator       *basicAllocator)
-: d_queue(QueueCapacity(numItems.d_i), basicAllocator)
-, d_highWaterMark(-1)
-{
-}
+inline Queue<TYPE>::Queue(const InitialCapacity &numItems,
+                          bslma::Allocator *basicAllocator)
+    : d_queue(QueueCapacity(numItems.d_i), basicAllocator),
+      d_highWaterMark(-1) {}
 
 template <class TYPE>
-inline
-Queue<TYPE>::Queue(int highWaterMark, bslma::Allocator *basicAllocator)
-: d_queue(basicAllocator)
-, d_highWaterMark(highWaterMark < 0 ? -1 : highWaterMark)
-{
-}
+inline Queue<TYPE>::Queue(int highWaterMark, bslma::Allocator *basicAllocator)
+    : d_queue(basicAllocator),
+      d_highWaterMark(highWaterMark < 0 ? -1 : highWaterMark) {}
 
 template <class TYPE>
-inline
-Queue<TYPE>::Queue(const InitialCapacity&  numItems,
-                   int                     highWaterMark,
-                   bslma::Allocator       *basicAllocator)
-: d_queue(QueueCapacity(numItems.d_i), basicAllocator)
-, d_highWaterMark(highWaterMark < 0 ? -1 : highWaterMark)
-{
-}
+inline Queue<TYPE>::Queue(const InitialCapacity &numItems, int highWaterMark,
+                          bslma::Allocator *basicAllocator)
+    : d_queue(QueueCapacity(numItems.d_i), basicAllocator),
+      d_highWaterMark(highWaterMark < 0 ? -1 : highWaterMark) {}
 
 template <class TYPE>
-inline
-Queue<TYPE>::Queue(const bdlc::Queue<TYPE>&  srcQueue,
-                   bslma::Allocator         *basicAllocator)
-: d_queue(srcQueue, basicAllocator)
-, d_highWaterMark(-1)
-{
-}
+inline Queue<TYPE>::Queue(const bdlc::Queue<TYPE> &srcQueue,
+                          bslma::Allocator *basicAllocator)
+    : d_queue(srcQueue, basicAllocator), d_highWaterMark(-1) {}
 
 template <class TYPE>
-inline
-Queue<TYPE>::Queue(const bdlc::Queue<TYPE>&  srcQueue,
-                   int                       highWaterMark,
-                   bslma::Allocator         *basicAllocator)
-: d_queue(srcQueue, basicAllocator)
-, d_highWaterMark(highWaterMark < 0 ? -1 : highWaterMark)
-{
-}
+inline Queue<TYPE>::Queue(const bdlc::Queue<TYPE> &srcQueue, int highWaterMark,
+                          bslma::Allocator *basicAllocator)
+    : d_queue(srcQueue, basicAllocator),
+      d_highWaterMark(highWaterMark < 0 ? -1 : highWaterMark) {}
 
-template <class TYPE>
-inline
-Queue<TYPE>::~Queue()
-{
-}
+template <class TYPE> inline Queue<TYPE>::~Queue() {}
 
 // MANIPULATORS
-template <class TYPE>
-void Queue<TYPE>::popBack(TYPE *buffer)
-{
-    unsigned int length;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-
-        while (0 == (length = d_queue.length())) {
-            d_notEmptyCondition.wait(&d_mutex);
-        }
-        *buffer = d_queue.back();
-        d_queue.popBack();
-        --length;
-    }
-
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-}
-
-template <class TYPE>
-TYPE Queue<TYPE>::popBack()
-{
-    // Note that this method is not implemented in terms of 'popBack(TYPE*)'
-    // because that would require TYPE to have a default constructor.
-
-    unsigned int length;
-
+template <class TYPE> void Queue<TYPE>::popBack(TYPE *buffer) {
+  unsigned int length;
+  {
     bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
     while (0 == (length = d_queue.length())) {
-        d_notEmptyCondition.wait(&d_mutex);
+      d_notEmptyCondition.wait(&d_mutex);
     }
-    TYPE back = d_queue.back();
+    *buffer = d_queue.back();
     d_queue.popBack();
     --length;
+  }
 
-    lock.release()->unlock();
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+}
 
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-    return back;
+template <class TYPE> TYPE Queue<TYPE>::popBack() {
+  // Note that this method is not implemented in terms of 'popBack(TYPE*)'
+  // because that would require TYPE to have a default constructor.
+
+  unsigned int length;
+
+  bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+
+  while (0 == (length = d_queue.length())) {
+    d_notEmptyCondition.wait(&d_mutex);
+  }
+  TYPE back = d_queue.back();
+  d_queue.popBack();
+  --length;
+
+  lock.release()->unlock();
+
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+  return back;
 }
 
 template <class TYPE>
-int Queue<TYPE>::timedPopBack(TYPE *buffer, const bsls::TimeInterval& timeout)
-{
-    unsigned int length;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-
-        while (0 == (length = d_queue.length())) {
-            if (d_notEmptyCondition.timedWait(&d_mutex, timeout)) {
-                return 1;                                             // RETURN
-            }
-        }
-        *buffer = d_queue.back();
-        d_queue.popBack();
-        --length;
-    }
-
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-    return 0;
-}
-
-template <class TYPE>
-void Queue<TYPE>::popFront(TYPE *buffer)
-{
-    unsigned int length;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-
-        while (0 == (length = d_queue.length())) {
-            d_notEmptyCondition.wait(&d_mutex);
-        }
-        *buffer = d_queue.front();
-        d_queue.popFront();
-        --length;
-    }
-
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-}
-
-template <class TYPE>
-TYPE Queue<TYPE>::popFront()
-{
-    // Note that this method is not implemented in terms of 'popFront(TYPE*)'
-    // because that would require TYPE to have a default constructor.
-
-    unsigned int length;
-
+int Queue<TYPE>::timedPopBack(TYPE *buffer, const bsls::TimeInterval &timeout) {
+  unsigned int length;
+  {
     bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
     while (0 == (length = d_queue.length())) {
-        d_notEmptyCondition.wait(&d_mutex);
+      if (d_notEmptyCondition.timedWait(&d_mutex, timeout)) {
+        return 1; // RETURN
+      }
     }
-    TYPE front = d_queue.front();
+    *buffer = d_queue.back();
+    d_queue.popBack();
+    --length;
+  }
+
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+  return 0;
+}
+
+template <class TYPE> void Queue<TYPE>::popFront(TYPE *buffer) {
+  unsigned int length;
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+
+    while (0 == (length = d_queue.length())) {
+      d_notEmptyCondition.wait(&d_mutex);
+    }
+    *buffer = d_queue.front();
     d_queue.popFront();
     --length;
+  }
 
-    lock.release()->unlock();
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+}
 
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-    return front;
+template <class TYPE> TYPE Queue<TYPE>::popFront() {
+  // Note that this method is not implemented in terms of 'popFront(TYPE*)'
+  // because that would require TYPE to have a default constructor.
+
+  unsigned int length;
+
+  bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+
+  while (0 == (length = d_queue.length())) {
+    d_notEmptyCondition.wait(&d_mutex);
+  }
+  TYPE front = d_queue.front();
+  d_queue.popFront();
+  --length;
+
+  lock.release()->unlock();
+
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+  return front;
 }
 
 template <class TYPE>
-int Queue<TYPE>::timedPopFront(TYPE *buffer, const bsls::TimeInterval& timeout)
-{
-    unsigned int length;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+int Queue<TYPE>::timedPopFront(TYPE *buffer,
+                               const bsls::TimeInterval &timeout) {
+  unsigned int length;
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
-        while (0 == (length = d_queue.length())) {
-            if (d_notEmptyCondition.timedWait(&d_mutex, timeout)) {
-                return 1;                                             // RETURN
-            }
-        }
-        *buffer = d_queue.front();
-        d_queue.popFront();
-        --length;
+    while (0 == (length = d_queue.length())) {
+      if (d_notEmptyCondition.timedWait(&d_mutex, timeout)) {
+        return 1; // RETURN
+      }
     }
+    *buffer = d_queue.front();
+    d_queue.popFront();
+    --length;
+  }
 
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+  return 0;
+}
+
+template <class TYPE> int Queue<TYPE>::tryPopFront(TYPE *buffer) {
+  unsigned int length;
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+
+    if (0 == (length = d_queue.length())) {
+      return 1; // RETURN
     }
-    return 0;
+    *buffer = d_queue.front();
+    d_queue.popFront();
+    --length;
+  }
+
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+  return 0;
+}
+
+template <class TYPE> inline void Queue<TYPE>::tryPopFront(int maxNumItems) {
+  tryPopFrontImp(maxNumItems, static_cast<bsl::vector<TYPE> *>(0));
 }
 
 template <class TYPE>
-int Queue<TYPE>::tryPopFront(TYPE *buffer)
-{
-    unsigned int length;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-
-        if (0 == (length = d_queue.length())) {
-            return 1;                                                 // RETURN
-        }
-        *buffer = d_queue.front();
-        d_queue.popFront();
-        --length;
-    }
-
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-    return 0;
+inline void Queue<TYPE>::tryPopFront(int maxNumItems,
+                                     bsl::vector<TYPE> *buffer) {
+  tryPopFrontImp(maxNumItems, buffer);
 }
 
 template <class TYPE>
-inline
-void Queue<TYPE>::tryPopFront(int maxNumItems)
-{
-    tryPopFrontImp(maxNumItems, static_cast<bsl::vector<TYPE> *>(0));
-}
-
-template <class TYPE>
-inline
-void Queue<TYPE>::tryPopFront(int maxNumItems, bsl::vector<TYPE> *buffer)
-{
-    tryPopFrontImp(maxNumItems, buffer);
-}
-
-template <class TYPE>
-inline
-void Queue<TYPE>::tryPopFront(int maxNumItems, std::vector<TYPE> *buffer)
-{
-    tryPopFrontImp(maxNumItems, buffer);
+inline void Queue<TYPE>::tryPopFront(int maxNumItems,
+                                     std::vector<TYPE> *buffer) {
+  tryPopFrontImp(maxNumItems, buffer);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
-inline
-void Queue<TYPE>::tryPopFront(int maxNumItems, std::pmr::vector<TYPE> *buffer)
-{
-    tryPopFrontImp(maxNumItems, buffer);
+inline void
+Queue<TYPE>::tryPopFront(int maxNumItems,
+                         std::experimental::pmr::vector<TYPE> *buffer) {
+  tryPopFrontImp(maxNumItems, buffer);
 }
 #endif
 
-template <class TYPE>
-int Queue<TYPE>::tryPopBack(TYPE *buffer)
-{
-    unsigned int length;
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+template <class TYPE> int Queue<TYPE>::tryPopBack(TYPE *buffer) {
+  unsigned int length;
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
-        if (0 == (length = d_queue.length())) {
-            return 1;                                                 // RETURN
-        }
-        *buffer = d_queue.back();
-        d_queue.popBack();
-        --length;
+    if (0 == (length = d_queue.length())) {
+      return 1; // RETURN
     }
+    *buffer = d_queue.back();
+    d_queue.popBack();
+    --length;
+  }
 
-    if (length < (unsigned) d_highWaterMark) {
-        d_notFullCondition.signal();
-    }
-    return 0;
+  if (length < (unsigned)d_highWaterMark) {
+    d_notFullCondition.signal();
+  }
+  return 0;
+}
+
+template <class TYPE> inline void Queue<TYPE>::tryPopBack(int maxNumItems) {
+  tryPopBackImp(maxNumItems, static_cast<bsl::vector<TYPE> *>(0));
 }
 
 template <class TYPE>
-inline
-void Queue<TYPE>::tryPopBack(int maxNumItems)
-{
-    tryPopBackImp(maxNumItems, static_cast<bsl::vector<TYPE> *>(0));
+inline void Queue<TYPE>::tryPopBack(int maxNumItems,
+                                    bsl::vector<TYPE> *buffer) {
+  tryPopBackImp(maxNumItems, buffer);
 }
 
 template <class TYPE>
-inline
-void Queue<TYPE>::tryPopBack(int maxNumItems, bsl::vector<TYPE> *buffer)
-{
-    tryPopBackImp(maxNumItems, buffer);
-}
-
-template <class TYPE>
-inline
-void Queue<TYPE>::tryPopBack(int maxNumItems, std::vector<TYPE> *buffer)
-{
-    tryPopBackImp(maxNumItems, buffer);
+inline void Queue<TYPE>::tryPopBack(int maxNumItems,
+                                    std::vector<TYPE> *buffer) {
+  tryPopBackImp(maxNumItems, buffer);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
-inline
-void Queue<TYPE>::tryPopBack(int maxNumItems, std::pmr::vector<TYPE> *buffer)
-{
-    tryPopBackImp(maxNumItems, buffer);
+inline void
+Queue<TYPE>::tryPopBack(int maxNumItems,
+                        std::experimental::pmr::vector<TYPE> *buffer) {
+  tryPopBackImp(maxNumItems, buffer);
 }
 #endif
 
-template <class TYPE>
-void Queue<TYPE>::removeAll()
-{
-    removeAllImp(static_cast<bsl::vector<TYPE> *>(0));
+template <class TYPE> void Queue<TYPE>::removeAll() {
+  removeAllImp(static_cast<bsl::vector<TYPE> *>(0));
 }
 
-template <class TYPE>
-void Queue<TYPE>::removeAll(bsl::vector<TYPE> *buffer)
-{
-    removeAllImp(buffer);
+template <class TYPE> void Queue<TYPE>::removeAll(bsl::vector<TYPE> *buffer) {
+  removeAllImp(buffer);
 }
 
-template <class TYPE>
-void Queue<TYPE>::removeAll(std::vector<TYPE> *buffer)
-{
-    removeAllImp(buffer);
+template <class TYPE> void Queue<TYPE>::removeAll(std::vector<TYPE> *buffer) {
+  removeAllImp(buffer);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 template <class TYPE>
-void Queue<TYPE>::removeAll(std::pmr::vector<TYPE> *buffer)
-{
-    removeAllImp(buffer);
+void Queue<TYPE>::removeAll(std::experimental::pmr::vector<TYPE> *buffer) {
+  removeAllImp(buffer);
 }
 #endif
 
-template <class TYPE>
-void Queue<TYPE>::pushBack(const TYPE& item)
-{
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-        if (d_highWaterMark >= 0) {
-            while (d_queue.length() >= d_highWaterMark) {
-                d_notFullCondition.wait(&d_mutex);
-            }
-        }
-        d_queue.pushBack(item);
+template <class TYPE> void Queue<TYPE>::pushBack(const TYPE &item) {
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+    if (d_highWaterMark >= 0) {
+      while (d_queue.length() >= d_highWaterMark) {
+        d_notFullCondition.wait(&d_mutex);
+      }
     }
+    d_queue.pushBack(item);
+  }
 
-    d_notEmptyCondition.signal();
+  d_notEmptyCondition.signal();
+}
+
+template <class TYPE> void Queue<TYPE>::pushFront(const TYPE &item) {
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+    if (d_highWaterMark >= 0) {
+      while (d_queue.length() >= d_highWaterMark) {
+        d_notFullCondition.wait(&d_mutex);
+      }
+    }
+    d_queue.pushFront(item);
+  }
+
+  d_notEmptyCondition.signal();
 }
 
 template <class TYPE>
-void Queue<TYPE>::pushFront(const TYPE& item)
-{
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-        if (d_highWaterMark >= 0) {
-            while (d_queue.length() >= d_highWaterMark) {
-                d_notFullCondition.wait(&d_mutex);
-            }
+int Queue<TYPE>::timedPushBack(const TYPE &item,
+                               const bsls::TimeInterval &timeout) {
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+    if (d_highWaterMark >= 0) {
+      while (d_queue.length() >= d_highWaterMark) {
+        if (d_notFullCondition.timedWait(&d_mutex, timeout)) {
+          return 1; // RETURN
         }
-        d_queue.pushFront(item);
+      }
     }
+    d_queue.pushBack(item);
+  }
 
-    d_notEmptyCondition.signal();
+  d_notEmptyCondition.signal();
+  return 0;
 }
 
 template <class TYPE>
-int Queue<TYPE>::timedPushBack(const TYPE&               item,
-                               const bsls::TimeInterval& timeout)
-{
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-        if (d_highWaterMark >= 0) {
-            while (d_queue.length() >= d_highWaterMark) {
-                if (d_notFullCondition.timedWait(&d_mutex, timeout)) {
-                    return 1;                                         // RETURN
-                }
-            }
+int Queue<TYPE>::timedPushFront(const TYPE &item,
+                                const bsls::TimeInterval &timeout) {
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+    if (d_highWaterMark >= 0) {
+      while (d_queue.length() >= d_highWaterMark) {
+        if (d_notFullCondition.timedWait(&d_mutex, timeout)) {
+          return 1; // RETURN
         }
-        d_queue.pushBack(item);
+      }
     }
+    d_queue.pushFront(item);
+  }
 
-    d_notEmptyCondition.signal();
-    return 0;
+  d_notEmptyCondition.signal();
+  return 0;
 }
 
 template <class TYPE>
-int Queue<TYPE>::timedPushFront(const TYPE&               item,
-                                const bsls::TimeInterval& timeout)
-{
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-        if (d_highWaterMark >= 0) {
-            while (d_queue.length() >= d_highWaterMark) {
-                if (d_notFullCondition.timedWait(&d_mutex, timeout)) {
-                    return 1;                                         // RETURN
-                }
-            }
-        }
-        d_queue.pushFront(item);
-    }
-
-    d_notEmptyCondition.signal();
-    return 0;
-}
-
-template <class TYPE>
-inline
-void Queue<TYPE>::forcePushFront(const TYPE& item)
-{
-    {
-        bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
-        d_queue.pushFront(item);
-    }
-    d_notEmptyCondition.signal();
+inline void Queue<TYPE>::forcePushFront(const TYPE &item) {
+  {
+    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+    d_queue.pushFront(item);
+  }
+  d_notEmptyCondition.signal();
 }
 
 // *** Modifiable access to the mutex, condition variable, and queue ***
 
-template <class TYPE>
-inline
-bslmt::Condition& Queue<TYPE>::condition()
-{
-    return d_notEmptyCondition;
+template <class TYPE> inline bslmt::Condition &Queue<TYPE>::condition() {
+  return d_notEmptyCondition;
+}
+
+template <class TYPE> inline bslmt::Condition &Queue<TYPE>::insertCondition() {
+  return d_notFullCondition;
+}
+
+template <class TYPE> inline bslmt::Mutex &Queue<TYPE>::mutex() {
+  return d_mutex;
 }
 
 template <class TYPE>
-inline
-bslmt::Condition& Queue<TYPE>::insertCondition()
-{
-    return d_notFullCondition;
+inline bslmt::Condition &Queue<TYPE>::notEmptyCondition() {
+  return d_notEmptyCondition;
 }
 
-template <class TYPE>
-inline
-bslmt::Mutex& Queue<TYPE>::mutex()
-{
-    return d_mutex;
+template <class TYPE> inline bslmt::Condition &Queue<TYPE>::notFullCondition() {
+  return d_notFullCondition;
 }
 
-template <class TYPE>
-inline
-bslmt::Condition& Queue<TYPE>::notEmptyCondition()
-{
-    return d_notEmptyCondition;
-}
-
-template <class TYPE>
-inline
-bslmt::Condition& Queue<TYPE>::notFullCondition()
-{
-    return d_notFullCondition;
-}
-
-template <class TYPE>
-inline
-bdlc::Queue<TYPE>& Queue<TYPE>::queue()
-{
-    return d_queue;
+template <class TYPE> inline bdlc::Queue<TYPE> &Queue<TYPE>::queue() {
+  return d_queue;
 }
 
 // ACCESSORS
-template <class TYPE>
-inline
-int Queue<TYPE>::highWaterMark() const
-{
-    return d_highWaterMark;
+template <class TYPE> inline int Queue<TYPE>::highWaterMark() const {
+  return d_highWaterMark;
 }
 
-template <class TYPE>
-inline
-int Queue<TYPE>::length() const
-{
-    bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
+template <class TYPE> inline int Queue<TYPE>::length() const {
+  bslmt::LockGuard<bslmt::Mutex> lock(&d_mutex);
 
-    return d_queue.length();
+  return d_queue.length();
 }
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace bdlcc
+} // namespace BloombergLP
 
 #endif
 

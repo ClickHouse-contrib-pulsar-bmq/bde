@@ -17,7 +17,7 @@ BSLS_IDENT("$Id: $")
 //: o 'read'  populate a 'Json' object from a JSON text document.
 //: o 'write' populate a JSON text document from a 'Json' object.
 //
-///Configuring the Output Format
+/// Configuring the Output Format
 ///-----------------------------
 // There are a number of options to configure the output format produced by
 // 'write':
@@ -51,7 +51,7 @@ BSLS_IDENT("$Id: $")
 // For more information, see the 'bdljsn_writeoptions' and 'bdljsn_writestyle'
 // components.
 //
-///Handling of Duplicate Keys
+/// Handling of Duplicate Keys
 ///--------------------------
 // 'bdljsn::JsonObject' represents a JSON Object having unique keys.  If an
 // Object with duplicate keys is found in a JSON document, 'read' will preserve
@@ -68,7 +68,7 @@ BSLS_IDENT("$Id: $")
 // that preserving the value of the first key is consistent with the behavior
 // of the existing 'baljsn::DatumUtil' component.
 //
-///Allowing Trailing Text
+/// Allowing Trailing Text
 ///----------------------
 // By default, 'bdljsn::JsonUtil::read' will report an error for input where a
 // valid JSON document is followed by additional text unless the trailing text
@@ -104,12 +104,12 @@ BSLS_IDENT("$Id: $")
 //  +-----------+------------------------+-------------+-----------+
 //..
 //
-///Usage
+/// Usage
 ///-----
 // This section illustrates the intended use of this component.
 //
-///Example 1: Reading and Writing JSON Data
-/// - - - - - - - - - - - - - - - - - - - -
+/// Example 1: Reading and Writing JSON Data
+///  - - - - - - - - - - - - - - - - - - - -
 // This component provides methods for reading and writing JSON data to/from
 // 'Json' objects.
 //
@@ -179,7 +179,7 @@ BSLS_IDENT("$Id: $")
 //  assert(resultString == INPUT_JSON);
 //..
 //
-///Example 2: The Effect of 'options' on 'write'
+/// Example 2: The Effect of 'options' on 'write'
 ///- - - - - - - - - - - - - - - - - - - - - - -
 // By populating a 'WriteOptions' object and passing it to 'write', the format
 // of the resulting JSON can be controlled.
@@ -335,370 +335,279 @@ BSLS_IDENT("$Id: $")
 namespace BloombergLP {
 namespace bdljsn {
 
-                              // ===============
-                              // struct JsonUtil
-                              // ===============
+// ===============
+// struct JsonUtil
+// ===============
 
 struct JsonUtil {
-    // This 'struct' provides a namespace for utility functions that provide
-    // 'read' and 'write' operations to/from 'Json' objects.
+  // This 'struct' provides a namespace for utility functions that provide
+  // 'read' and 'write' operations to/from 'Json' objects.
 
-    // TYPES
-    typedef bsl::pair<bsl::uint64_t, bsl::uint64_t> LineAndColumnNumber;
+  // TYPES
+  typedef bsl::pair<bsl::uint64_t, bsl::uint64_t> LineAndColumnNumber;
 
-    // CLASS METHODS
-    static int read(Json               *result,
-                    bsl::istream&       input);
-    static int read(Json               *result,
-                    bsl::istream&       input,
-                    const ReadOptions&  options);
-    static int read(Json               *result,
-                    bsl::streambuf     *input);
-    static int read(Json               *result,
-                    bsl::streambuf     *input,
-                    const ReadOptions&  options);
-    static int read(Json                    *result,
-                    const bsl::string_view&  input);
-    static int read(Json                    *result,
-                    const bsl::string_view&  input,
-                    const ReadOptions&       options);
-    static int read(Json               *result,
-                    Error              *errorDescription,
-                    bsl::istream&       input);
-    static int read(Json               *result,
-                    Error              *errorDescription,
-                    bsl::istream&       input,
-                    const ReadOptions&  options);
-    static int read(Json               *result,
-                    Error              *errorDescription,
-                    bsl::streambuf     *input);
-    static int read(Json               *result,
-                    Error              *errorDescription,
-                    bsl::streambuf     *input,
-                    const ReadOptions&  options);
-    static int read(Json                    *result,
-                    Error                   *errorDescription,
-                    const bsl::string_view&  input);
-    static int read(Json                    *result,
-                    Error                   *errorDescription,
-                    const bsl::string_view&  input,
-                    const ReadOptions&       options);
-        // Load to the specified 'result' a value-semantic representation of
-        // the JSON text in the specified 'input'.  Optionally specify an
-        // 'errorDescription' that, if an error occurs, is loaded with a
-        // description of the error.  Optionally specify 'options' which allow
-        // altering the maximum nesting depth.  Return 0 on success, and a
-        // non-zero value if 'input' does not consist of valid JSON text or an
-        // error occurs when reading from 'input'.  If
-        // 'options.allowTrailingText()' is 'false' (the default), then an
-        // error will be reported if a valid JSON text is followed by any text
-        // that does not consist solely of white-space characters.  If
-        // 'options.allowTrailingText()' is 'true', then this function will
-        // return success where a valid JSON document is followed by additional
-        // text as long as that text is separated from the valid JSON by a
-        // delimiter character (i.e., either the JSON text ends in a delimiter,
-        // or the text that follows starts with a delimiter).  Here, delimiters
-        // are white-space characters, '[',']','{','}',',', or '"'.
+  // CLASS METHODS
+  static int read(Json *result, bsl::istream &input);
+  static int read(Json *result, bsl::istream &input,
+                  const ReadOptions &options);
+  static int read(Json *result, bsl::streambuf *input);
+  static int read(Json *result, bsl::streambuf *input,
+                  const ReadOptions &options);
+  static int read(Json *result, const bsl::string_view &input);
+  static int read(Json *result, const bsl::string_view &input,
+                  const ReadOptions &options);
+  static int read(Json *result, Error *errorDescription, bsl::istream &input);
+  static int read(Json *result, Error *errorDescription, bsl::istream &input,
+                  const ReadOptions &options);
+  static int read(Json *result, Error *errorDescription, bsl::streambuf *input);
+  static int read(Json *result, Error *errorDescription, bsl::streambuf *input,
+                  const ReadOptions &options);
+  static int read(Json *result, Error *errorDescription,
+                  const bsl::string_view &input);
+  static int read(Json *result, Error *errorDescription,
+                  const bsl::string_view &input, const ReadOptions &options);
+  // Load to the specified 'result' a value-semantic representation of
+  // the JSON text in the specified 'input'.  Optionally specify an
+  // 'errorDescription' that, if an error occurs, is loaded with a
+  // description of the error.  Optionally specify 'options' which allow
+  // altering the maximum nesting depth.  Return 0 on success, and a
+  // non-zero value if 'input' does not consist of valid JSON text or an
+  // error occurs when reading from 'input'.  If
+  // 'options.allowTrailingText()' is 'false' (the default), then an
+  // error will be reported if a valid JSON text is followed by any text
+  // that does not consist solely of white-space characters.  If
+  // 'options.allowTrailingText()' is 'true', then this function will
+  // return success where a valid JSON document is followed by additional
+  // text as long as that text is separated from the valid JSON by a
+  // delimiter character (i.e., either the JSON text ends in a delimiter,
+  // or the text that follows starts with a delimiter).  Here, delimiters
+  // are white-space characters, '[',']','{','}',',', or '"'.
 
-    static bsl::ostream& printError(bsl::ostream&           stream,
-                                    bsl::istream&           input,
-                                    const Error&            error);
-    static bsl::ostream& printError(bsl::ostream&           stream,
-                                    bsl::streambuf         *input,
-                                    const Error&            error);
-    static bsl::ostream& printError(bsl::ostream&           stream,
-                                    const bsl::string_view& input,
-                                    const Error&            error);
-        // Print, to the specified 'stream', a description of the specified
-        // 'error', containing the line and column in the specified 'input'
-        // where the 'error' occurred.  Return a reference to the modifiable
-        // 'stream'.  If 'error.location()' does not refer to a valid location
-        // in 'input' an unspecified error description will be written to
-        // 'stream'.  Note that the caller should ensure 'input' refers to the
-        // same input position as when 'input' was supplied to 'read' (or
-        // whatever operation created 'error').
+  static bsl::ostream &printError(bsl::ostream &stream, bsl::istream &input,
+                                  const Error &error);
+  static bsl::ostream &printError(bsl::ostream &stream, bsl::streambuf *input,
+                                  const Error &error);
+  static bsl::ostream &printError(bsl::ostream &stream,
+                                  const bsl::string_view &input,
+                                  const Error &error);
+  // Print, to the specified 'stream', a description of the specified
+  // 'error', containing the line and column in the specified 'input'
+  // where the 'error' occurred.  Return a reference to the modifiable
+  // 'stream'.  If 'error.location()' does not refer to a valid location
+  // in 'input' an unspecified error description will be written to
+  // 'stream'.  Note that the caller should ensure 'input' refers to the
+  // same input position as when 'input' was supplied to 'read' (or
+  // whatever operation created 'error').
 
-    static int write(bsl::ostream&       output,
-                     const Json&         json);
-    static int write(bsl::ostream&       output,
-                     const Json&         json,
-                     const WriteOptions& options);
-    static int write(bsl::streambuf      *output,
-                     const Json&          json);
-    static int write(bsl::streambuf      *output,
-                     const Json&          json,
-                     const WriteOptions&  options);
-    static int write(bsl::string         *output,
-                     const Json&          json);
-    static int write(bsl::string         *output,
-                     const Json&          json,
-                     const WriteOptions&  options);
+  static int write(bsl::ostream &output, const Json &json);
+  static int write(bsl::ostream &output, const Json &json,
+                   const WriteOptions &options);
+  static int write(bsl::streambuf *output, const Json &json);
+  static int write(bsl::streambuf *output, const Json &json,
+                   const WriteOptions &options);
+  static int write(bsl::string *output, const Json &json);
+  static int write(bsl::string *output, const Json &json,
+                   const WriteOptions &options);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int write(std::pmr::string    *output,
-                     const Json&          json);
-    static int write(std::pmr::string    *output,
-                     const Json&          json,
-                     const WriteOptions&  options);
+  static int write(std::experimental::pmr::string *output, const Json &json);
+  static int write(std::experimental::pmr::string *output, const Json &json,
+                   const WriteOptions &options);
 #endif
-    static int write(std::string         *output,
-                     const Json&          json);
-    static int write(std::string         *output,
-                     const Json&          json,
-                     const WriteOptions&  options);
-        // Write to the specified 'output' a JSON text representation of the
-        // specified 'json' document, using the optionally specified 'options'
-        // for formatting the resulting text.  Return 0 on success, and a
-        // non-zero value otherwise.  Note that this operation will report an
-        // error only if there is an error writing to 'output'.
+  static int write(std::string *output, const Json &json);
+  static int write(std::string *output, const Json &json,
+                   const WriteOptions &options);
+  // Write to the specified 'output' a JSON text representation of the
+  // specified 'json' document, using the optionally specified 'options'
+  // for formatting the resulting text.  Return 0 on success, and a
+  // non-zero value otherwise.  Note that this operation will report an
+  // error only if there is an error writing to 'output'.
 };
 
 // ============================================================================
 //                            INLINE DEFINITIONS
 // ============================================================================
 
-                               // --------------
-                               // class JsonUtil
-                               // --------------
+// --------------
+// class JsonUtil
+// --------------
 // CLASS METHODS
-inline
-int JsonUtil::read(Json               *result,
-                   bsl::istream&       input,
-                   const ReadOptions&  options)
-{
-    Error tmp;
-    return read(result, &tmp, input, options);
+inline int JsonUtil::read(Json *result, bsl::istream &input,
+                          const ReadOptions &options) {
+  Error tmp;
+  return read(result, &tmp, input, options);
 }
 
-inline
-int JsonUtil::read(Json               *result,
-                   bsl::istream&       input)
-{
-    ReadOptions options;
-    return read(result, input, options);
+inline int JsonUtil::read(Json *result, bsl::istream &input) {
+  ReadOptions options;
+  return read(result, input, options);
 }
 
-inline
-int JsonUtil::read(Json               *result,
-                   bsl::streambuf     *input,
-                   const ReadOptions&  options)
-{
-    Error tmp;
-    return read(result, &tmp, input, options);
+inline int JsonUtil::read(Json *result, bsl::streambuf *input,
+                          const ReadOptions &options) {
+  Error tmp;
+  return read(result, &tmp, input, options);
 }
 
-inline
-int JsonUtil::read(Json               *result,
-                   bsl::streambuf     *input)
-{
-    ReadOptions options;
-    return read(result, input, options);
+inline int JsonUtil::read(Json *result, bsl::streambuf *input) {
+  ReadOptions options;
+  return read(result, input, options);
 }
 
-inline
-int JsonUtil::read(Json                    *result,
-                   const bsl::string_view&  input,
-                   const ReadOptions&       options)
-{
-    Error tmp;
-    return read(result, &tmp, input, options);
+inline int JsonUtil::read(Json *result, const bsl::string_view &input,
+                          const ReadOptions &options) {
+  Error tmp;
+  return read(result, &tmp, input, options);
 }
 
-inline
-int JsonUtil::read(Json                    *result,
-                   const bsl::string_view&  input)
-{
-    ReadOptions options;
-    return read(result, input, options);
+inline int JsonUtil::read(Json *result, const bsl::string_view &input) {
+  ReadOptions options;
+  return read(result, input, options);
 }
 
-inline
-int JsonUtil::read(Json               *result,
-                   Error              *errorDescription,
-                   bsl::istream&       input,
-                   const ReadOptions&  options)
-{
+inline int JsonUtil::read(Json *result, Error *errorDescription,
+                          bsl::istream &input, const ReadOptions &options) {
 
-    return read(result, errorDescription, input.rdbuf(), options);
+  return read(result, errorDescription, input.rdbuf(), options);
 }
 
-inline
-int JsonUtil::read(Json               *result,
-                   Error              *errorDescription,
-                   bsl::istream&       input)
-{
-    ReadOptions options;
+inline int JsonUtil::read(Json *result, Error *errorDescription,
+                          bsl::istream &input) {
+  ReadOptions options;
 
-    return read(result, errorDescription, input, options);
+  return read(result, errorDescription, input, options);
 }
 
-inline
-int JsonUtil::read(Json           *result,
-                   Error          *errorDescription,
-                   bsl::streambuf *input)
-{
-    ReadOptions options;
+inline int JsonUtil::read(Json *result, Error *errorDescription,
+                          bsl::streambuf *input) {
+  ReadOptions options;
 
-    return read(result, errorDescription, input, options);
+  return read(result, errorDescription, input, options);
 }
 
-inline
-int JsonUtil::read(Json                    *result,
-                   Error                   *errorDescription,
-                   const bsl::string_view&  input,
-                   const ReadOptions&       options)
-{
-    bdlsb::FixedMemInStreamBuf inputBuf(input.data(), input.size());
-    return read(result, errorDescription, &inputBuf, options);
+inline int JsonUtil::read(Json *result, Error *errorDescription,
+                          const bsl::string_view &input,
+                          const ReadOptions &options) {
+  bdlsb::FixedMemInStreamBuf inputBuf(input.data(), input.size());
+  return read(result, errorDescription, &inputBuf, options);
 }
 
-inline
-int JsonUtil::read(Json                    *result,
-                   Error                   *errorDescription,
-                   const bsl::string_view&  input)
-{
-    ReadOptions options;
-    return read(result, errorDescription, input, options);
+inline int JsonUtil::read(Json *result, Error *errorDescription,
+                          const bsl::string_view &input) {
+  ReadOptions options;
+  return read(result, errorDescription, input, options);
 }
 
-inline
-bsl::ostream& JsonUtil::printError(bsl::ostream& stream,
-                                   bsl::istream& input,
-                                   const Error&  error)
-{
-    return printError(stream, input.rdbuf(), error);
+inline bsl::ostream &JsonUtil::printError(bsl::ostream &stream,
+                                          bsl::istream &input,
+                                          const Error &error) {
+  return printError(stream, input.rdbuf(), error);
 }
 
-inline
-bsl::ostream& JsonUtil::printError(bsl::ostream&           stream,
-                                   const bsl::string_view& input,
-                                   const Error&            error)
-{
-    bdlsb::FixedMemInStreamBuf inputBuf(input.data(), input.size());
-    return printError(stream, &inputBuf, error);
+inline bsl::ostream &JsonUtil::printError(bsl::ostream &stream,
+                                          const bsl::string_view &input,
+                                          const Error &error) {
+  bdlsb::FixedMemInStreamBuf inputBuf(input.data(), input.size());
+  return printError(stream, &inputBuf, error);
 }
 
-inline
-int JsonUtil::write(bsl::streambuf      *output,
-                    const Json&          json,
-                    const WriteOptions&  options)
-{
-    bsl::ostream outputStream(output);
-    return write(outputStream, json, options);
+inline int JsonUtil::write(bsl::streambuf *output, const Json &json,
+                           const WriteOptions &options) {
+  bsl::ostream outputStream(output);
+  return write(outputStream, json, options);
 }
 
-inline
-int JsonUtil::write(bsl::streambuf      *output,
-                    const Json&          json)
-{
-    WriteOptions options;
-    return write(output, json, options);
+inline int JsonUtil::write(bsl::streambuf *output, const Json &json) {
+  WriteOptions options;
+  return write(output, json, options);
 }
 
-inline
-int JsonUtil::write(bsl::string         *output,
-                    const Json&          json,
-                    const WriteOptions&  options)
-{
-    bsl::ostringstream stream(output->get_allocator());
+inline int JsonUtil::write(bsl::string *output, const Json &json,
+                           const WriteOptions &options) {
+  bsl::ostringstream stream(output->get_allocator());
 
-    int rc = write(stream, json, options);
-    if (0 == rc) {
+  int rc = write(stream, json, options);
+  if (0 == rc) {
 #ifdef BSLS_PLATFORM_CMP_SUN
-        const bsl::string &tmpOutput = stream.str();
+    const bsl::string &tmpOutput = stream.str();
 #else
-        bsl::string tmpOutput = stream.str(output->get_allocator());
+    bsl::string tmpOutput = stream.str(output->get_allocator());
 #endif
-        *output = bslmf::MovableRefUtil::move(tmpOutput);
-    }
-    return rc;
+    *output = bslmf::MovableRefUtil::move(tmpOutput);
+  }
+  return rc;
 }
 
-inline
-int JsonUtil::write(bsl::string         *output,
-                    const Json&          json)
-{
-    WriteOptions options;
+inline int JsonUtil::write(bsl::string *output, const Json &json) {
+  WriteOptions options;
 
-    return write(output, json, options);
+  return write(output, json, options);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-inline
-int JsonUtil::write(std::pmr::string    *output,
-                    const Json&          json,
-                    const WriteOptions&  options)
-{
-#if defined (BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY)
-    typedef std::basic_ostringstream<char,
-                                     std::char_traits<char>,
-                                     std::pmr::polymorphic_allocator<char> >
-        PmrOstringStream;
+inline int JsonUtil::write(std::experimental::pmr::string *output,
+                           const Json &json, const WriteOptions &options) {
+#if defined(BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY)
+  typedef std::basic_ostringstream<
+      char, std::char_traits<char>,
+      std::experimental::pmr::polymorphic_allocator<char>>
+      PmrOstringStream;
 
-    PmrOstringStream stream(std::ios_base::out, output->get_allocator());
-    int rc = write(stream, json, options);
-    if (0 == rc) {
-        std::pmr::string tmpOutput = stream.str(output->get_allocator());
-        *output = bslmf::MovableRefUtil::move(tmpOutput);
-    }
-    return rc;
+  PmrOstringStream stream(std::ios_base::out, output->get_allocator());
+  int rc = write(stream, json, options);
+  if (0 == rc) {
+    std::experimental::pmr::string tmpOutput =
+        stream.str(output->get_allocator());
+    *output = bslmf::MovableRefUtil::move(tmpOutput);
+  }
+  return rc;
 #else
-    std::ostringstream stream;
-    int rc = write(stream, json, options);
-    if (0 == rc) {
-        const bsl::string &tmpOutput = stream.str();
-        *output = bslmf::MovableRefUtil::move(tmpOutput);
-    }
-    return rc;
+  std::ostringstream stream;
+  int rc = write(stream, json, options);
+  if (0 == rc) {
+    const bsl::string &tmpOutput = stream.str();
+    *output = bslmf::MovableRefUtil::move(tmpOutput);
+  }
+  return rc;
 #endif
 }
-#endif  // defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING)
+#endif // defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING)
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-inline
-int JsonUtil::write(std::pmr::string    *output,
-                    const Json&          json)
-{
-    WriteOptions options;
+inline int JsonUtil::write(std::experimental::pmr::string *output,
+                           const Json &json) {
+  WriteOptions options;
 
-    return write(output, json, options);
+  return write(output, json, options);
 }
-#endif  // defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING)
+#endif // defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING)
 
-inline
-int JsonUtil::write(std::string         *output,
-                    const Json&          json,
-                    const WriteOptions&  options)
-{
-    std::ostringstream stream;
+inline int JsonUtil::write(std::string *output, const Json &json,
+                           const WriteOptions &options) {
+  std::ostringstream stream;
 
-    int rc = write(stream, json, options);
-    if (0 == rc) {
-        std::string tmpOutput(stream.str());
-        *output = bslmf::MovableRefUtil::move(tmpOutput);
-    }
-    return rc;
+  int rc = write(stream, json, options);
+  if (0 == rc) {
+    std::string tmpOutput(stream.str());
+    *output = bslmf::MovableRefUtil::move(tmpOutput);
+  }
+  return rc;
 }
 
-inline
-int JsonUtil::write(std::string         *output,
-                    const Json&          json)
-{
-    WriteOptions options;
+inline int JsonUtil::write(std::string *output, const Json &json) {
+  WriteOptions options;
 
-    return write(output, json, options);
+  return write(output, json, options);
 }
 
-inline
-int JsonUtil::write(bsl::ostream& output, const Json& json)
-{
-    WriteOptions options;
-    return write(output, json, options);
+inline int JsonUtil::write(bsl::ostream &output, const Json &json) {
+  WriteOptions options;
+  return write(output, json, options);
 }
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace bdljsn
+} // namespace BloombergLP
 
-#endif  // INCLUDED_BDLJSN_JSONUTIL
+#endif // INCLUDED_BDLJSN_JSONUTIL
 
 // ----------------------------------------------------------------------------
 // Copyright 2022 Bloomberg Finance L.P.

@@ -23,8 +23,8 @@ BSLS_IDENT("$Id: $")
 //@DESCRIPTION: This component, 'bdls::PipeUtil', provides portable utility
 // methods for named pipes.
 //
-///Pipe Atomicity
-/// - - - - - - -
+/// Pipe Atomicity
+///  - - - - - - -
 // Applications that expect multiple writers to a single pipe must should be
 // aware that message content might be corrupted (interleaved) unless:
 //
@@ -55,67 +55,67 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string> // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 
 namespace bdls {
-                              // ===============
-                              // struct PipeUtil
-                              // ===============
+// ===============
+// struct PipeUtil
+// ===============
 struct PipeUtil {
-    // This struct contains utility methods for platform-independent named pipe
-    // operations.
+  // This struct contains utility methods for platform-independent named pipe
+  // operations.
 
-    static int makeCanonicalName(bsl::string             *pipeName,
-                                 const bsl::string_view&  baseName);
-    static int makeCanonicalName(std::string             *pipeName,
-                                 const bsl::string_view&  baseName);
+  static int makeCanonicalName(bsl::string *pipeName,
+                               const bsl::string_view &baseName);
+  static int makeCanonicalName(std::string *pipeName,
+                               const bsl::string_view &baseName);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int makeCanonicalName(std::pmr::string        *pipeName,
-                                 const bsl::string_view&  baseName);
+  static int makeCanonicalName(std::experimental::pmr::string *pipeName,
+                               const bsl::string_view &baseName);
 #endif
-        // Load into the specified 'pipeName' the system-dependent canonical
-        // pipe name corresponding to the specified 'baseName'.  Return 0 on
-        // success, and a nonzero value if 'baseName' cannot be part of a pipe
-        // name on this system.
-        //
-        // On Unix systems, the canonical name is defined by prefixing
-        // 'baseName' with the directory specified by the 'SOCKDIR' environment
-        // variable if it is set, otherwise with the directory specified by the
-        // 'TMPDIR' environment variable if it is set, and otherwise by the
-        // current directory.
-        //
-        // On Windows systems, the canonical name is defined by prefixing
-        // 'baseName' with "\\.\pipe\".
-        //
-        // Finally, any uppercase characters in 'baseName' are converted to
-        // lower case in the canonical name.
+  // Load into the specified 'pipeName' the system-dependent canonical
+  // pipe name corresponding to the specified 'baseName'.  Return 0 on
+  // success, and a nonzero value if 'baseName' cannot be part of a pipe
+  // name on this system.
+  //
+  // On Unix systems, the canonical name is defined by prefixing
+  // 'baseName' with the directory specified by the 'SOCKDIR' environment
+  // variable if it is set, otherwise with the directory specified by the
+  // 'TMPDIR' environment variable if it is set, and otherwise by the
+  // current directory.
+  //
+  // On Windows systems, the canonical name is defined by prefixing
+  // 'baseName' with "\\.\pipe\".
+  //
+  // Finally, any uppercase characters in 'baseName' are converted to
+  // lower case in the canonical name.
 
-    static int send(const bsl::string_view& pipeName,
-                    const bsl::string_view& message);
-        // Send the specified 'message' to the pipe with the specified UTF-8
-        // 'pipeName'.  Return 0 on success, and a nonzero value otherwise.
-        // 'message is output in a single 'write' operation; consequently,
-        // messages that do not exceed the 'PIPE_BUF' value (see {Pipe
-        // Atomicity}) will not be interleaved even when multiple concurrent
-        // processes are writing to 'pipeName'.  The behavior is undefined
-        // unless 'pipeName' is a valid UTF-8 string.
+  static int send(const bsl::string_view &pipeName,
+                  const bsl::string_view &message);
+  // Send the specified 'message' to the pipe with the specified UTF-8
+  // 'pipeName'.  Return 0 on success, and a nonzero value otherwise.
+  // 'message is output in a single 'write' operation; consequently,
+  // messages that do not exceed the 'PIPE_BUF' value (see {Pipe
+  // Atomicity}) will not be interleaved even when multiple concurrent
+  // processes are writing to 'pipeName'.  The behavior is undefined
+  // unless 'pipeName' is a valid UTF-8 string.
 
-    static bool isOpenForReading(const bsl::string_view& pipeName);
-        // Return 'true' if the pipe with the specified UTF-8 'pipeName'
-        // exists, the calling process has permission to write to it, and some
-        // process is able to read the bytes written to it, and 'false'
-        // otherwise.  On Windows, this function may block and may write an
-        // "empty message", consisting of a single newline.  The behavior is
-        // undefined unless 'pipeName' is a valid UTF-8 string.  Note that even
-        // though a process might have the pipe open for reading, this function
-        // might still return 'false' because there are not sufficient
-        // resources available.
+  static bool isOpenForReading(const bsl::string_view &pipeName);
+  // Return 'true' if the pipe with the specified UTF-8 'pipeName'
+  // exists, the calling process has permission to write to it, and some
+  // process is able to read the bytes written to it, and 'false'
+  // otherwise.  On Windows, this function may block and may write an
+  // "empty message", consisting of a single newline.  The behavior is
+  // undefined unless 'pipeName' is a valid UTF-8 string.  Note that even
+  // though a process might have the pipe open for reading, this function
+  // might still return 'false' because there are not sufficient
+  // resources available.
 };
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace bdls
+} // namespace BloombergLP
 
 #endif
 
