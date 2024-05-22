@@ -19,12 +19,12 @@ BSLS_IDENT("$Id: $")
 // See {http://bburl/BDEFuzzTesting} for details on how to build and run with
 // fuzz testing enabled.
 //
-///Usage
+/// Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-///Example 1: Consuming Integers in a Range to Pass to an Interface
-/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/// Example 1: Consuming Integers in a Range to Pass to an Interface
+///  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Suppose we wish to fuzz test a function with preconditions.
 //
 // First, we define the 'TradingInterfaceUnderTest' 'struct':
@@ -87,13 +87,13 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_assert.h>
 #include <bsls_libraryfeatures.h>
-#include <bsls_types.h>           // 'bsls::Types::Uint64'
+#include <bsls_types.h> // 'bsls::Types::Uint64'
 
-#include <bsl_cmath.h>            // 'bsl::isfinite'
-#include <bsl_cstdint.h>          // 'bsl::uint8_t'
-#include <bsl_limits.h>           // 'bsl::numeric_limits'
+#include <bsl_cmath.h>   // 'bsl::isfinite'
+#include <bsl_cstdint.h> // 'bsl::uint8_t'
+#include <bsl_limits.h>  // 'bsl::numeric_limits'
 #include <bsl_string.h>
-#include <bsl_type_traits.h>      // 'bsl::is_same'
+#include <bsl_type_traits.h> // 'bsl::is_same'
 #include <bsl_vector.h>
 
 #include <string>
@@ -102,216 +102,202 @@ BSLS_IDENT("$Id: $")
 namespace BloombergLP {
 namespace bslim {
 
-                              // ===============
-                              // struct FuzzUtil
-                              // ===============
+// ===============
+// struct FuzzUtil
+// ===============
 
 struct FuzzUtil {
-    // This utility 'struct' provides a namespace for a suite of functions
-    // operating on objects of type 'FuzzDataView'and providing the consumption
-    // of fuzz data bytes into fundamental and standard library types.
+  // This utility 'struct' provides a namespace for a suite of functions
+  // operating on objects of type 'FuzzDataView'and providing the consumption
+  // of fuzz data bytes into fundamental and standard library types.
 
-    // CLASS METHODS
-    static bool consumeBool(FuzzDataView *fuzzDataView);
-        // Return a 'bool' value based upon consuming a single byte from the
-        // specified 'fuzzDataView'.  If 'fuzzDataView->length()' is 0, return
-        // 'false'.
+  // CLASS METHODS
+  static bool consumeBool(FuzzDataView *fuzzDataView);
+  // Return a 'bool' value based upon consuming a single byte from the
+  // specified 'fuzzDataView'.  If 'fuzzDataView->length()' is 0, return
+  // 'false'.
 
-    template <class TYPE>
-    static typename bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
-    consumeNumber(FuzzDataView *fuzzDataView);
+  template <class TYPE>
+  static typename bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
+  consumeNumber(FuzzDataView *fuzzDataView);
 
-    template <class TYPE>
-    static typename
-    bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
-    consumeNumber(FuzzDataView *fuzzDataView);
-        // Return a value of (template parameter) 'TYPE' in the range
-        // [min .. max] -- where 'min' and 'max' are the minimum and maximum
-        // values representable by the 'TYPE' -- based on at most the next
-        // 'sizeof(TYPE) + 1' bytes from the specified 'fuzzDataView', and
-        // update 'fuzzDataView' to reflect the bytes consumed.  If
-        // '0 == fuzzDataView->length()', return the minimum value of 'TYPE'.
-        // This function does not participate in overload resolution unless
-        // either 'bsl::is_integral<TYPE>::value' or
-        // 'bsl::is_floating_point<TYPE>::value' is 'true'.  The behavior is
-        // undefined if 'bsl::is_same<TYPE, bool>::value' or
-        // 'bsl::is_same<TYPE, long double>' is 'true'.
+  template <class TYPE>
+  static
+      typename bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
+      consumeNumber(FuzzDataView *fuzzDataView);
+  // Return a value of (template parameter) 'TYPE' in the range
+  // [min .. max] -- where 'min' and 'max' are the minimum and maximum
+  // values representable by the 'TYPE' -- based on at most the next
+  // 'sizeof(TYPE) + 1' bytes from the specified 'fuzzDataView', and
+  // update 'fuzzDataView' to reflect the bytes consumed.  If
+  // '0 == fuzzDataView->length()', return the minimum value of 'TYPE'.
+  // This function does not participate in overload resolution unless
+  // either 'bsl::is_integral<TYPE>::value' or
+  // 'bsl::is_floating_point<TYPE>::value' is 'true'.  The behavior is
+  // undefined if 'bsl::is_same<TYPE, bool>::value' or
+  // 'bsl::is_same<TYPE, long double>' is 'true'.
 
-    template <class TYPE>
-    static typename
-    bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
-    consumeNumberInRange(FuzzDataView                *fuzzDataView,
-                         TYPE                         min,
-                         TYPE                         max);
-    template <class TYPE>
-    static typename
-    bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
-    consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max);
-        // Return a value of (template parameter) 'TYPE' in the specified range
-        // [min .. max] based on at most the next 'sizeof(TYPE) + 1' bytes from
-        // the specified 'fuzzDataView', and update 'fuzzDataView' to reflect
-        // the bytes consumed.  If '0 == fuzzDataView->length()', return the
-        // specified 'min'.  This function does not participate in overload
-        // resolution unless either 'bsl::is_integral<TYPE>::value' or
-        // 'bsl::is_floating_point<TYPE>::value' is 'true'.  The behavior is
-        // undefined if 'min > max', 'min' or 'max' is not finite, or either
-        // 'bsl::is_same<TYPE, bool>::value' or
-        // 'bsl::is_same<TYPE, long double>' is 'true'.
+  template <class TYPE>
+  static typename bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
+  consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max);
+  template <class TYPE>
+  static
+      typename bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
+      consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max);
+  // Return a value of (template parameter) 'TYPE' in the specified range
+  // [min .. max] based on at most the next 'sizeof(TYPE) + 1' bytes from
+  // the specified 'fuzzDataView', and update 'fuzzDataView' to reflect
+  // the bytes consumed.  If '0 == fuzzDataView->length()', return the
+  // specified 'min'.  This function does not participate in overload
+  // resolution unless either 'bsl::is_integral<TYPE>::value' or
+  // 'bsl::is_floating_point<TYPE>::value' is 'true'.  The behavior is
+  // undefined if 'min > max', 'min' or 'max' is not finite, or either
+  // 'bsl::is_same<TYPE, bool>::value' or
+  // 'bsl::is_same<TYPE, long double>' is 'true'.
 
-    static void consumeRandomLengthChars(bsl::vector<char> *output,
-                                         FuzzDataView      *fuzzDataView,
-                                         bsl::size_t        maxLength);
-    static void consumeRandomLengthChars(std::vector<char> *output,
-                                         FuzzDataView      *fuzzDataView,
-                                         bsl::size_t        maxLength);
+  static void consumeRandomLengthChars(bsl::vector<char> *output,
+                                       FuzzDataView *fuzzDataView,
+                                       bsl::size_t maxLength);
+  static void consumeRandomLengthChars(std::vector<char> *output,
+                                       FuzzDataView *fuzzDataView,
+                                       bsl::size_t maxLength);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
-    static void consumeRandomLengthChars(std::pmr::vector<char> *output,
-                                         FuzzDataView           *fuzzDataView,
-                                         bsl::size_t             maxLength);
+  static void
+  consumeRandomLengthChars(std::experimental::pmr::vector<char> *output,
+                           FuzzDataView *fuzzDataView, bsl::size_t maxLength);
 #endif
-    // Load into the specified 'output' a sequence of characters of length from
-    // 0 to the specified 'maxLength'.  If the specified 'fuzzDataView' has
-    // fewer bytes than 'maxLength', load at most 'fuzzDataView->length()'
-    // bytes into 'output'.  If the buffer in 'fuzzDataView' contains two
-    // successive backslash characters, then in 'output' they will be converted
-    // to a single backslash ('\\') character; if a single backslash character
-    // is encountered, the consumption of bytes is terminated.  Note that
-    // because double backslashes are mapped to single backslashes, more than
-    // 'maxLength' bytes may be consumed from the buffer to produce the
-    // 'output'.  Also note that the purpose of this function is to enable the
-    // creation of a non-zero-terminated 'string_view', which is not possible
-    // with the 'string' counterpart.
+  // Load into the specified 'output' a sequence of characters of length from
+  // 0 to the specified 'maxLength'.  If the specified 'fuzzDataView' has
+  // fewer bytes than 'maxLength', load at most 'fuzzDataView->length()'
+  // bytes into 'output'.  If the buffer in 'fuzzDataView' contains two
+  // successive backslash characters, then in 'output' they will be converted
+  // to a single backslash ('\\') character; if a single backslash character
+  // is encountered, the consumption of bytes is terminated.  Note that
+  // because double backslashes are mapped to single backslashes, more than
+  // 'maxLength' bytes may be consumed from the buffer to produce the
+  // 'output'.  Also note that the purpose of this function is to enable the
+  // creation of a non-zero-terminated 'string_view', which is not possible
+  // with the 'string' counterpart.
 
-    static void consumeRandomLengthString(bsl::string      *output,
-                                          FuzzDataView     *fuzzDataView,
-                                          bsl::size_t       maxLength);
-    static void consumeRandomLengthString(std::string      *output,
-                                          FuzzDataView     *fuzzDataView,
-                                          bsl::size_t       maxLength);
+  static void consumeRandomLengthString(bsl::string *output,
+                                        FuzzDataView *fuzzDataView,
+                                        bsl::size_t maxLength);
+  static void consumeRandomLengthString(std::string *output,
+                                        FuzzDataView *fuzzDataView,
+                                        bsl::size_t maxLength);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static void consumeRandomLengthString(std::pmr::string *output,
-                                          FuzzDataView     *fuzzDataView,
-                                          bsl::size_t       maxLength);
+  static void consumeRandomLengthString(std::experimental::pmr::string *output,
+                                        FuzzDataView *fuzzDataView,
+                                        bsl::size_t maxLength);
 #endif
-        // Load into the specified 'output' a string of length from 0 to the
-        // specified 'maxLength'.  If the specified 'fuzzDataView' has fewer
-        // bytes than 'maxLength', load at most 'fuzzDataView->length()' bytes
-        // into 'output'.  If the buffer in 'fuzzDataView' contains two
-        // successive backslash characters, then in 'output' they will be
-        // converted to a single backslash ('\\') character; if a single
-        // backslash character is encountered, the consumption of bytes is
-        // terminated.  Note that because double backslashes are mapped to
-        // single backslashes, more than 'maxLength' bytes may be consumed
-        // from the buffer to produce the 'output'.
+  // Load into the specified 'output' a string of length from 0 to the
+  // specified 'maxLength'.  If the specified 'fuzzDataView' has fewer
+  // bytes than 'maxLength', load at most 'fuzzDataView->length()' bytes
+  // into 'output'.  If the buffer in 'fuzzDataView' contains two
+  // successive backslash characters, then in 'output' they will be
+  // converted to a single backslash ('\\') character; if a single
+  // backslash character is encountered, the consumption of bytes is
+  // terminated.  Note that because double backslashes are mapped to
+  // single backslashes, more than 'maxLength' bytes may be consumed
+  // from the buffer to produce the 'output'.
 };
 
 // ============================================================================
 //                            INLINE DEFINITIONS
 // ============================================================================
 
-                              // ---------------
-                              // struct FuzzUtil
-                              // ---------------
+// ---------------
+// struct FuzzUtil
+// ---------------
 
 // CLASS METHODS
-inline
-bool FuzzUtil::consumeBool(FuzzDataView *fuzzDataView)
-{
-    return 1 & consumeNumber<bsl::uint8_t>(fuzzDataView);
+inline bool FuzzUtil::consumeBool(FuzzDataView *fuzzDataView) {
+  return 1 & consumeNumber<bsl::uint8_t>(fuzzDataView);
 }
 
 template <class TYPE>
 typename bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
-FuzzUtil::consumeNumber(FuzzDataView *fuzzDataView)
-{
-    return consumeNumberInRange(fuzzDataView,
-                                bsl::numeric_limits<TYPE>::min(),
-                                bsl::numeric_limits<TYPE>::max());
-}
-
-template <class TYPE>
-typename
-bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
-FuzzUtil::consumeNumber(FuzzDataView *fuzzDataView)
-{
-    return consumeNumberInRange(fuzzDataView,
-                                -bsl::numeric_limits<TYPE>::max(),
-                                bsl::numeric_limits<TYPE>::max());
-}
-
-template <class TYPE>
-typename bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
-FuzzUtil::consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max)
-{
-    BSLMF_ASSERT(bsl::is_integral<TYPE>::value);
-    BSLMF_ASSERT((!bsl::is_same<TYPE, bool>::value));
-    BSLMF_ASSERT(sizeof(TYPE) <= sizeof(bsls::Types::Uint64));
-    BSLS_ASSERT(min <= max);
-
-    bsls::Types::Uint64 range = static_cast<bsls::Types::Uint64>(max) - min;
-
-    int numBytes = 0;
-
-    for (bsls::Types::Uint64 rangeCpy = range; 0 != rangeCpy;
-         rangeCpy >>= 8, ++numBytes) {
-    }
-
-    bsls::Types::Uint64 addend = 0;
-
-    FuzzDataView prefix = fuzzDataView->removePrefix(numBytes);
-
-    for (const bsl::uint8_t *it = prefix.begin(); it != prefix.end(); it++) {
-        addend = (addend << 8) | *it;
-    }
-
-    if (bsl::numeric_limits<bsls::Types::Uint64>::max() != range) {
-        addend %= (range + 1);
-    }
-
-    return static_cast<TYPE>(min + addend);
+FuzzUtil::consumeNumber(FuzzDataView *fuzzDataView) {
+  return consumeNumberInRange(fuzzDataView, bsl::numeric_limits<TYPE>::min(),
+                              bsl::numeric_limits<TYPE>::max());
 }
 
 template <class TYPE>
 typename bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
-FuzzUtil::consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max)
-{
-    BSLMF_ASSERT((!bsl::is_same<TYPE, long double>::value));
-    BSLMF_ASSERT(bsl::numeric_limits<TYPE>::has_infinity);
-
-    BSLS_ASSERT(min <= max);
-
-    BSLS_ASSERT(min == min && max == max);
-    BSLS_ASSERT(bsl::numeric_limits<TYPE>::infinity() != max &&
-                -bsl::numeric_limits<TYPE>::infinity() != min);
-
-    TYPE       addend = min;
-    TYPE       range  = 0;
-    const TYPE k_HALF = 0.5;
-
-    if (max > min + bsl::numeric_limits<TYPE>::max()) {
-        range = max * k_HALF - min * k_HALF;
-        if (consumeBool(fuzzDataView)) {
-            addend = min + range;
-        }
-    }
-    else {
-        range = max - min;
-    }
-
-    typedef typename bsl::conditional<(sizeof(TYPE) <= sizeof(bsl::uint32_t)),
-                                      bsl::uint32_t,
-                                      bsls::Types::Uint64>::type IntegralType;
-
-    TYPE factor =
-        static_cast<TYPE>(consumeNumber<IntegralType>(fuzzDataView)) /
-        static_cast<TYPE>(
-            bsl::numeric_limits<IntegralType>::max());  // between 0-1
-
-    return addend + range * factor;
+FuzzUtil::consumeNumber(FuzzDataView *fuzzDataView) {
+  return consumeNumberInRange(fuzzDataView, -bsl::numeric_limits<TYPE>::max(),
+                              bsl::numeric_limits<TYPE>::max());
 }
 
-}  // close package namespace
-}  // close enterprise namespace
+template <class TYPE>
+typename bsl::enable_if<bsl::is_integral<TYPE>::value, TYPE>::type
+FuzzUtil::consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max) {
+  BSLMF_ASSERT(bsl::is_integral<TYPE>::value);
+  BSLMF_ASSERT((!bsl::is_same<TYPE, bool>::value));
+  BSLMF_ASSERT(sizeof(TYPE) <= sizeof(bsls::Types::Uint64));
+  BSLS_ASSERT(min <= max);
+
+  bsls::Types::Uint64 range = static_cast<bsls::Types::Uint64>(max) - min;
+
+  int numBytes = 0;
+
+  for (bsls::Types::Uint64 rangeCpy = range; 0 != rangeCpy;
+       rangeCpy >>= 8, ++numBytes) {
+  }
+
+  bsls::Types::Uint64 addend = 0;
+
+  FuzzDataView prefix = fuzzDataView->removePrefix(numBytes);
+
+  for (const bsl::uint8_t *it = prefix.begin(); it != prefix.end(); it++) {
+    addend = (addend << 8) | *it;
+  }
+
+  if (bsl::numeric_limits<bsls::Types::Uint64>::max() != range) {
+    addend %= (range + 1);
+  }
+
+  return static_cast<TYPE>(min + addend);
+}
+
+template <class TYPE>
+typename bsl::enable_if<bsl::is_floating_point<TYPE>::value, TYPE>::type
+FuzzUtil::consumeNumberInRange(FuzzDataView *fuzzDataView, TYPE min, TYPE max) {
+  BSLMF_ASSERT((!bsl::is_same<TYPE, long double>::value));
+  BSLMF_ASSERT(bsl::numeric_limits<TYPE>::has_infinity);
+
+  BSLS_ASSERT(min <= max);
+
+  BSLS_ASSERT(min == min && max == max);
+  BSLS_ASSERT(bsl::numeric_limits<TYPE>::infinity() != max &&
+              -bsl::numeric_limits<TYPE>::infinity() != min);
+
+  TYPE addend = min;
+  TYPE range = 0;
+  const TYPE k_HALF = 0.5;
+
+  if (max > min + bsl::numeric_limits<TYPE>::max()) {
+    range = max * k_HALF - min * k_HALF;
+    if (consumeBool(fuzzDataView)) {
+      addend = min + range;
+    }
+  } else {
+    range = max - min;
+  }
+
+  typedef typename bsl::conditional<(sizeof(TYPE) <= sizeof(bsl::uint32_t)),
+                                    bsl::uint32_t, bsls::Types::Uint64>::type
+      IntegralType;
+
+  TYPE factor = static_cast<TYPE>(consumeNumber<IntegralType>(fuzzDataView)) /
+                static_cast<TYPE>(
+                    bsl::numeric_limits<IntegralType>::max()); // between 0-1
+
+  return addend + range * factor;
+}
+
+} // namespace bslim
+} // namespace BloombergLP
 
 #endif
 

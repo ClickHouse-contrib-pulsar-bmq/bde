@@ -20,9 +20,9 @@ BSLS_IDENT("$Id: $")
 // This component provides a protocol (pure abstract interface) class,
 // 'bsl::memory_resource', comprising member functions for allocating and
 // deallocating memory.  The 'bsl::memory_resource' interface is identical to
-// that of 'std::pmr::memory_resource' from the C++17 Standard Library; in
-// fact, the former type is an alias for the latter type when using a C++17 or
-// later library supplied by the platform.
+// that of 'std::experimental::pmr::memory_resource' from the C++17 Standard
+// Library; in fact, the former type is an alias for the latter type when using
+// a C++17 or later library supplied by the platform.
 //
 // A concrete class derived from 'bsl::memory_resource' might use pooling or
 // other mechanisms that improve on 'new' and 'delete' in some way, such as
@@ -192,10 +192,10 @@ BSLS_IDENT("$Id: $")
 // (typically the size of 2 pointers), regardless of the size of 'TYPE'.
 //
 // First, we define a simple class template modeled after the C++17 standard
-// library 'std::pmr::polymorphic_allocator' template, which is a thin wrapper
-// around a 'memory_resource' pointer.  By wrapping the pointer in a class, we
-// avoid some the problems of raw pointers such as accidental use of a null
-// pointer:
+// library 'std::experimental::pmr::polymorphic_allocator' template, which is a
+// thin wrapper around a 'memory_resource' pointer.  By wrapping the pointer in
+// a class, we avoid some the problems of raw pointers such as accidental use of
+// a null pointer:
 //..
 //  #include <bsls_alignmentfromtype.h>
 //
@@ -260,8 +260,8 @@ BSLS_IDENT("$Id: $")
 // 'allocator_type' typedef that can be passed to each constructor.
 // Typically, the allocator constructor argument would be optional, but,
 // because our 'PolymorphicAllocator' has no default constructor (unlike the
-// 'std::pmr::polymorphic_allocator'), the allocator is *required* for all
-// constructors except the move constructor:
+// 'std::experimental::pmr::polymorphic_allocator'), the allocator is *required*
+// for all constructors except the move constructor:
 //..
 //    public:
 //      // TYPES
@@ -377,7 +377,7 @@ BSLS_IDENT("$Id: $")
 
 namespace bsl {
 
-using std::pmr::memory_resource;
+using std::experimental::pmr::memory_resource;
 
 } // namespace bsl
 
@@ -392,8 +392,8 @@ namespace bsl {
 class memory_resource {
   // A protocol (pure abstract interface) class, comprising member functions
   // for allocating and deallocating memory.  This class is a pre-C++17
-  // implementation of 'std::pmr::memory_resource' from the C++17 Standard
-  // Library.
+  // implementation of 'std::experimental::pmr::memory_resource' from the C++17
+  // Standard Library.
 
   // PRIVATE CONSTANTS
   enum { k_MAX_ALIGN = BloombergLP::bsls::AlignmentUtil::BSLS_MAX_ALIGNMENT };

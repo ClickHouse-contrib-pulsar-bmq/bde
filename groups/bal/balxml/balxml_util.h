@@ -27,7 +27,7 @@ BSLS_IDENT("$Id: $")
 // "targetNamespace" and extract the attribute value.  It leaves all other
 // validation of 'xsdSource' to a parser.
 //
-///Usage
+/// Usage
 ///-----
 //..
 //  // 'etalon' targetNamespace:
@@ -108,51 +108,50 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>                   // 'std::string', 'std::pmr::string'
+#include <string> // 'std::string', 'std::experimental::pmr::string'
 
-namespace BloombergLP  {
+namespace BloombergLP {
 namespace balxml {
 
-                                // ===========
-                                // struct Util
-                                // ===========
+// ===========
+// struct Util
+// ===========
 
 struct Util {
 
-    // CLASS METHODS
-    static bool extractNamespaceFromXsd(
-                                     const bsl::string_view&  xsdSource,
-                                     bsl::string             *targetNamespace);
-    static bool extractNamespaceFromXsd(
-                                     const bsl::string_view&  xsdSource,
-                                     std::string             *targetNamespace);
+  // CLASS METHODS
+  static bool extractNamespaceFromXsd(const bsl::string_view &xsdSource,
+                                      bsl::string *targetNamespace);
+  static bool extractNamespaceFromXsd(const bsl::string_view &xsdSource,
+                                      std::string *targetNamespace);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static bool extractNamespaceFromXsd(
-                                     const bsl::string_view&  xsdSource,
-                                     std::pmr::string        *targetNamespace);
+  static bool
+  extractNamespaceFromXsd(const bsl::string_view &xsdSource,
+                          std::experimental::pmr::string *targetNamespace);
 #endif
 
-    static bool extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
-                                        bsl::string      *targetNamespace);
-    static bool extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
-                                        std::string      *targetNamespace);
+  static bool extractNamespaceFromXsd(bsl::streambuf *xsdSource,
+                                      bsl::string *targetNamespace);
+  static bool extractNamespaceFromXsd(bsl::streambuf *xsdSource,
+                                      std::string *targetNamespace);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static bool extractNamespaceFromXsd(bsl::streambuf   *xsdSource,
-                                        std::pmr::string *targetNamespace);
+  static bool
+  extractNamespaceFromXsd(bsl::streambuf *xsdSource,
+                          std::experimental::pmr::string *targetNamespace);
 #endif
-        // Extract the target namespace from the XSD schema in the specified
-        // 'xsdSource' and load it into the specified 'targetNamespace'.
-        // Return 'true' on success, and 'false' otherwise.  Note that a valid
-        // XSD schema must have a 'targetNamespace' attribute in the '<schema>'
-        // element that identifies the namespace that the XSD schema defines.
-        // If no such attribute is found, or the 'xsdSource' is ill-formed,
-        // this method returns 'false'.  Otherwise, it returns 'true' and
-        // populates the output parameter 'targetNamespace' with the value in
-        // the first 'attribute="value"' pair found for the target namespace.
+  // Extract the target namespace from the XSD schema in the specified
+  // 'xsdSource' and load it into the specified 'targetNamespace'.
+  // Return 'true' on success, and 'false' otherwise.  Note that a valid
+  // XSD schema must have a 'targetNamespace' attribute in the '<schema>'
+  // element that identifies the namespace that the XSD schema defines.
+  // If no such attribute is found, or the 'xsdSource' is ill-formed,
+  // this method returns 'false'.  Otherwise, it returns 'true' and
+  // populates the output parameter 'targetNamespace' with the value in
+  // the first 'attribute="value"' pair found for the target namespace.
 };
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace balxml
+} // namespace BloombergLP
 
 #endif
 

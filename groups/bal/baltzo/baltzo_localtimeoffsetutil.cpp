@@ -1,10 +1,10 @@
 // baltzo_localtimeoffsetutil.cpp                                     -*-C++-*-
 #include <baltzo_localtimeoffsetutil.h>
 
-#include <baltzo_defaultzoneinfocache.h>  // for testing only
-#include <baltzo_testloader.h>            // for testing only
-#include <baltzo_zoneinfocache.h>         // for testing only
-#include <baltzo_zoneinfoutil.h>          // for testing only
+#include <baltzo_defaultzoneinfocache.h> // for testing only
+#include <baltzo_testloader.h>           // for testing only
+#include <baltzo_zoneinfocache.h>        // for testing only
+#include <baltzo_zoneinfoutil.h>         // for testing only
 
 #include <bslmt_readlockguard.h>
 #include <bslmt_writelockguard.h>
@@ -19,60 +19,52 @@
 #include <bsls_review.h>
 #include <bsls_timeinterval.h>
 
-#include <bsl_cstdlib.h>  // getenv
-#include <bsl_cstring.h>  // memcpy
+#include <bsl_cstdlib.h> // getenv
+#include <bsl_cstring.h> // memcpy
 
 namespace BloombergLP {
 namespace baltzo {
 
-                         // --------------------------
-                         // struct LocalTimeOffsetUtil
-                         // --------------------------
+// --------------------------
+// struct LocalTimeOffsetUtil
+// --------------------------
 
 // PRIVATE CLASS METHODS
-inline
-int LocalTimeOffsetUtil::configureImp(const char            *timezone,
-                                      const bdlt::Datetime&  utcDatetime)
-{
-    BSLS_ASSERT(timezone);
+inline int
+LocalTimeOffsetUtil::configureImp(const char *timezone,
+                                  const bdlt::Datetime &utcDatetime) {
+  BSLS_ASSERT(timezone);
 
-    int retval = TimeZoneUtil::loadLocalTimePeriodForUtc(
-                                                      privateLocalTimePeriod(),
-                                                      timezone,
-                                                      utcDatetime);
-    if (retval) {
-        return retval;                                                // RETURN
-    }
-    privateTimezone()->assign(timezone);
-    ++s_updateCount;
-    return retval;
+  int retval = TimeZoneUtil::loadLocalTimePeriodForUtc(privateLocalTimePeriod(),
+                                                       timezone, utcDatetime);
+  if (retval) {
+    return retval; // RETURN
+  }
+  privateTimezone()->assign(timezone);
+  ++s_updateCount;
+  return retval;
 }
 
-inline
-LocalTimePeriod *LocalTimeOffsetUtil::privateLocalTimePeriod()
-{
-    static LocalTimePeriod localTimePeriod(bslma::Default::globalAllocator());
-    return &localTimePeriod;
+inline LocalTimePeriod *LocalTimeOffsetUtil::privateLocalTimePeriod() {
+  static LocalTimePeriod localTimePeriod(bslma::Default::globalAllocator());
+  return &localTimePeriod;
 }
 
-inline
-bslmt::RWMutex *LocalTimeOffsetUtil::privateLock()
-{
-    static bslmt::RWMutex *s_lock_p;
+inline bslmt::RWMutex *LocalTimeOffsetUtil::privateLock() {
+  static bslmt::RWMutex *s_lock_p;
 
-    BSLMT_ONCE_DO {
-        static bslmt::RWMutex s_lock;
+  BSLMT_ONCE_DO {
+    static bslmt::RWMutex s_lock;
 
-        s_lock_p = &s_lock;
-    }
+    s_lock_p = &s_lock;
+  }
 
-    return s_lock_p;
+  return s_lock_p;
 }
 
-bsl::string *LocalTimeOffsetUtil::privateTimezone()
-{
-    static bsl::string timezone(bslma::Default::globalAllocator());
-    return &timezone;
+bsl::string *LocalTimeOffsetUtil::privateTimezone() {
+  static bsl::string timezone(bslma::Default::globalAllocator());
+  return &timezone;
 }
 
 // CLASS DATA
@@ -80,122 +72,112 @@ bsls::AtomicInt LocalTimeOffsetUtil::s_updateCount(0);
 
 // CLASS METHODS
 
-                        // *** local time offset methods ***
+// *** local time offset methods ***
 
 #ifndef BDE_OMIT_INTERNAL_DEPRECATED
 
 void LocalTimeOffsetUtil::loadLocalTimeOffset(
-                                            int                   *result,
-                                            const bdlt::Datetime&  utcDatetime)
-{
-    *result = static_cast<int>(localTimeOffset(utcDatetime).seconds());
+    int *result, const bdlt::Datetime &utcDatetime) {
+  *result = static_cast<int>(localTimeOffset(utcDatetime).seconds());
 }
 
 #endif
 
-bsls::TimeInterval LocalTimeOffsetUtil::localTimeOffset(
-                                             const bdlt::Datetime& utcDatetime)
-{
-    bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
+bsls::TimeInterval
+LocalTimeOffsetUtil::localTimeOffset(const bdlt::Datetime &utcDatetime) {
+  bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
 
-    const LocalTimePeriod *localTimePeriod = privateLocalTimePeriod();
+  const LocalTimePeriod *localTimePeriod = privateLocalTimePeriod();
 
-    int offsetInSeconds;
+  int offsetInSeconds;
 
-    if (utcDatetime <  localTimePeriod->utcStartTime()
-     || utcDatetime >= localTimePeriod->utcEndTime()) {
+  if (utcDatetime < localTimePeriod->utcStartTime() ||
+      utcDatetime >= localTimePeriod->utcEndTime()) {
 
-        readLockGuard.release()->unlock();
+    readLockGuard.release()->unlock();
 
-        {
-            bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(
-                                                                privateLock());
+    {
+      bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
 
-            if (utcDatetime <  localTimePeriod->utcStartTime()
-             || utcDatetime >= localTimePeriod->utcEndTime()) {
+      if (utcDatetime < localTimePeriod->utcStartTime() ||
+          utcDatetime >= localTimePeriod->utcEndTime()) {
 
-                int status = configureImp(privateTimezone()->c_str(),
-                                          utcDatetime);
-                (void)status; BSLS_ASSERT(0 == status);
-            }
+        int status = configureImp(privateTimezone()->c_str(), utcDatetime);
+        (void)status;
+        BSLS_ASSERT(0 == status);
+      }
 
-            offsetInSeconds =
-                            localTimePeriod->descriptor().utcOffsetInSeconds();
-        }
-    } else {
-        offsetInSeconds = localTimePeriod->descriptor().utcOffsetInSeconds();
+      offsetInSeconds = localTimePeriod->descriptor().utcOffsetInSeconds();
     }
-    return bsls::TimeInterval(offsetInSeconds);
+  } else {
+    offsetInSeconds = localTimePeriod->descriptor().utcOffsetInSeconds();
+  }
+  return bsls::TimeInterval(offsetInSeconds);
 }
 
-                        // *** configure methods ***
+// *** configure methods ***
 
-int LocalTimeOffsetUtil::configure()
-{
-    const char *timezone = bsl::getenv("TZ");
-    if (!timezone) {
-        return -1;                                                    // RETURN
-    }
+int LocalTimeOffsetUtil::configure() {
+  const char *timezone = bsl::getenv("TZ");
+  if (!timezone) {
+    return -1; // RETURN
+  }
 
-    bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
-    return configureImp(timezone, bdlt::CurrentTime::utc());
+  bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
+  return configureImp(timezone, bdlt::CurrentTime::utc());
 }
 
-int LocalTimeOffsetUtil::configure(const char *timezone)
-{
-    BSLS_ASSERT(timezone);
+int LocalTimeOffsetUtil::configure(const char *timezone) {
+  BSLS_ASSERT(timezone);
 
-    bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
-    return configureImp(timezone, bdlt::CurrentTime::utc());
+  bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
+  return configureImp(timezone, bdlt::CurrentTime::utc());
 }
 
-int LocalTimeOffsetUtil::configure(const char            *timezone,
-                                   const bdlt::Datetime&  utcDatetime)
-{
-    BSLS_ASSERT(timezone);
+int LocalTimeOffsetUtil::configure(const char *timezone,
+                                   const bdlt::Datetime &utcDatetime) {
+  BSLS_ASSERT(timezone);
 
-    bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
-    return configureImp(timezone, utcDatetime);
+  bslmt::WriteLockGuard<bslmt::RWMutex> writeLockGuard(privateLock());
+  return configureImp(timezone, utcDatetime);
 }
 
-                        // *** accessor methods ***
+// *** accessor methods ***
 
-void LocalTimeOffsetUtil::loadLocalTimePeriod(LocalTimePeriod *localTimePeriod)
-{
-    BSLS_ASSERT(localTimePeriod);
+void LocalTimeOffsetUtil::loadLocalTimePeriod(
+    LocalTimePeriod *localTimePeriod) {
+  BSLS_ASSERT(localTimePeriod);
 
-    bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
-    *localTimePeriod = *privateLocalTimePeriod();
+  bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
+  *localTimePeriod = *privateLocalTimePeriod();
 }
 
-void LocalTimeOffsetUtil::loadTimezone(bsl::string *timezone)
-{
-    BSLS_ASSERT(timezone);
+void LocalTimeOffsetUtil::loadTimezone(bsl::string *timezone) {
+  BSLS_ASSERT(timezone);
 
-    bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
-    *timezone = *privateTimezone();
+  bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
+  *timezone = *privateTimezone();
 }
 
-void LocalTimeOffsetUtil::loadTimezone(std::string *timezone)
-{
-    BSLS_ASSERT(timezone);
+void LocalTimeOffsetUtil::loadTimezone(std::string *timezone) {
+  BSLS_ASSERT(timezone);
 
-    bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
-    *timezone = *privateTimezone();
+  bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
+  *timezone = *privateTimezone();
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-void LocalTimeOffsetUtil::loadTimezone(std::pmr::string *timezone)
-{
-    BSLS_ASSERT(timezone);
+void LocalTimeOffsetUtil::loadTimezone(
+    std::experimental::pmr::string *timezone) {
+  BSLS_ASSERT(timezone);
 
-    bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
-    *timezone = *privateTimezone();
+  bslmt::ReadLockGuard<bslmt::RWMutex> readLockGuard(privateLock());
+  *timezone = *privateTimezone();
 }
 #endif
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace baltzo
+} // namespace BloombergLP
 
 // ----------------------------------------------------------------------------
 // Copyright 2018 Bloomberg Finance L.P.

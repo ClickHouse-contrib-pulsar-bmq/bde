@@ -26,154 +26,156 @@
 
 #ifdef COMPILING_BSLMA_BSLALLOCATOR_H
 
-#define BSLMA_BSLALLOCATOR_DEPRECATE_ASSIGN \
-    BSLS_DEPRECATE_FEATURE("bsl", "bsl_allocator_assign", \
-                           "Do not assign allocators.")
+#define BSLMA_BSLALLOCATOR_DEPRECATE_ASSIGN                                    \
+  BSLS_DEPRECATE_FEATURE("bsl", "bsl_allocator_assign",                        \
+                         "Do not assign allocators.")
 
 namespace BloombergLP {
 namespace bslma {
 
 // FORWARD DECLARATIONS
 struct BslAllocator_Voidish;
-    // Object type that will be placeholder for 'void'
+// Object type that will be placeholder for 'void'
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace bslma
+} // namespace BloombergLP
 
 namespace bsl {
 
-                              // ===============
-                              // class allocator
-                              // ===============
+// ===============
+// class allocator
+// ===============
 
 template <class TYPE = polymorphic_allocator<>::value_type>
 class allocator : public polymorphic_allocator<TYPE> {
-    // An STL-compatible allocator that forwards allocation calls to an
-    // underlying mechanism object of a type derived from 'bslma::Allocator'.
-    // This class template adheres to the allocator requirements defined in
-    // section [allocator.requirements] and implements a superset of the
-    // 'std::pmr::polymorphic_allocator' class template described in section
-    // [mem.poly.allocator.class] of the C++ standard and may be used to
-    // instantiate any [container] class template that follows the STL
-    // allocator protocol.  The allocation mechanism is chosen at run-time,
-    // giving the programmer run-time control over how a container allocates
-    // and frees memory.
+  // An STL-compatible allocator that forwards allocation calls to an
+  // underlying mechanism object of a type derived from 'bslma::Allocator'.
+  // This class template adheres to the allocator requirements defined in
+  // section [allocator.requirements] and implements a superset of the
+  // 'std::experimental::pmr::polymorphic_allocator' class template described in
+  // section [mem.poly.allocator.class] of the C++ standard and may be used to
+  // instantiate any [container] class template that follows the STL
+  // allocator protocol.  The allocation mechanism is chosen at run-time,
+  // giving the programmer run-time control over how a container allocates
+  // and frees memory.
 
-    // PRIVATE TYPES
-    typedef polymorphic_allocator<TYPE> Base;
-    typedef allocator_traits<Base>      BaseTraits;
+  // PRIVATE TYPES
+  typedef polymorphic_allocator<TYPE> Base;
+  typedef allocator_traits<Base> BaseTraits;
 
-  public:
-    // TRAITS
-    // Note that 'allocator' is not trivially copyable because its assignment
-    // operator is not trivial.
-    BSLMF_NESTED_TRAIT_DECLARATION(allocator,
-                                   BloombergLP::bslmf::IsBitwiseCopyable);
-    BSLMF_NESTED_TRAIT_DECLARATION(allocator,
-                              BloombergLP::bslmf::IsBitwiseEqualityComparable);
+public:
+  // TRAITS
+  // Note that 'allocator' is not trivially copyable because its assignment
+  // operator is not trivial.
+  BSLMF_NESTED_TRAIT_DECLARATION(allocator,
+                                 BloombergLP::bslmf::IsBitwiseCopyable);
+  BSLMF_NESTED_TRAIT_DECLARATION(
+      allocator, BloombergLP::bslmf::IsBitwiseEqualityComparable);
 
-    // PUBLIC TYPES
-    typedef TYPE                                    value_type;
-    typedef value_type&                             reference;
-    typedef value_type const&                       const_reference;
-    typedef typename BaseTraits::size_type          size_type;
-    typedef typename BaseTraits::difference_type    difference_type;
-    typedef typename BaseTraits::pointer            pointer;
-    typedef typename BaseTraits::const_pointer      const_pointer;
-    typedef typename BaseTraits::void_pointer       void_pointer;
-    typedef typename BaseTraits::const_void_pointer const_void_pointer;
+  // PUBLIC TYPES
+  typedef TYPE value_type;
+  typedef value_type &reference;
+  typedef value_type const &const_reference;
+  typedef typename BaseTraits::size_type size_type;
+  typedef typename BaseTraits::difference_type difference_type;
+  typedef typename BaseTraits::pointer pointer;
+  typedef typename BaseTraits::const_pointer const_pointer;
+  typedef typename BaseTraits::void_pointer void_pointer;
+  typedef typename BaseTraits::const_void_pointer const_void_pointer;
 
-    template <class ANY_TYPE>
-    struct rebind {
-        // This nested 'struct' template, parameterized by 'ANY_TYPE', provides
-        // a namespace for an 'other' type alias, which is this template
-        // instantiated with 'ANY_TYPE' instead of 'TYPE'.  Note that this
-        // allocator type is convertible to and from 'other' for any type,
-        // including 'void'.
+  template <class ANY_TYPE> struct rebind {
+    // This nested 'struct' template, parameterized by 'ANY_TYPE', provides
+    // a namespace for an 'other' type alias, which is this template
+    // instantiated with 'ANY_TYPE' instead of 'TYPE'.  Note that this
+    // allocator type is convertible to and from 'other' for any type,
+    // including 'void'.
 
-        typedef allocator<ANY_TYPE> other;
-    };
+    typedef allocator<ANY_TYPE> other;
+  };
 
-    // CREATORS
-    allocator();
-        // Create an allocator that will forward allocation calls to the
-        // object pointed to by 'bslma::Default::defaultAllocator()'.
-        // Postcondition:
-        //..
-        //  this->mechanism() == bslma::Default::defaultAllocator()
-        //..
+  // CREATORS
+  allocator();
+  // Create an allocator that will forward allocation calls to the
+  // object pointed to by 'bslma::Default::defaultAllocator()'.
+  // Postcondition:
+  //..
+  //  this->mechanism() == bslma::Default::defaultAllocator()
+  //..
 
-    allocator(BloombergLP::bslma::Allocator *mechanism);            // IMPLICIT
-        // Convert a 'bslma::Allocator' pointer to an 'allocator' object that
-        // forwards allocation calls to the object pointed to by the specified
-        // 'mechanism'.  If 'mechanism' is 0, then the currently installed
-        // default allocator is used instead.  Postcondition:
-        //..
-        //  this->mechanism() == bslma::Default::allocator(mechanism)
-        //..
+  allocator(
+      BloombergLP::bslma::Allocator
+          *mechanism); // IMPLICIT
+                       // Convert a 'bslma::Allocator' pointer to an 'allocator'
+                       // object that forwards allocation calls to the object
+                       // pointed to by the specified 'mechanism'.  If
+                       // 'mechanism' is 0, then the currently installed default
+                       // allocator is used instead.  Postcondition:
+                       //..
+                       //  this->mechanism() ==
+                       //  bslma::Default::allocator(mechanism)
+                       //..
 
 #ifdef BSLS_COMPILERFEATURES_SUPPORT_DEFAULTED_FUNCTIONS
-    allocator(const allocator& original) BSLS_KEYWORD_NOEXCEPT = default;
+  allocator(const allocator &original) BSLS_KEYWORD_NOEXCEPT = default;
 #else
-    allocator(const allocator& original) BSLS_KEYWORD_NOEXCEPT;
+  allocator(const allocator &original) BSLS_KEYWORD_NOEXCEPT;
 #endif
-    template <class ANY_TYPE>
-    allocator(const allocator<ANY_TYPE>& original) BSLS_KEYWORD_NOEXCEPT;
-        // Create an allocator sharing the same mechanism object as the
-        // specified 'original'.  The newly constructed allocator will compare
-        // equal to 'original', even though they may be instantiated on
-        // different types.  Postconditions:
-        //..
-        //  *this == original
-        //  this->mechanism() == original.mechanism()
-        //..
+  template <class ANY_TYPE>
+  allocator(const allocator<ANY_TYPE> &original) BSLS_KEYWORD_NOEXCEPT;
+  // Create an allocator sharing the same mechanism object as the
+  // specified 'original'.  The newly constructed allocator will compare
+  // equal to 'original', even though they may be instantiated on
+  // different types.  Postconditions:
+  //..
+  //  *this == original
+  //  this->mechanism() == original.mechanism()
+  //..
 
-    //! ~allocator() = default;
-        // Destroy this object.  Note that this destructor does not delete the
-        // object pointed to by 'mechanism()'.
+  //! ~allocator() = default;
+  // Destroy this object.  Note that this destructor does not delete the
+  // object pointed to by 'mechanism()'.
 
-    // MANIPULATORS
-    BSLMA_BSLALLOCATOR_DEPRECATE_ASSIGN
-    allocator& operator=(const allocator& rhs);
-        // !DEPRECATED! 'bsl::allocator' should not be assigned.  Modify this
-        // allocator to use the same mechanism as the specified 'rhs' allocator
-        // and return a modifiable reference to this object.  Note that
-        // 'bsl::allocator' objects should never be assigned at runtime, but,
-        // in the absence of 'if constexpr', such assignments can sometimes be
-        // found legitimately in dead branches (branches that are never taken
-        // at runtime) within function templates; ideally, such code would be
-        // replaced by more sophisticated metaprogramming that avoided calls to
-        // this operator entirely.  Invoking this assignment will result in a
-        // review error unless 'rhs == *this', i.e., when the assignment would
-        // be a no-op.  In the future, the review error may be replaced with an
-        // a hard assertion failure.
+  // MANIPULATORS
+  BSLMA_BSLALLOCATOR_DEPRECATE_ASSIGN
+  allocator &operator=(const allocator &rhs);
+  // !DEPRECATED! 'bsl::allocator' should not be assigned.  Modify this
+  // allocator to use the same mechanism as the specified 'rhs' allocator
+  // and return a modifiable reference to this object.  Note that
+  // 'bsl::allocator' objects should never be assigned at runtime, but,
+  // in the absence of 'if constexpr', such assignments can sometimes be
+  // found legitimately in dead branches (branches that are never taken
+  // at runtime) within function templates; ideally, such code would be
+  // replaced by more sophisticated metaprogramming that avoided calls to
+  // this operator entirely.  Invoking this assignment will result in a
+  // review error unless 'rhs == *this', i.e., when the assignment would
+  // be a no-op.  In the future, the review error may be replaced with an
+  // a hard assertion failure.
 
-    BSLS_ANNOTATION_NODISCARD
-    pointer allocate(size_type n, const void *hint = 0);
-        // Return a block of memory having sufficient size and alignment to
-        // hold the specified 'n' objects of 'value_type', allocated from the
-        // memory resource held by this allocator.  Optionally specify a
-        // 'hint', which is ignored by this allocator type but theoretically
-        // used by other allocators as an aid for optimizing locality.
+  BSLS_ANNOTATION_NODISCARD
+  pointer allocate(size_type n, const void *hint = 0);
+  // Return a block of memory having sufficient size and alignment to
+  // hold the specified 'n' objects of 'value_type', allocated from the
+  // memory resource held by this allocator.  Optionally specify a
+  // 'hint', which is ignored by this allocator type but theoretically
+  // used by other allocators as an aid for optimizing locality.
 
-    void deallocate(TYPE *p, std::size_t n = 1);
-        // Deallocate a block of memory at the specified 'p' address by
-        // returning it to the memory resource held by this allocator.
-        // Optionally specify the number of objects, 'n', to deallocate.  The
-        // behavior is undefined unless 'p' is the address of a block
-        // previously allocated by a call to 'allocate' with the same 'n' from
-        // a copy of this allocator having the same 'value_type' and not yet
-        // deallocated.
+  void deallocate(TYPE *p, std::size_t n = 1);
+  // Deallocate a block of memory at the specified 'p' address by
+  // returning it to the memory resource held by this allocator.
+  // Optionally specify the number of objects, 'n', to deallocate.  The
+  // behavior is undefined unless 'p' is the address of a block
+  // previously allocated by a call to 'allocate' with the same 'n' from
+  // a copy of this allocator having the same 'value_type' and not yet
+  // deallocated.
 
-    template <class ELEMENT_TYPE>
-    void construct(ELEMENT_TYPE *address);
-        // Create a default-constructed object of (template parameter)
-        // 'ELEMENT_TYPE' at the specified 'address'.  If 'ELEMENT_TYPE'
-        // supports 'bslma'-style allocation, this allocator passes itself to
-        // the extended default constructor.  If the constructor throws, the
-        // memory at 'address' is left in an unspecified state.  The behavior
-        // is undefined unless 'address' refers to a block of sufficient size
-        // and properly aligned for objects of 'ELEMENT_TYPE'.
+  template <class ELEMENT_TYPE> void construct(ELEMENT_TYPE *address);
+  // Create a default-constructed object of (template parameter)
+  // 'ELEMENT_TYPE' at the specified 'address'.  If 'ELEMENT_TYPE'
+  // supports 'bslma'-style allocation, this allocator passes itself to
+  // the extended default constructor.  If the constructor throws, the
+  // memory at 'address' is left in an unspecified state.  The behavior
+  // is undefined unless 'address' refers to a block of sufficient size
+  // and properly aligned for objects of 'ELEMENT_TYPE'.
 
 #if BSLS_COMPILERFEATURES_SIMULATE_VARIADIC_TEMPLATES
 // {{{ BEGIN GENERATED CODE
@@ -185,778 +187,614 @@ class allocator : public polymorphic_allocator<TYPE> {
 #define BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A BSLMA_BSLALLOCATOR_VARIADIC_LIMIT
 #endif
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 0
-    template <class ELEMENT_TYPE, class ARG1>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 0
+  template <class ELEMENT_TYPE, class ARG1>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 0
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 1
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 1
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 1
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 2
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 2
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 2
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 3
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 3
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 3
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 4
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 4
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 4
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 5
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 5
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 5
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 6
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 6
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 6
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 7
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 7
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 7
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 8
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 8
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 8
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 9
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 9
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 9
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 10
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 10
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 10
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 11
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 11
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 11
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 12
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11,
-                                              class ARGS_12>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 12
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 12
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 13
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11,
-                                              class ARGS_12,
-                                              class ARGS_13>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 13
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 13
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 14
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11,
-                                              class ARGS_12,
-                                              class ARGS_13,
-                                              class ARGS_14>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 14
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13, class ARGS_14>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 14
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 0
-    template <class ELEMENT_TYPE, class ARG1>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 0
+  template <class ELEMENT_TYPE, class ARG1>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 0
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 1
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 1
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 1
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 2
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 2
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 2
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 3
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 3
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 3
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 4
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 4
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 4
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 5
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 5
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 5
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 6
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 6
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 6
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 7
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 7
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 7
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 8
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 8
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 8
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 9
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 9
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 9
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 10
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 10
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 10
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 11
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 11
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 11
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 12
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11,
-                                              class ARGS_12>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 12
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 12
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 13
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11,
-                                              class ARGS_12,
-                                              class ARGS_13>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 13
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 13
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 14
-    template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                              class ARGS_02,
-                                              class ARGS_03,
-                                              class ARGS_04,
-                                              class ARGS_05,
-                                              class ARGS_06,
-                                              class ARGS_07,
-                                              class ARGS_08,
-                                              class ARGS_09,
-                                              class ARGS_10,
-                                              class ARGS_11,
-                                              class ARGS_12,
-                                              class ARGS_13,
-                                              class ARGS_14>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14);
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 14
+  template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13, class ARGS_14>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14);
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_A >= 14
 
 #else
-// The generated code below is a workaround for the absence of perfect
-// forwarding in some compilers.
-    template <class ELEMENT_TYPE, class ARG1, class... ARGS>
-    void construct(ELEMENT_TYPE            *address,
-                   ARG1&                    argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments);
-    template <class ELEMENT_TYPE, class ARG1, class... ARGS>
-    void construct(ELEMENT_TYPE                            *address,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                   BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments);
+  // The generated code below is a workaround for the absence of perfect
+  // forwarding in some compilers.
+  template <class ELEMENT_TYPE, class ARG1, class... ARGS>
+  void construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments);
+  template <class ELEMENT_TYPE, class ARG1, class... ARGS>
+  void construct(ELEMENT_TYPE *address,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                 BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments);
 // }}} END GENERATED CODE
 #endif
 
-    template <class ELEMENT_TYPE>
-    void destroy(ELEMENT_TYPE *address);
-        // Call the 'TYPE' destructor for the object pointed to by the
-        // specified 'address'.  Do not directly deallocate any memory.
+  template <class ELEMENT_TYPE> void destroy(ELEMENT_TYPE *address);
+  // Call the 'TYPE' destructor for the object pointed to by the
+  // specified 'address'.  Do not directly deallocate any memory.
 
-    // ACCESSORS
-    pointer       address(reference x) const;
-    const_pointer address(const_reference x) const;
-        // Return the address of the object referred to by the specified 'x'
-        // reference, even if the (template parameter) 'TYPE' overloads the
-        // unary 'operator&'.
+  // ACCESSORS
+  pointer address(reference x) const;
+  const_pointer address(const_reference x) const;
+  // Return the address of the object referred to by the specified 'x'
+  // reference, even if the (template parameter) 'TYPE' overloads the
+  // unary 'operator&'.
 
-    BSLS_KEYWORD_CONSTEXPR
-    size_type max_size() const;
-        // Return the maximum number of elements of (template parameter) 'TYPE'
-        // that can be allocated using this allocator.  Note that there is no
-        // guarantee that attempts at allocating fewer elements than the value
-        // returned by 'max_size' will not throw.
+  BSLS_KEYWORD_CONSTEXPR
+  size_type max_size() const;
+  // Return the maximum number of elements of (template parameter) 'TYPE'
+  // that can be allocated using this allocator.  Note that there is no
+  // guarantee that attempts at allocating fewer elements than the value
+  // returned by 'max_size' will not throw.
 
-    BloombergLP::bslma::Allocator *mechanism() const;
-        // Return a pointer to the mechanism object to which this proxy
-        // forwards allocation and deallocation calls.
+  BloombergLP::bslma::Allocator *mechanism() const;
+  // Return a pointer to the mechanism object to which this proxy
+  // forwards allocation and deallocation calls.
 
-    allocator select_on_container_copy_construction() const;
-        // Return a default-constructed allocator.
+  allocator select_on_container_copy_construction() const;
+  // Return a default-constructed allocator.
 };
 
-                           // =====================
-                           // class allocator<void>
-                           // =====================
+// =====================
+// class allocator<void>
+// =====================
 
 template <>
 class allocator<void>
-    : public allocator<BloombergLP::bslma::BslAllocator_Voidish>
-{
-    // Specialization of 'allocator<T>' where 'T' is 'void'.  Does not contain
-    // members that are unrepresentable for 'void'.  Note that this
-    // specialization may be removed in the future.  Use 'allocator<>' or
-    // 'allocator<char>' instead.
+    : public allocator<BloombergLP::bslma::BslAllocator_Voidish> {
+  // Specialization of 'allocator<T>' where 'T' is 'void'.  Does not contain
+  // members that are unrepresentable for 'void'.  Note that this
+  // specialization may be removed in the future.  Use 'allocator<>' or
+  // 'allocator<char>' instead.
 
-    // PRIVATE TYPES
-    typedef allocator<BloombergLP::bslma::BslAllocator_Voidish> Base;
+  // PRIVATE TYPES
+  typedef allocator<BloombergLP::bslma::BslAllocator_Voidish> Base;
 
-    // NOT DEFINED
-    void allocate();     // Hide name inherited from base class
-    void deallocate();   // Hide name inherited from base class
-    void construct();    // Hide name inherited from base class
-    void destroy();      // Hide name inherited from base class
-    void max_size(int);  // Hide name inherited from base class
+  // NOT DEFINED
+  void allocate();    // Hide name inherited from base class
+  void deallocate();  // Hide name inherited from base class
+  void construct();   // Hide name inherited from base class
+  void destroy();     // Hide name inherited from base class
+  void max_size(int); // Hide name inherited from base class
 
-  public:
-    // TRAITS
-    // Note that 'allocator' is not trivially copyable because its assignment
-    // operator is not trivial.
-    BSLMF_NESTED_TRAIT_DECLARATION(allocator,
-                                   BloombergLP::bslmf::IsBitwiseCopyable);
-    BSLMF_NESTED_TRAIT_DECLARATION(allocator,
-                              BloombergLP::bslmf::IsBitwiseEqualityComparable);
+public:
+  // TRAITS
+  // Note that 'allocator' is not trivially copyable because its assignment
+  // operator is not trivial.
+  BSLMF_NESTED_TRAIT_DECLARATION(allocator,
+                                 BloombergLP::bslmf::IsBitwiseCopyable);
+  BSLMF_NESTED_TRAIT_DECLARATION(
+      allocator, BloombergLP::bslmf::IsBitwiseEqualityComparable);
 
-    // PUBLIC TYPES
-    typedef void           *pointer;
-    typedef const void     *const_pointer;
-    typedef void           *void_pointer;
-    typedef const void     *const_void_pointer;
-    typedef void            value_type;
+  // PUBLIC TYPES
+  typedef void *pointer;
+  typedef const void *const_pointer;
+  typedef void *void_pointer;
+  typedef const void *const_void_pointer;
+  typedef void value_type;
 
-    // CREATORS
-    allocator();
-        // Create a proxy object that will forward allocation calls to the
-        // object pointed to by 'bslma::Default::defaultAllocator()'.
-        // Postcondition:
-        //..
-        //  this->mechanism() == bslma::Default::defaultAllocator();
-        //..
+  // CREATORS
+  allocator();
+  // Create a proxy object that will forward allocation calls to the
+  // object pointed to by 'bslma::Default::defaultAllocator()'.
+  // Postcondition:
+  //..
+  //  this->mechanism() == bslma::Default::defaultAllocator();
+  //..
 
-    allocator(BloombergLP::bslma::Allocator *mechanism);            // IMPLICIT
-        // Convert a 'bslma::Allocator' pointer to an 'allocator' object that
-        // forwards allocation calls to the object pointed to by the specified
-        // 'mechanism'.  If 'mechanism' is 0, then the currently installed
-        // default allocator is used instead.  Postcondition:
-        //..
-        //  this->mechanism() == bslma::Default::allocator(mechanism);
-        //..
+  allocator(
+      BloombergLP::bslma::Allocator
+          *mechanism); // IMPLICIT
+                       // Convert a 'bslma::Allocator' pointer to an 'allocator'
+                       // object that forwards allocation calls to the object
+                       // pointed to by the specified 'mechanism'.  If
+                       // 'mechanism' is 0, then the currently installed default
+                       // allocator is used instead.  Postcondition:
+                       //..
+                       //  this->mechanism() ==
+                       //  bslma::Default::allocator(mechanism);
+                       //..
 
 #ifdef BSLS_COMPILERFEATURES_SUPPORT_DEFAULTED_FUNCTIONS
-    allocator(const allocator& original) BSLS_KEYWORD_NOEXCEPT = default;
+  allocator(const allocator &original) BSLS_KEYWORD_NOEXCEPT = default;
 #else
-    allocator(const allocator& original) BSLS_KEYWORD_NOEXCEPT;
+  allocator(const allocator &original) BSLS_KEYWORD_NOEXCEPT;
 #endif
-    template <class ANY_TYPE>
-    allocator(const allocator<ANY_TYPE>& original) BSLS_KEYWORD_NOEXCEPT;
-        // Create a proxy object sharing the same mechanism object as the
-        // specified 'original'.  The newly constructed allocator will compare
-        // equal to 'original', even though they may be instantiated on
-        // different types.  Postcondition:
-        //..
-        //  this->mechanism() == original.mechanism();
-        //..
+  template <class ANY_TYPE>
+  allocator(const allocator<ANY_TYPE> &original) BSLS_KEYWORD_NOEXCEPT;
+  // Create a proxy object sharing the same mechanism object as the
+  // specified 'original'.  The newly constructed allocator will compare
+  // equal to 'original', even though they may be instantiated on
+  // different types.  Postcondition:
+  //..
+  //  this->mechanism() == original.mechanism();
+  //..
 
-    //! ~allocator();
-        // Destroy this object.  Note that this does not delete the object
-        // pointed to by 'mechanism()'.  Also note that this method's
-        // definition is compiler generated.
+  //! ~allocator();
+  // Destroy this object.  Note that this does not delete the object
+  // pointed to by 'mechanism()'.  Also note that this method's
+  // definition is compiler generated.
 
-    // MANIPULATORS
-    //! allocator& operator=(const allocator& rhs) = default;
+  // MANIPULATORS
+  //! allocator& operator=(const allocator& rhs) = default;
 
-    // ACCESSORS
-    allocator select_on_container_copy_construction() const;
-        // Return a default-constructed allocator.
+  // ACCESSORS
+  allocator select_on_container_copy_construction() const;
+  // Return a default-constructed allocator.
 };
 
-                  // ========================================
-                  // class allocator_traits<allocator<TYPE> >
-                  // ========================================
+// ========================================
+// class allocator_traits<allocator<TYPE> >
+// ========================================
 
-template <class TYPE>
-struct allocator_traits<allocator<TYPE> > {
-    // This 'struct' template provides a specialization of the
-    // 'allocator_traits' class template for 'bsl::allocator'.  This
-    // specialization is not strictly necessary, but its presence speeds up
-    // compliation by bypassing a significant amount of metaprogramming.
+template <class TYPE> struct allocator_traits<allocator<TYPE>> {
+  // This 'struct' template provides a specialization of the
+  // 'allocator_traits' class template for 'bsl::allocator'.  This
+  // specialization is not strictly necessary, but its presence speeds up
+  // compliation by bypassing a significant amount of metaprogramming.
 
-    // PUBLIC TYPES
-    typedef allocator<TYPE>                             allocator_type;
-    typedef TYPE                                        value_type;
+  // PUBLIC TYPES
+  typedef allocator<TYPE> allocator_type;
+  typedef TYPE value_type;
 
-    typedef typename allocator_type::pointer            pointer;
-    typedef typename allocator_type::const_pointer      const_pointer;
-    typedef typename allocator_type::void_pointer       void_pointer;
-    typedef typename allocator_type::const_void_pointer const_void_pointer;
-    typedef typename allocator_type::difference_type    difference_type;
-    typedef typename allocator_type::size_type          size_type;
+  typedef typename allocator_type::pointer pointer;
+  typedef typename allocator_type::const_pointer const_pointer;
+  typedef typename allocator_type::void_pointer void_pointer;
+  typedef typename allocator_type::const_void_pointer const_void_pointer;
+  typedef typename allocator_type::difference_type difference_type;
+  typedef typename allocator_type::size_type size_type;
 
 #ifdef BSLS_COMPILERFEATURES_SUPPORT_ALIAS_TEMPLATES
-    template <class ELEMENT_TYPE>
-    using rebind_alloc = allocator<ELEMENT_TYPE>;
+  template <class ELEMENT_TYPE> using rebind_alloc = allocator<ELEMENT_TYPE>;
 
-    template <class ELEMENT_TYPE>
-    using rebind_traits = allocator_traits<allocator<ELEMENT_TYPE> >;
+  template <class ELEMENT_TYPE>
+  using rebind_traits = allocator_traits<allocator<ELEMENT_TYPE>>;
 #else
-    template <class ELEMENT_TYPE>
-    struct rebind_alloc : allocator<ELEMENT_TYPE> {
-        rebind_alloc()
-        : allocator<ELEMENT_TYPE>()
-        {
-        }
+  template <class ELEMENT_TYPE> struct rebind_alloc : allocator<ELEMENT_TYPE> {
+    rebind_alloc() : allocator<ELEMENT_TYPE>() {}
 
-        template <typename ARG>
-        rebind_alloc(const ARG& allocatorArg)
-            // Convert from anything that can be used to cosntruct the base
-            // type.  This might be better if SFINAE-ed out using
-            // 'is_convertible', but stressing older compilers more seems
-            // unwise.
-        : allocator<ELEMENT_TYPE>(allocatorArg)
-        {
-        }
-    };
+    template <typename ARG>
+    rebind_alloc(const ARG &allocatorArg)
+        // Convert from anything that can be used to cosntruct the base
+        // type.  This might be better if SFINAE-ed out using
+        // 'is_convertible', but stressing older compilers more seems
+        // unwise.
+        : allocator<ELEMENT_TYPE>(allocatorArg) {}
+  };
 
-    template <class ELEMENT_TYPE>
-    struct rebind_traits : allocator_traits<allocator<ELEMENT_TYPE> > {
-    };
+  template <class ELEMENT_TYPE>
+  struct rebind_traits : allocator_traits<allocator<ELEMENT_TYPE>> {};
 #endif
 
-    static pointer allocate(allocator_type& m, size_type n)
-    {
-        return m.allocate(n);
-    }
+  static pointer allocate(allocator_type &m, size_type n) {
+    return m.allocate(n);
+  }
 
-    static pointer allocate(allocator_type&    m,
-                            size_type          n,
-                            const_void_pointer /* hint */)
-    {
-        return m.allocate(n);
-    }
+  static pointer allocate(allocator_type &m, size_type n,
+                          const_void_pointer /* hint */) {
+    return m.allocate(n);
+  }
 
-    static void deallocate(allocator_type& m, pointer p, size_type n)
-    {
-        m.deallocate(p, n);
-    }
+  static void deallocate(allocator_type &m, pointer p, size_type n) {
+    m.deallocate(p, n);
+  }
 
-    template <class TYPE2>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p)
-    {
-        m.construct(p);
-    }
+  template <class TYPE2> static void construct(allocator_type &m, TYPE2 *p) {
+    m.construct(p);
+  }
 
 #if BSLS_COMPILERFEATURES_SIMULATE_VARIADIC_TEMPLATES
 // {{{ BEGIN GENERATED CODE
@@ -968,1076 +806,829 @@ struct allocator_traits<allocator<TYPE> > {
 #define BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B BSLMA_BSLALLOCATOR_VARIADIC_LIMIT
 #endif
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 0
-    template <class TYPE2, class ARG1>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1)
-    {
-        m.construct(p,
-                    argument1);
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 0
+  template <class TYPE2, class ARG1>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1) {
+    m.construct(p, argument1);
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 0
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 1
-    template <class TYPE2, class ARG1, class ARGS_01>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 1
+  template <class TYPE2, class ARG1, class ARGS_01>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01)
+                            arguments_01) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 1
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 2
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 2
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02)
+                            arguments_02) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 2
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 3
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 3
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03)
+                            arguments_03) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 3
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 4
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 4
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04)
+                            arguments_04) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 4
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 5
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 5
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05)
+                            arguments_05) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 5
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 6
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 6
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06)
+                            arguments_06) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 6
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 7
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 7
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07)
+                            arguments_07) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 7
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 8
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 8
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08)
+                            arguments_08) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 8
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 9
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 9
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09)
+                            arguments_09) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 9
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 10
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 10
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10)
+                            arguments_10) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 10
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 11
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 11
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11)
+                            arguments_11) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 11
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 12
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11,
-                                       class ARGS_12>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 12
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12)
+                            arguments_12) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 12
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 13
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11,
-                                       class ARGS_12,
-                                       class ARGS_13>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 13
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13)
+                            arguments_13) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 13
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 14
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11,
-                                       class ARGS_12,
-                                       class ARGS_13,
-                                       class ARGS_14>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 14
-
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13, class ARGS_14>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14)
+                            arguments_14) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 14
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 0
-    template <class TYPE2, class ARG1>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 0
+  template <class TYPE2, class ARG1>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 0
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 1
-    template <class TYPE2, class ARG1, class ARGS_01>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 1
+  template <class TYPE2, class ARG1, class ARGS_01>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01)
+                            arguments_01) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 1
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 2
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 2
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02)
+                            arguments_02) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 2
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 3
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 3
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03)
+                            arguments_03) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 3
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 4
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 4
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04)
+                            arguments_04) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 4
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 5
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 5
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05)
+                            arguments_05) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 5
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 6
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 6
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06)
+                            arguments_06) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 6
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 7
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 7
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07)
+                            arguments_07) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 7
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 8
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 8
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08)
+                            arguments_08) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 8
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 9
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 9
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09)
+                            arguments_09) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 9
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 10
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 10
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10)
+                            arguments_10) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 10
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 11
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 11
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11)
+                            arguments_11) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 11
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 12
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11,
-                                       class ARGS_12>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 12
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12)
+                            arguments_12) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 12
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 13
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11,
-                                       class ARGS_12,
-                                       class ARGS_13>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 13
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13)
+                            arguments_13) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 13
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 14
-    template <class TYPE2, class ARG1, class ARGS_01,
-                                       class ARGS_02,
-                                       class ARGS_03,
-                                       class ARGS_04,
-                                       class ARGS_05,
-                                       class ARGS_06,
-                                       class ARGS_07,
-                                       class ARGS_08,
-                                       class ARGS_09,
-                                       class ARGS_10,
-                                       class ARGS_11,
-                                       class ARGS_12,
-                                       class ARGS_13,
-                                       class ARGS_14>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
-    }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 14
+  template <class TYPE2, class ARG1, class ARGS_01, class ARGS_02,
+            class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+            class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+            class ARGS_11, class ARGS_12, class ARGS_13, class ARGS_14>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14)
+                            arguments_14) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
+  }
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_B >= 14
 
 #else
-// The generated code below is a workaround for the absence of perfect
-// forwarding in some compilers.
-    template <class TYPE2, class ARG1, class... ARGS>
-    static void construct(allocator_type&  m,
-                          TYPE2           *p,
-                          ARG1&            argument1,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments)
-    {
-        m.construct(p,
-                    argument1,
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
-    }
+  // The generated code below is a workaround for the absence of perfect
+  // forwarding in some compilers.
+  template <class TYPE2, class ARG1, class... ARGS>
+  static void construct(allocator_type &m, TYPE2 *p, ARG1 &argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments) {
+    m.construct(p, argument1,
+                BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
+  }
 
-    template <class TYPE2, class ARG1, class... ARGS>
-    static void construct(allocator_type&                          m,
-                          TYPE2                                   *p,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments)
-    {
-        m.construct(p,
-                    BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-                    BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
-    }
+  template <class TYPE2, class ARG1, class... ARGS>
+  static void construct(allocator_type &m, TYPE2 *p,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+                        BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments) {
+    m.construct(p, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+                BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
+  }
 // }}} END GENERATED CODE
 #endif
 
-    template <class ELEMENT_TYPE>
-    static void destroy(allocator_type& m, ELEMENT_TYPE *p)
-    {
-        m.destroy(p);
-    }
+  template <class ELEMENT_TYPE>
+  static void destroy(allocator_type &m, ELEMENT_TYPE *p) {
+    m.destroy(p);
+  }
 
-    BSLS_KEYWORD_CONSTEXPR
-    static size_type max_size(const allocator_type& m)
-    {
-        return m.max_size();
-    }
+  BSLS_KEYWORD_CONSTEXPR
+  static size_type max_size(const allocator_type &m) { return m.max_size(); }
 
-    // Allocator propagation traits
-    static
-    allocator_type select_on_container_copy_construction(const allocator_type&)
-    {
-        return allocator_type();
-    }
+  // Allocator propagation traits
+  static allocator_type
+  select_on_container_copy_construction(const allocator_type &) {
+    return allocator_type();
+  }
 
-    typedef false_type is_always_equal;
+  typedef false_type is_always_equal;
 
-    typedef false_type propagate_on_container_copy_assignment;
+  typedef false_type propagate_on_container_copy_assignment;
 
-    typedef false_type propagate_on_container_move_assignment;
+  typedef false_type propagate_on_container_move_assignment;
 
-    typedef false_type propagate_on_container_swap;
+  typedef false_type propagate_on_container_swap;
 };
-
 
 // ============================================================================
 //                      INLINE FUNCTION DEFINITIONS
 // ============================================================================
 
-                              // ---------------
-                              // class allocator
-                              // ---------------
+// ---------------
+// class allocator
+// ---------------
 
 // CREATORS
 template <class TYPE>
-inline
-allocator<TYPE>::allocator()
-: Base(BloombergLP::bslma::Default::defaultAllocator())
-{
-}
+inline allocator<TYPE>::allocator()
+    : Base(BloombergLP::bslma::Default::defaultAllocator()) {}
 
 template <class TYPE>
-inline
-allocator<TYPE>::allocator(BloombergLP::bslma::Allocator *mechanism)
-: Base(BloombergLP::bslma::Default::allocator(mechanism))
-{
-}
+inline allocator<TYPE>::allocator(BloombergLP::bslma::Allocator *mechanism)
+    : Base(BloombergLP::bslma::Default::allocator(mechanism)) {}
 
 #ifndef BSLS_COMPILERFEATURES_SUPPORT_DEFAULTED_FUNCTIONS
 // In C++11 and later, this copy constructor is defaulted.
 template <class TYPE>
-inline
-allocator<TYPE>::allocator(const allocator& original) BSLS_KEYWORD_NOEXCEPT
-: Base(original)
-{
-}
+inline allocator<TYPE>::allocator(const allocator &original)
+    BSLS_KEYWORD_NOEXCEPT : Base(original) {}
 #endif
 
 template <class TYPE>
 template <class ANY_TYPE>
-inline
-allocator<TYPE>::allocator(const allocator<ANY_TYPE>& original)
-                                                          BSLS_KEYWORD_NOEXCEPT
-: Base(original)
-{
-}
+inline allocator<TYPE>::allocator(const allocator<ANY_TYPE> &original)
+    BSLS_KEYWORD_NOEXCEPT : Base(original) {}
 
 // MANIPULATORS
 template <class TYPE>
-inline
-allocator<TYPE>&
-allocator<TYPE>::operator=(const allocator& rhs)
-{
-    BSLS_REVIEW_OPT(rhs == *this &&
-                    "'bsl::allocator' objects cannot be assigned");
+inline allocator<TYPE> &allocator<TYPE>::operator=(const allocator &rhs) {
+  BSLS_REVIEW_OPT(rhs == *this &&
+                  "'bsl::allocator' objects cannot be assigned");
 
-    if (this != &rhs) {
-        // As the base class does not support assignment, the only way to
-        // change the mechanism is to destroy and re-create this object
-        this->~allocator();
-        return *::new(this) allocator(rhs);
-    }
+  if (this != &rhs) {
+    // As the base class does not support assignment, the only way to
+    // change the mechanism is to destroy and re-create this object
+    this->~allocator();
+    return *::new (this) allocator(rhs);
+  }
 
-    return *this;
+  return *this;
 }
 
 template <class TYPE>
-inline
-typename allocator<TYPE>::pointer
-allocator<TYPE>::allocate(size_type n, const void * /* hint */)
-{
-    return Base::allocate(n);
+inline typename allocator<TYPE>::pointer
+allocator<TYPE>::allocate(size_type n, const void * /* hint */) {
+  return Base::allocate(n);
 }
 
 template <class TYPE>
-inline
-void allocator<TYPE>::deallocate(TYPE *p, std::size_t n)
-{
-    Base::deallocate(p, n);
+inline void allocator<TYPE>::deallocate(TYPE *p, std::size_t n) {
+  Base::deallocate(p, n);
 }
 
 template <class TYPE>
 template <class ELEMENT_TYPE>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(address, *this);
+inline void allocator<TYPE>::construct(ELEMENT_TYPE *address) {
+  BloombergLP::bslma::ConstructionUtil::construct(address, *this);
 }
 
 #if BSLS_COMPILERFEATURES_SIMULATE_VARIADIC_TEMPLATES
@@ -2052,1171 +1643,866 @@ void allocator<TYPE>::construct(ELEMENT_TYPE *address)
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 0
 template <class TYPE>
 template <class ELEMENT_TYPE, class ARG1>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1);
+inline void allocator<TYPE>::construct(ELEMENT_TYPE *address, ARG1 &argument1) {
+  BloombergLP::bslma::ConstructionUtil::construct(address, *this, argument1);
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 0
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 0
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 1
 template <class TYPE>
 template <class ELEMENT_TYPE, class ARG1, class ARGS_01>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
+inline void
+allocator<TYPE>::construct(ELEMENT_TYPE *address, ARG1 &argument1,
+                           BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01)
+                               arguments_01) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 1
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 1
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 2
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 2
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 2
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 3
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 3
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 3
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 4
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 4
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 4
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 5
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 5
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 5
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 6
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 6
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 6
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 7
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 7
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 7
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 8
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 8
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 8
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 9
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 9
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 9
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 10
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 10
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 10
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 11
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 11
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 11
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 12
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11,
-                                          class ARGS_12>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11, class ARGS_12>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 12
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 12
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 13
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11,
-                                          class ARGS_12,
-                                          class ARGS_13>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11, class ARGS_12, class ARGS_13>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 13
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 13
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 14
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11,
-                                          class ARGS_12,
-                                          class ARGS_13,
-                                          class ARGS_14>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11, class ARGS_12, class ARGS_13, class ARGS_14>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 14
-
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 14
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 0
 template <class TYPE>
 template <class ELEMENT_TYPE, class ARG1>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1));
+inline void allocator<TYPE>::construct(ELEMENT_TYPE *address,
+                                       BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)
+                                           argument1) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 0
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 0
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 1
 template <class TYPE>
 template <class ELEMENT_TYPE, class ARG1, class ARGS_01>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 1
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 1
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 2
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 2
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 2
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 3
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 3
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 3
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 4
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 4
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 4
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 5
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 5
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 5
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 6
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 6
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 6
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 7
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 7
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 7
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 8
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 8
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 8
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 9
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 9
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 9
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 10
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 10
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 10
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 11
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 11
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 11
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 12
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11,
-                                          class ARGS_12>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11, class ARGS_12>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 12
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 12
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 13
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11,
-                                          class ARGS_12,
-                                          class ARGS_13>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11, class ARGS_12, class ARGS_13>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 13
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 13
 
 #if BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 14
 template <class TYPE>
-template <class ELEMENT_TYPE, class ARG1, class ARGS_01,
-                                          class ARGS_02,
-                                          class ARGS_03,
-                                          class ARGS_04,
-                                          class ARGS_05,
-                                          class ARGS_06,
-                                          class ARGS_07,
-                                          class ARGS_08,
-                                          class ARGS_09,
-                                          class ARGS_10,
-                                          class ARGS_11,
-                                          class ARGS_12,
-                                          class ARGS_13,
-                                          class ARGS_14>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
-                       BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
+template <class ELEMENT_TYPE, class ARG1, class ARGS_01, class ARGS_02,
+          class ARGS_03, class ARGS_04, class ARGS_05, class ARGS_06,
+          class ARGS_07, class ARGS_08, class ARGS_09, class ARGS_10,
+          class ARGS_11, class ARGS_12, class ARGS_13, class ARGS_14>
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_01) arguments_01,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_02) arguments_02,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_03) arguments_03,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_04) arguments_04,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_05) arguments_05,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_06) arguments_06,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_07) arguments_07,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_08) arguments_08,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_09) arguments_09,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_10) arguments_10,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_11) arguments_11,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_12) arguments_12,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_13) arguments_13,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS_14) arguments_14) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_01, arguments_01),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_02, arguments_02),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_03, arguments_03),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_04, arguments_04),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_05, arguments_05),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_06, arguments_06),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_07, arguments_07),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_08, arguments_08),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_09, arguments_09),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_10, arguments_10),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_11, arguments_11),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_12, arguments_12),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_13, arguments_13),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS_14, arguments_14));
 }
-#endif  // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 14
+#endif // BSLMA_BSLALLOCATOR_VARIADIC_LIMIT_C >= 14
 
 #else
 // The generated code below is a workaround for the absence of perfect
 // forwarding in some compilers.
 template <class TYPE>
 template <class ELEMENT_TYPE, class ARG1, class... ARGS>
-inline
-void allocator<TYPE>::construct(ELEMENT_TYPE *address,
-                                ARG1&         argument1,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        argument1,
-        BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, ARG1 &argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, argument1,
+      BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
 }
 
 template <class TYPE>
 template <class ELEMENT_TYPE, class ARG1, class... ARGS>
-inline
-void allocator<TYPE>::construct(
-                            ELEMENT_TYPE                            *address,
-                            BSLS_COMPILERFEATURES_FORWARD_REF(ARG1)  argument1,
-                          BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments)
-{
-    BloombergLP::bslma::ConstructionUtil::construct(
-        address,
-        *this,
-        BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
-        BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
+inline void allocator<TYPE>::construct(
+    ELEMENT_TYPE *address, BSLS_COMPILERFEATURES_FORWARD_REF(ARG1) argument1,
+    BSLS_COMPILERFEATURES_FORWARD_REF(ARGS)... arguments) {
+  BloombergLP::bslma::ConstructionUtil::construct(
+      address, *this, BSLS_COMPILERFEATURES_FORWARD(ARG1, argument1),
+      BSLS_COMPILERFEATURES_FORWARD(ARGS, arguments)...);
 }
 // }}} END GENERATED CODE
 #endif
 
 template <class TYPE>
 template <class ELEMENT_TYPE>
-inline
-void allocator<TYPE>::destroy(ELEMENT_TYPE *address)
-{
-    BloombergLP::bslma::DestructionUtil::destroy(address);
+inline void allocator<TYPE>::destroy(ELEMENT_TYPE *address) {
+  BloombergLP::bslma::DestructionUtil::destroy(address);
 }
-
 
 // ACCESSORS
 template <class TYPE>
-inline
-typename allocator<TYPE>::pointer
-allocator<TYPE>::address(reference x) const
-{
-    return BloombergLP::bsls::Util::addressOf(x);
+inline typename allocator<TYPE>::pointer
+allocator<TYPE>::address(reference x) const {
+  return BloombergLP::bsls::Util::addressOf(x);
 }
 
 template <class TYPE>
-inline
-typename allocator<TYPE>::const_pointer
-allocator<TYPE>::address(const_reference x) const
-{
-    return BloombergLP::bsls::Util::addressOf(x);
+inline typename allocator<TYPE>::const_pointer
+allocator<TYPE>::address(const_reference x) const {
+  return BloombergLP::bsls::Util::addressOf(x);
 }
 
 template <class TYPE>
-BSLS_KEYWORD_CONSTEXPR inline
-typename allocator<TYPE>::size_type allocator<TYPE>::max_size() const
-{
-    // Return the largest value, 'v', such that 'v * sizeof(T)' fits in a
-    // 'size_type'.
+BSLS_KEYWORD_CONSTEXPR inline typename allocator<TYPE>::size_type
+allocator<TYPE>::max_size() const {
+  // Return the largest value, 'v', such that 'v * sizeof(T)' fits in a
+  // 'size_type'.
 
-    BSLS_KEYWORD_CONSTEXPR
-        const size_type MAX_NUM_BYTES    = ~size_type(0);
-    BSLS_KEYWORD_CONSTEXPR
-        const size_type MAX_NUM_ELEMENTS = MAX_NUM_BYTES / sizeof(TYPE);
+  BSLS_KEYWORD_CONSTEXPR
+  const size_type MAX_NUM_BYTES = ~size_type(0);
+  BSLS_KEYWORD_CONSTEXPR
+  const size_type MAX_NUM_ELEMENTS = MAX_NUM_BYTES / sizeof(TYPE);
 
-    return MAX_NUM_ELEMENTS;
+  return MAX_NUM_ELEMENTS;
 }
 
 template <class TYPE>
-inline
-BloombergLP::bslma::Allocator *allocator<TYPE>::mechanism() const
-{
-    return static_cast<BloombergLP::bslma::Allocator *>(this->resource());
+inline BloombergLP::bslma::Allocator *allocator<TYPE>::mechanism() const {
+  return static_cast<BloombergLP::bslma::Allocator *>(this->resource());
 }
 
 template <class TYPE>
-inline
-allocator<TYPE> allocator<TYPE>::select_on_container_copy_construction() const
-{
-    return allocator();
+inline allocator<TYPE>
+allocator<TYPE>::select_on_container_copy_construction() const {
+  return allocator();
 }
 
-
-                           // ---------------------
-                           // class allocator<void>
-                           // ---------------------
+// ---------------------
+// class allocator<void>
+// ---------------------
 
 // CREATORS
-inline
-allocator<void>::allocator()
-{
-}
+inline allocator<void>::allocator() {}
 
-inline
-allocator<void>::allocator(BloombergLP::bslma::Allocator *mechanism)
-: Base(mechanism)
-{
-}
+inline allocator<void>::allocator(BloombergLP::bslma::Allocator *mechanism)
+    : Base(mechanism) {}
 
 #ifndef BSLS_COMPILERFEATURES_SUPPORT_DEFAULTED_FUNCTIONS
 // In C++11 and later, this copy constructor is defaulted.
-inline
-allocator<void>::allocator(const allocator& original) BSLS_KEYWORD_NOEXCEPT
-: Base(original)
-{
-}
+inline allocator<void>::allocator(const allocator &original)
+    BSLS_KEYWORD_NOEXCEPT : Base(original) {}
 #endif
 
 template <class ANY_TYPE>
-inline
-allocator<void>::allocator(const allocator<ANY_TYPE>& original)
-                                                          BSLS_KEYWORD_NOEXCEPT
-: Base(original)
-{
+inline allocator<void>::allocator(const allocator<ANY_TYPE> &original)
+    BSLS_KEYWORD_NOEXCEPT : Base(original) {}
+
+inline allocator<void>
+allocator<void>::select_on_container_copy_construction() const {
+  return allocator<void>();
 }
 
-inline
-allocator<void> allocator<void>::select_on_container_copy_construction() const
-{
-    return allocator<void>();
-}
-
-}  // close namespace bsl
+} // namespace bsl
 
 #if BSLS_PLATFORM_CMP_MSVC
 // As of MSVC 19.30.30709 (2022), the following workaround is still needed.
@@ -3236,35 +2522,27 @@ allocator<void> allocator<void>::select_on_container_copy_construction() const
 // implementation detail (not part of the interface for 'bsl::allocator').
 
 template <class TYPE>
-inline
-bool operator==(const bsl::allocator<TYPE>&    a,
-                BloombergLP::bslma::Allocator *b)
-{
-    return a.resource() == b || a.resource()->is_equal(*b);
+inline bool operator==(const bsl::allocator<TYPE> &a,
+                       BloombergLP::bslma::Allocator *b) {
+  return a.resource() == b || a.resource()->is_equal(*b);
 }
 
 template <class TYPE>
-inline
-bool operator==(BloombergLP::bslma::Allocator *a,
-                const bsl::allocator<TYPE>&    b)
-{
-    return a == b.resource() || a->is_equal(*b.resource());
+inline bool operator==(BloombergLP::bslma::Allocator *a,
+                       const bsl::allocator<TYPE> &b) {
+  return a == b.resource() || a->is_equal(*b.resource());
 }
 
 template <class TYPE>
-inline
-bool operator!=(const bsl::allocator<TYPE>&    a,
-                BloombergLP::bslma::Allocator *b)
-{
-    return ! (a.resource() == b || a.resource()->is_equal(*b));
+inline bool operator!=(const bsl::allocator<TYPE> &a,
+                       BloombergLP::bslma::Allocator *b) {
+  return !(a.resource() == b || a.resource()->is_equal(*b));
 }
 
 template <class TYPE>
-inline
-bool operator!=(BloombergLP::bslma::Allocator *a,
-                const bsl::allocator<TYPE>&    b)
-{
-    return ! (a == b.resource() || a->is_equal(*b.resource()));
+inline bool operator!=(BloombergLP::bslma::Allocator *a,
+                       const bsl::allocator<TYPE> &b) {
+  return !(a == b.resource() || a->is_equal(*b.resource()));
 }
 #endif
 
@@ -3276,28 +2554,27 @@ namespace BloombergLP {
 namespace bslma {
 
 template <class TYPE>
-struct UsesBslmaAllocator< ::bsl::allocator<TYPE> > : bsl::false_type {
-    // An allocator is not *itself* an allocator-aware type, even though it is
-    // convertible from 'bsl::Allocator *'.
+struct UsesBslmaAllocator<::bsl::allocator<TYPE>> : bsl::false_type {
+  // An allocator is not *itself* an allocator-aware type, even though it is
+  // convertible from 'bsl::Allocator *'.
 };
 
 template <class TYPE>
-struct IsStdAllocator<bsl::allocator<TYPE> > : bsl::true_type {
-    // A 'bsl::allocator' inherits its 'allocate' method from a base class,
-    // which causes 'IsStdAllocator' to fail the auto-detected it.
+struct IsStdAllocator<bsl::allocator<TYPE>> : bsl::true_type {
+  // A 'bsl::allocator' inherits its 'allocate' method from a base class,
+  // which causes 'IsStdAllocator' to fail the auto-detected it.
 };
 
-template <>
-struct IsStdAllocator<bsl::allocator<void> > : bsl::false_type {
-    // 'bsl::allocator<void>' is not an allocator type, even though all other
-    // instantiations are allocator types.
+template <> struct IsStdAllocator<bsl::allocator<void>> : bsl::false_type {
+  // 'bsl::allocator<void>' is not an allocator type, even though all other
+  // instantiations are allocator types.
 };
 
-}  // close namespace bslma
-}  // close enterprise namespace
+} // namespace bslma
+} // namespace BloombergLP
 
 #else // if ! defined(DEFINED_BSLMA_BSLALLOCATOR_H)
-# error Not valid except when included from bslma_bslallocator.h
+#error Not valid except when included from bslma_bslallocator.h
 #endif // ! defined(COMPILING_BSLMA_BSLALLOCATOR_H)
 
 #endif // ! defined(INCLUDED_BSLMA_BSLALLOCATOR_CPP03)
