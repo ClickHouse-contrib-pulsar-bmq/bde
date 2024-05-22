@@ -2,7 +2,7 @@
 #include <baltzo_datafileloader.h>
 
 #include <bsls_ident.h>
-BSLS_IDENT_RCSID(baltzo_datafileloader_cpp, "$Id$ $CSID$")
+BSLS_IDENT_RCSID(baltzo_datafileloader_cpp,"$Id$ $CSID$")
 
 #include <baltzo_errorcode.h>
 #include <baltzo_zoneinfo.h>
@@ -34,211 +34,238 @@ namespace u {
 
 using namespace BloombergLP;
 
-const char *INVALID_PATH = "! INVALID_FILE_PATH !";
+const char *INVALID_PATH    = "! INVALID_FILE_PATH !";
 
 const int UNSPECIFIED_ERROR = -1;
-const int UNSUPPORTED_ID = baltzo::ErrorCode::k_UNSUPPORTED_ID;
+const int UNSUPPORTED_ID    = baltzo::ErrorCode::k_UNSUPPORTED_ID;
 
 BSLMF_ASSERT(u::UNSUPPORTED_ID != u::UNSPECIFIED_ERROR);
 
-template <class STRING> struct IsString {
-  static const bool value =
-      bsl::is_same<STRING, bsl::string>::value ||
-      bsl::is_same<STRING, std::string>::value
+template <class STRING>
+struct IsString {
+    static const bool value = bsl::is_same<STRING, bsl::string>::value
+                           || bsl::is_same<STRING, std::string>::value
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-      || bsl::is_same<STRING, std::experimental::pmr::string>::value
+                           || bsl::is_same<STRING, std::pmr::string>::value
 #endif
-      ;
+    ;
 };
 
 // HELPER FUNCTIONS
 template <class STRING>
-void concatenatePath(STRING *result, const bsl::string &rootPath,
-                     const char *timeZoneId)
-// Load, into the specified 'result', the system independent path of the
-// specified 'timeZoneId' appended to the specified 'rootPath'.
+void concatenatePath(STRING             *result,
+                     const bsl::string&  rootPath,
+                     const char         *timeZoneId)
+    // Load, into the specified 'result', the system independent path of the
+    // specified 'timeZoneId' appended to the specified 'rootPath'.
 {
-  BSLS_ASSERT(result);
-  BSLS_ASSERT(timeZoneId);
+    BSLS_ASSERT(result);
+    BSLS_ASSERT(timeZoneId);
 
-  BSLMF_ASSERT(u::IsString<STRING>::value);
+    BSLMF_ASSERT(u::IsString<STRING>::value);
 
-  *result = rootPath;
-  for (bdlb::Tokenizer it(bslstl::StringRef(timeZoneId),
-                          bslstl::StringRef("/"));
-       it.isValid(); ++it) {
-    bdls::PathUtil::appendIfValid(result, it.token());
-  }
+    *result = rootPath;
+    for (bdlb::Tokenizer it(bslstl::StringRef(timeZoneId),
+                            bslstl::StringRef("/"));
+         it.isValid();
+         ++it) {
+        bdls::PathUtil::appendIfValid(result, it.token());
+    }
 }
 
 int validateTimeZoneId(const char *timeZoneId)
-// Returns 0 if the specified 'timeZoneId' contains only valid characters
-// and does not start with '/', and a non-zero value otherwise.
+    // Returns 0 if the specified 'timeZoneId' contains only valid characters
+    // and does not start with '/', and a non-zero value otherwise.
 {
-  BSLS_ASSERT(timeZoneId);
+    BSLS_ASSERT(timeZoneId);
 
-  if ('/' == timeZoneId[0]) {
-    return -1; // RETURN
-  }
-
-  const char *VALID_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                           "abcdefghijklmnopqrstuvwxyz"
-                           "1234567890/_+-";
-
-  for (const char *pc = timeZoneId; *pc; ++pc) {
-    if (!bsl::strchr(VALID_CHAR, *pc)) {
-      return -2; // RETURN
+    if ('/' == timeZoneId[0]) {
+        return -1;                                                    // RETURN
     }
-  }
 
-  return 0;
+    const char *VALID_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                             "abcdefghijklmnopqrstuvwxyz"
+                             "1234567890/_+-";
+
+    for (const char *pc = timeZoneId; *pc; ++pc) {
+        if (!bsl::strchr(VALID_CHAR, *pc)) {
+            return -2;                                                // RETURN
+        }
+    }
+
+    return 0;
 }
 
 template <class STRING>
-inline int loadTimeZoneFilePath_Impl(STRING *result, const char *timeZoneId,
-                                     const bsl::string &rootPath)
-// Load into the specified 'result' the file-system path to the Zoneinfo
-// binary data file corresponding to the specified 'timeZoneId' relative to
-// the configured 'rootPath'.  Return 0 on success, and a non-zero value
-// otherwise.  On error, 'result' is left in a valid, but unspecified
-// state.  The behavior is undefined unless either 'configureRootPath' or
-// 'configureRootPathIfValid' has been called successfully.  Note that this
-// operation does not verify 'result' refers to a valid file on the file
-// system, or whether the file (if it exists) contains valid Zoneinfo data.
+inline
+int loadTimeZoneFilePath_Impl(STRING             *result,
+                              const char         *timeZoneId,
+                              const bsl::string&  rootPath)
+    // Load into the specified 'result' the file-system path to the Zoneinfo
+    // binary data file corresponding to the specified 'timeZoneId' relative to
+    // the configured 'rootPath'.  Return 0 on success, and a non-zero value
+    // otherwise.  On error, 'result' is left in a valid, but unspecified
+    // state.  The behavior is undefined unless either 'configureRootPath' or
+    // 'configureRootPathIfValid' has been called successfully.  Note that this
+    // operation does not verify 'result' refers to a valid file on the file
+    // system, or whether the file (if it exists) contains valid Zoneinfo data.
 {
-  BSLS_ASSERT(result);
-  BSLS_ASSERT(timeZoneId);
-  BSLS_ASSERT(u::INVALID_PATH != rootPath);
+    BSLS_ASSERT(result);
+    BSLS_ASSERT(timeZoneId);
+    BSLS_ASSERT(u::INVALID_PATH != rootPath);
 
-  BSLMF_ASSERT(u::IsString<STRING>::value);
+    BSLMF_ASSERT(u::IsString<STRING>::value);
 
-  const int rc = u::validateTimeZoneId(timeZoneId);
-  if (0 != rc) {
-    return rc; // RETURN
-  }
+    const int rc = u::validateTimeZoneId(timeZoneId);
+    if (0 != rc) {
+        return rc;                                                    // RETURN
+    }
 
-  u::concatenatePath(result, rootPath, timeZoneId);
+    u::concatenatePath(result, rootPath, timeZoneId);
 
-  return 0;
+    return 0;
 }
 
-} // namespace u
-} // namespace
+}  // close namespace u
+}  // close unnamed namespace
 
 namespace BloombergLP {
 namespace baltzo {
 
-// --------------------
-// class DataFileLoader
-// --------------------
+                            // --------------------
+                            // class DataFileLoader
+                            // --------------------
 
 // CLASS METHODS
-bool DataFileLoader::isPlausibleZoneinfoRootPath(const char *path) {
-  BSLS_ASSERT(path);
+bool DataFileLoader::isPlausibleZoneinfoRootPath(const char *path)
+{
+    BSLS_ASSERT(path);
 
-  if (!bdls::FilesystemUtil::isDirectory(path, true)) {
-    return false; // RETURN
-  }
+    if (!bdls::FilesystemUtil::isDirectory(path, true)) {
+        return false;                                                 // RETURN
+    }
 
-  bsl::string gmtPath;
-  u::concatenatePath(&gmtPath, path, "GMT");
+    bsl::string gmtPath;
+    u::concatenatePath(&gmtPath, path, "GMT");
 
-  // If 'path' is a valid directory, appending "GMT" to it must result in a
-  // valid path.
+    // If 'path' is a valid directory, appending "GMT" to it must result in a
+    // valid path.
 
-  return bdls::FilesystemUtil::isRegularFile(gmtPath.c_str(), true);
+    return bdls::FilesystemUtil::isRegularFile(gmtPath.c_str(), true);
 }
 
 // CREATORS
-DataFileLoader::DataFileLoader() : d_rootPath(u::INVALID_PATH) {}
+DataFileLoader::DataFileLoader()
+: d_rootPath(u::INVALID_PATH)
+{
+}
 
-DataFileLoader::DataFileLoader(const allocator_type &allocator)
-    : d_rootPath(u::INVALID_PATH, allocator) {}
+DataFileLoader::DataFileLoader(const allocator_type& allocator)
+: d_rootPath(u::INVALID_PATH, allocator)
+{
+}
 
-DataFileLoader::~DataFileLoader() {}
+DataFileLoader::~DataFileLoader()
+{
+}
 
 // MANIPULATORS
-void DataFileLoader::configureRootPath(const char *path) {
-  BSLS_ASSERT(path);
+void DataFileLoader::configureRootPath(const char *path)
+{
+    BSLS_ASSERT(path);
 
-  if (!isPlausibleZoneinfoRootPath(path)) {
-    BSLS_LOG_DEBUG("Invalid directory provided to initialize "
-                   "Zoneinfo database time-zone information loader: %s",
-                   path);
-  }
-  d_rootPath = path;
+    if (!isPlausibleZoneinfoRootPath(path)) {
+        BSLS_LOG_DEBUG("Invalid directory provided to initialize "
+                       "Zoneinfo database time-zone information loader: %s",
+                       path);
+    }
+    d_rootPath = path;
 }
 
-int DataFileLoader::configureRootPathIfPlausible(const char *path) {
-  BSLS_ASSERT(path);
+int DataFileLoader::configureRootPathIfPlausible(const char *path)
+{
+    BSLS_ASSERT(path);
 
-  if (!isPlausibleZoneinfoRootPath(path)) {
-    return -1; // RETURN
-  }
+    if (!isPlausibleZoneinfoRootPath(path)) {
+        return -1;                                                    // RETURN
+    }
 
-  d_rootPath = path;
-  return 0;
+    d_rootPath = path;
+    return 0;
 }
 
-int DataFileLoader::loadTimeZone(Zoneinfo *result, const char *timeZoneId) {
-  BSLS_ASSERT(result);
-  BSLS_ASSERT(timeZoneId);
+int DataFileLoader::loadTimeZone(Zoneinfo *result, const char *timeZoneId)
+{
+    BSLS_ASSERT(result);
+    BSLS_ASSERT(timeZoneId);
 
-  bsl::string path;
-  const int rc = loadTimeZoneFilePath(&path, timeZoneId);
-  if (0 != rc) {
-    BSLS_LOG_ERROR("Poorly formed time-zone identifier '%s'", timeZoneId);
-    return u::UNSUPPORTED_ID; // RETURN
-  }
+    bsl::string path;
+    const int rc = loadTimeZoneFilePath(&path, timeZoneId);
+    if (0 != rc) {
+        BSLS_LOG_ERROR("Poorly formed time-zone identifier '%s'", timeZoneId);
+        return u::UNSUPPORTED_ID;                                     // RETURN
+    }
 
-  // Create a file stream for the olson data file.
+    // Create a file stream for the olson data file.
 
-  bsl::ifstream infile(path.c_str(), bsl::ifstream::binary | bsl::ifstream::in);
+    bsl::ifstream infile(path.c_str(),
+                         bsl::ifstream::binary | bsl::ifstream::in);
 
-  if (!infile.is_open()) {
-    // Failed to open the data file for 'timeZoneId'.  If the data-file
-    // loader is correctly configured, 'timeZoneId' is not a supported
-    // time-zone identifier, so return 'k_UNSUPPORTED_ID'.  Otherwise, if
-    // the data-file loader is not correctly configured, return
-    // 'UNSPECIFIED_ERROR' (different from 'k_UNSUPPORTED_ID').
+    if (!infile.is_open()) {
+        // Failed to open the data file for 'timeZoneId'.  If the data-file
+        // loader is correctly configured, 'timeZoneId' is not a supported
+        // time-zone identifier, so return 'k_UNSUPPORTED_ID'.  Otherwise, if
+        // the data-file loader is not correctly configured, return
+        // 'UNSPECIFIED_ERROR' (different from 'k_UNSUPPORTED_ID').
 
-    BSLS_LOG_ERROR("Failed to open time-zone information file '%s'",
-                   path.c_str());
+        BSLS_LOG_ERROR("Failed to open time-zone information file '%s'",
+                       path.c_str());
 
-    return isRootPathPlausible() ? u::UNSUPPORTED_ID
-                                 : u::UNSPECIFIED_ERROR; // RETURN
-  }
+        return isRootPathPlausible()
+               ? u::UNSUPPORTED_ID
+               : u::UNSPECIFIED_ERROR;                                // RETURN
+    }
 
-  result->setIdentifier(timeZoneId);
-  return ZoneinfoBinaryReader::read(result, infile);
+    result->setIdentifier(timeZoneId);
+    return ZoneinfoBinaryReader::read(result, infile);
 }
 
 // ACCESSORS
-int DataFileLoader::loadTimeZoneFilePath(bsl::string *result,
-                                         const char *timeZoneId) const {
-  return u::loadTimeZoneFilePath_Impl(result, timeZoneId, d_rootPath);
+int DataFileLoader::loadTimeZoneFilePath(bsl::string      *result,
+                                         const char       *timeZoneId) const
+{
+    return u::loadTimeZoneFilePath_Impl(result,
+                                        timeZoneId,
+                                        d_rootPath);
 }
 
-int DataFileLoader::loadTimeZoneFilePath(std::string *result,
-                                         const char *timeZoneId) const {
-  return u::loadTimeZoneFilePath_Impl(result, timeZoneId, d_rootPath);
+int DataFileLoader::loadTimeZoneFilePath(std::string      *result,
+                                         const char       *timeZoneId) const
+{
+    return u::loadTimeZoneFilePath_Impl(result,
+                                        timeZoneId,
+                                        d_rootPath);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-int DataFileLoader::loadTimeZoneFilePath(std::experimental::pmr::string *result,
-                                         const char *timeZoneId) const {
-  return u::loadTimeZoneFilePath_Impl(result, timeZoneId, d_rootPath);
+int DataFileLoader::loadTimeZoneFilePath(std::pmr::string *result,
+                                         const char       *timeZoneId) const
+{
+    return u::loadTimeZoneFilePath_Impl(result,
+                                        timeZoneId,
+                                        d_rootPath);
 }
 #endif
 
-const bsl::string &DataFileLoader::rootPath() const {
-  BSLS_ASSERT(u::INVALID_PATH != d_rootPath);
+const bsl::string& DataFileLoader::rootPath() const
+{
+    BSLS_ASSERT(u::INVALID_PATH != d_rootPath);
 
-  return d_rootPath;
+    return d_rootPath;
 }
 
-} // namespace baltzo
-} // namespace BloombergLP
+}  // close package namespace
+}  // close enterprise namespace
 
 // ----------------------------------------------------------------------------
 // Copyright 2020 Bloomberg Finance L.P.

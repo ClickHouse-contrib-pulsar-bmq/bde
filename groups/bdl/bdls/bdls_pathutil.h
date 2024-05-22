@@ -36,7 +36,7 @@ BSLS_IDENT("$Id: $")
 // particular, no effort is made to verify the existence or accessibility of
 // any segment of any path.
 //
-/// Terminology
+///Terminology
 ///-----------
 // To introduce the terminology explored in this section, lets start with a
 // Unix example:
@@ -52,20 +52,20 @@ BSLS_IDENT("$Id: $")
 //         Dirname: "/foo/bar/"
 //..
 //
-/// Separator
+///Separator
 ///- - - - -
 // A platform dependent character that separates elements of a path, such as
 // directory names from each other and file names.  The separator character is
 // the '/' (slash) on Unix (and the like) systems and '\' (backslash) on
 // Windows systems.
 //
-/// Path
-///  - -
+///Path
+/// - -
 // An optional root, followed by optional directories, followed by an optional
 // filename.
 //
-/// Root
-///  - -
+///Root
+/// - -
 // The root, if present, is at the beginning of a path and its presence
 // determines if a path is absolute (the root is present) or relative (the root
 // is not present).  The textual rules for what a root is are platform
@@ -75,14 +75,14 @@ BSLS_IDENT("$Id: $")
 // about speeding up functions (especially on Windows) by not reparsing roots
 // every time a function is called.
 //
-/// Unix Root
-///   -  -  -
+///Unix Root
+///  -  -  -
 // The Unix root consists of the separator characters at the beginning of a
 // path, so the root of "/one" is "/", the root of "//two" is "//", while the
 // root of "somefile" is "" (there is no root, relative path).
 //
-/// Windows Root
-///   -  -  -  -
+///Windows Root
+///  -  -  -  -
 // The Windows root is much more complicated than the Unix root, because
 // Windows has three different flavors of paths: local (LFS), UNC, and Long UNC
 // UNC (LUNC):
@@ -103,8 +103,8 @@ BSLS_IDENT("$Id: $")
 //:      "\\?\UNC\servername\folder\hello" root is "\\?\UNC\servername\dir\"
 //:      while "\\?\c:\windows\test" root is "\\?\\c:\"
 //
-/// Leaf (a.k.a. Basename)
-///  - - - - - - - - - - -
+///Leaf (a.k.a. Basename)
+/// - - - - - - - - - - -
 // The leaf is the rightmost name following the root, in other words: the last
 // element of the path.  Note that several methods in this utility require a
 // leaf to be present to function (such as 'getDirname').  Note that a relative
@@ -120,7 +120,7 @@ BSLS_IDENT("$Id: $")
 //  "/"                             Not Present
 //..
 //
-/// Extension
+///Extension
 ///- - - - - -
 // An extension is a suffix of a leaf that begins with a dot and that does
 // not contain additional dots. There are a few caveats. The special leaf
@@ -147,7 +147,7 @@ BSLS_IDENT("$Id: $")
 //  "foo.txt"                       ".txt"
 //..
 //
-/// Dirname
+///Dirname
 ///- - - -
 // Dirname is the part of the path that contains the root but not the leaf.
 // Note that the 'getDirname' utility method requires a leaf to be present to
@@ -164,7 +164,7 @@ BSLS_IDENT("$Id: $")
 //  "foo.txt"                       empty
 //..
 //
-/// Parsing and Performance ('rootEnd' argument)
+///Parsing and Performance ('rootEnd' argument)
 ///--------------------------------------------
 // Most methods of this component will perform basic parsing of the beginning
 // part of the path to determine what part of it is the "root" as defined for
@@ -175,11 +175,11 @@ BSLS_IDENT("$Id: $")
 // optional argument delimiting the "root"; if this argument is specified,
 // parsing is skipped.
 //
-/// Usage
+///Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-/// Example 1: Basic Syntax
+///Example 1: Basic Syntax
 ///- - - - - - - - - - - -
 // We start with strings representing an absolute native path and a relative
 // native path, respectively:
@@ -236,7 +236,7 @@ BSLS_IDENT("$Id: $")
 //  #endif
 //..
 //
-/// Example 2: Parsing a path using 'splitFilename'
+///Example 2: Parsing a path using 'splitFilename'
 ///- - - - - - - - - - - - - - - - - - - - - - - -
 // Suppose we need to obtain all filenames from the path.
 //
@@ -290,258 +290,291 @@ BSLS_IDENT("$Id: $")
 #include <bsl_string.h>
 #include <bsl_string_view.h>
 
-#include <string> // 'std::string', 'std::experimental::pmr::string'
+#include <string>           // 'std::string', 'std::pmr::string'
 
 namespace BloombergLP {
 
 namespace bdls {
-// ===============
-// struct PathUtil
-// ===============
+                              // ===============
+                              // struct PathUtil
+                              // ===============
 
 struct PathUtil {
-  // This struct contains utility methods for platform-independent
-  // manipulation of filesystem paths.  No method of this struct provides any
-  // filesystem operations or accesses the filesystem as part of its
-  // implementation.
+    // This struct contains utility methods for platform-independent
+    // manipulation of filesystem paths.  No method of this struct provides any
+    // filesystem operations or accesses the filesystem as part of its
+    // implementation.
 
-  // PUBLIC CLASS DATA
-  static const char k_SEPARATOR;
-  // character used as a preferred path separator; use
-  // of this constant is strongly discouraged (as
-  // platforms, like Windows, may support multiple
-  // separators in different contexts), instead prefer
-  // functions to join and split path strings
+    // PUBLIC CLASS DATA
+    static const char k_SEPARATOR;
+                          // character used as a preferred path separator; use
+                          // of this constant is strongly discouraged (as
+                          // platforms, like Windows, may support multiple
+                          // separators in different contexts), instead prefer
+                          // functions to join and split path strings
 
-  // CLASS METHODS
-  static int appendIfValid(bsl::string *path, const bsl::string_view &filename);
-  static int appendIfValid(std::string *path, const bsl::string_view &filename);
+    // CLASS METHODS
+    static int appendIfValid(bsl::string             *path,
+                             const bsl::string_view&  filename);
+    static int appendIfValid(std::string             *path,
+                             const bsl::string_view&  filename);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int appendIfValid(std::experimental::pmr::string *path,
-                           const bsl::string_view &filename);
+    static int appendIfValid(std::pmr::string        *path,
+                             const bsl::string_view&  filename);
 #endif
-  // Append the specified 'filename' to the end of the specified 'path'
-  // if 'filename' represents a relative path.  Return 0 on success, and
-  // a non-zero value otherwise.  Note that any filesystem separator
-  // characters at the end of 'filename' or 'path' will be discarded.
-  // See {Terminology} for the definition of separator.
+        // Append the specified 'filename' to the end of the specified 'path'
+        // if 'filename' represents a relative path.  Return 0 on success, and
+        // a non-zero value otherwise.  Note that any filesystem separator
+        // characters at the end of 'filename' or 'path' will be discarded.
+        // See {Terminology} for the definition of separator.
 
-  static void appendRaw(bsl::string *path, const char *filename,
-                        int length = -1, int rootEnd = -1);
-  static void appendRaw(std::string *path, const char *filename,
-                        int length = -1, int rootEnd = -1);
+    static void appendRaw(bsl::string *path,
+                          const char  *filename,
+                          int          length  = -1,
+                          int          rootEnd = -1);
+    static void appendRaw(std::string *path,
+                          const char  *filename,
+                          int          length  = -1,
+                          int          rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static void appendRaw(std::experimental::pmr::string *path,
-                        const char *filename, int length = -1,
-                        int rootEnd = -1);
+    static void appendRaw(std::pmr::string *path,
+                          const char       *filename,
+                          int               length  = -1,
+                          int               rootEnd = -1);
 #endif
-  // Append the specified 'filename' up to the optionally specified
-  // 'length' to the end of the specified 'path'.  If 'length' is
-  // negative, append the entire string.  If the optionally specified
-  // 'rootEnd' offset is non-negative, it is taken as the position in
-  // 'path' of the character following the root.  The behavior is
-  // undefined if 'filename' represents an absolute path or if either
-  // 'filename' or 'path' ends with the filesystem separator character.
-  // The behavior is also undefined if 'filename' points to any part of
-  // 'path' (i.e., 'filename' may not be an alias for 'path').  See
-  // {Parsing and Performance ('rootEnd' argument)}.
+        // Append the specified 'filename' up to the optionally specified
+        // 'length' to the end of the specified 'path'.  If 'length' is
+        // negative, append the entire string.  If the optionally specified
+        // 'rootEnd' offset is non-negative, it is taken as the position in
+        // 'path' of the character following the root.  The behavior is
+        // undefined if 'filename' represents an absolute path or if either
+        // 'filename' or 'path' ends with the filesystem separator character.
+        // The behavior is also undefined if 'filename' points to any part of
+        // 'path' (i.e., 'filename' may not be an alias for 'path').  See
+        // {Parsing and Performance ('rootEnd' argument)}.
 
-  static int popLeaf(bsl::string *path, int rootEnd = -1);
-  static int popLeaf(std::string *path, int rootEnd = -1);
+    static int popLeaf(bsl::string *path, int rootEnd = -1);
+    static int popLeaf(std::string *path, int rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int popLeaf(std::experimental::pmr::string *path, int rootEnd = -1);
+    static int popLeaf(std::pmr::string *path, int rootEnd = -1);
 #endif
-  // Remove from the specified 'path' the rightmost filename following
-  // the root; that is, remove the leaf element.  If the optionally
-  // specified 'rootEnd' offset is non-negative, it is taken as the
-  // position in 'path' of the character following the root.  Return 0 on
-  // success, and a nonzero value otherwise; in particular, return a
-  // nonzero value if 'path' does not have a leaf.  See {Parsing and
-  // Performance ('rootEnd' argument)}.  See also {Terminology} for the
-  // definition of leaf and root.
+        // Remove from the specified 'path' the rightmost filename following
+        // the root; that is, remove the leaf element.  If the optionally
+        // specified 'rootEnd' offset is non-negative, it is taken as the
+        // position in 'path' of the character following the root.  Return 0 on
+        // success, and a nonzero value otherwise; in particular, return a
+        // nonzero value if 'path' does not have a leaf.  See {Parsing and
+        // Performance ('rootEnd' argument)}.  See also {Terminology} for the
+        // definition of leaf and root.
 
-  static int getBasename(bsl::string *leaf, const bsl::string_view &path,
-                         int rootEnd = -1);
-  static int getBasename(std::string *leaf, const bsl::string_view &path,
-                         int rootEnd = -1);
+    static int getBasename(bsl::string             *leaf,
+                           const bsl::string_view&  path,
+                           int                      rootEnd = -1);
+    static int getBasename(std::string             *leaf,
+                           const bsl::string_view&  path,
+                           int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int getBasename(std::experimental::pmr::string *leaf,
-                         const bsl::string_view &path, int rootEnd = -1);
+    static int getBasename(std::pmr::string        *leaf,
+                           const bsl::string_view&  path,
+                           int                      rootEnd = -1);
 #endif
-  // Load into the specified 'leaf' the value of the rightmost name in
-  // the specified 'path' that follows the root; that is, the leaf
-  // element.  If the optionally specified 'rootEnd' offset is
-  // non-negative, it is taken as the position in 'path' of the character
-  // following the root.  Return 0 on success, and a non-zero value
-  // otherwise; in particular, return nonzero if 'path' does not have a
-  // leaf.  Note that 'getBasename' is a synonym for 'getLeaf'.  See
-  // {Parsing and Performance ('rootEnd' argument)}.  See also
-  // {Terminology} for the definition of leaf and root.
+        // Load into the specified 'leaf' the value of the rightmost name in
+        // the specified 'path' that follows the root; that is, the leaf
+        // element.  If the optionally specified 'rootEnd' offset is
+        // non-negative, it is taken as the position in 'path' of the character
+        // following the root.  Return 0 on success, and a non-zero value
+        // otherwise; in particular, return nonzero if 'path' does not have a
+        // leaf.  Note that 'getBasename' is a synonym for 'getLeaf'.  See
+        // {Parsing and Performance ('rootEnd' argument)}.  See also
+        // {Terminology} for the definition of leaf and root.
 
-  static int getDirname(bsl::string *dirname, const bsl::string_view &path,
-                        int rootEnd = -1);
-  static int getDirname(std::string *dirname, const bsl::string_view &path,
-                        int rootEnd = -1);
+    static int getDirname(bsl::string             *dirname,
+                          const bsl::string_view&  path,
+                          int                      rootEnd = -1);
+    static int getDirname(std::string             *dirname,
+                          const bsl::string_view&  path,
+                          int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int getDirname(std::experimental::pmr::string *dirname,
-                        const bsl::string_view &path, int rootEnd = -1);
+    static int getDirname(std::pmr::string        *dirname,
+                          const bsl::string_view&  path,
+                          int                      rootEnd = -1);
 #endif
-  // Load into the specified 'dirname' the value of the directory part of
-  // the specified 'path', that is, the root if it exists and all the
-  // filenames except the last one (the leaf).  If the optionally
-  // specified 'rootEnd' offset is non-negative, it is taken as the
-  // position in 'path' of the character following the root.  Return 0 on
-  // success, and a non-zero value otherwise; in particular, return a
-  // nonzero value if 'path' does not have a leaf.  Note that in the case
-  // of a relative path with a single filename, the function will succeed
-  // and 'dirname' will be the empty string.  See {Parsing and
-  // Performance ('rootEnd' argument)}.  See also {Terminology} for the
-  // definition of directories and root.
+        // Load into the specified 'dirname' the value of the directory part of
+        // the specified 'path', that is, the root if it exists and all the
+        // filenames except the last one (the leaf).  If the optionally
+        // specified 'rootEnd' offset is non-negative, it is taken as the
+        // position in 'path' of the character following the root.  Return 0 on
+        // success, and a non-zero value otherwise; in particular, return a
+        // nonzero value if 'path' does not have a leaf.  Note that in the case
+        // of a relative path with a single filename, the function will succeed
+        // and 'dirname' will be the empty string.  See {Parsing and
+        // Performance ('rootEnd' argument)}.  See also {Terminology} for the
+        // definition of directories and root.
 
-  static int getLeaf(bsl::string *leaf, const bsl::string_view &path,
-                     int rootEnd = -1);
-  static int getLeaf(std::string *leaf, const bsl::string_view &path,
-                     int rootEnd = -1);
+    static int getLeaf(bsl::string             *leaf,
+                       const bsl::string_view&  path,
+                       int                      rootEnd = -1);
+    static int getLeaf(std::string             *leaf,
+                       const bsl::string_view&  path,
+                       int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int getLeaf(std::experimental::pmr::string *leaf,
-                     const bsl::string_view &path, int rootEnd = -1);
+    static int getLeaf(std::pmr::string        *leaf,
+                       const bsl::string_view&  path,
+                       int                      rootEnd = -1);
 #endif
-  // Load into the specified 'leaf' the value of the rightmost name in
-  // the specified 'path' that follows the root; that is, the leaf
-  // element.  If the optionally specified 'rootEnd' offset is
-  // non-negative, it is taken as the position in 'path' of the character
-  // following the root.  Return 0 on success, and a non-zero value
-  // otherwise; in particular, return nonzero if 'path' does not have a
-  // leaf.  Note that 'getBasename' is a synonym for 'getLeaf'.  See
-  // {Parsing and Performance ('rootEn'd argument)}.  See also
-  // {Terminology} for the definition of leaf and root.
+        // Load into the specified 'leaf' the value of the rightmost name in
+        // the specified 'path' that follows the root; that is, the leaf
+        // element.  If the optionally specified 'rootEnd' offset is
+        // non-negative, it is taken as the position in 'path' of the character
+        // following the root.  Return 0 on success, and a non-zero value
+        // otherwise; in particular, return nonzero if 'path' does not have a
+        // leaf.  Note that 'getBasename' is a synonym for 'getLeaf'.  See
+        // {Parsing and Performance ('rootEn'd argument)}.  See also
+        // {Terminology} for the definition of leaf and root.
 
-  static int getExtension(bsl::string *extension, const bsl::string_view &path,
-                          int rootEnd = -1);
-  static int getExtension(std::string *extension, const bsl::string_view &path,
-                          int rootEnd = -1);
+    static int getExtension(bsl::string             *extension,
+                            const bsl::string_view&  path,
+                            int                      rootEnd = -1);
+    static int getExtension(std::string             *extension,
+                            const bsl::string_view&  path,
+                            int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int getExtension(std::experimental::pmr::string *extension,
-                          const bsl::string_view &path, int rootEnd = -1);
+    static int getExtension(std::pmr::string        *extension,
+                            const bsl::string_view&  path,
+                            int                      rootEnd = -1);
 #endif
-  // Load into the specified 'extension' the extension of 'path'.  If the
-  // optionally specified 'rootEnd' offset is non-negative, it is taken
-  // as the position in 'path' of the character following the root.
-  // Return 0 if the path has an extension, and a non-zero value
-  // otherwise. See {Parsing and Performance ('rootEnd' argument)}.  See
-  // also {Terminology} for the definitions of extension and root.
+        // Load into the specified 'extension' the extension of 'path'.  If the
+        // optionally specified 'rootEnd' offset is non-negative, it is taken
+        // as the position in 'path' of the character following the root.
+        // Return 0 if the path has an extension, and a non-zero value
+        // otherwise. See {Parsing and Performance ('rootEnd' argument)}.  See
+        // also {Terminology} for the definitions of extension and root.
 
-  static int getRoot(bsl::string *root, const bsl::string_view &path,
-                     int rootEnd = -1);
-  static int getRoot(std::string *root, const bsl::string_view &path,
-                     int rootEnd = -1);
+    static int getRoot(bsl::string             *root,
+                       const bsl::string_view&  path,
+                       int                      rootEnd = -1);
+    static int getRoot(std::string             *root,
+                       const bsl::string_view&  path,
+                       int                      rootEnd = -1);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static int getRoot(std::experimental::pmr::string *root,
-                     const bsl::string_view &path, int rootEnd = -1);
+    static int getRoot(std::pmr::string        *root,
+                       const bsl::string_view&  path,
+                       int                      rootEnd = -1);
 #endif
-  // Load into the specified 'root' the value of the root part of the
-  // specified 'path'.  If the optionally specified 'rootEnd' offset is
-  // non-negative, it is taken as the position in 'path' of the character
-  // following the root.  Return 0 on success, and a non-zero value
-  // otherwise; in particular, return a nonzero value if 'path' is
-  // relative.  Note that the meaning of the root part is
-  // platform-dependent.  See {Parsing and Performance ('rootEnd'
-  // argument)}.  See also {Terminology} for the definition of root.
+        // Load into the specified 'root' the value of the root part of the
+        // specified 'path'.  If the optionally specified 'rootEnd' offset is
+        // non-negative, it is taken as the position in 'path' of the character
+        // following the root.  Return 0 on success, and a non-zero value
+        // otherwise; in particular, return a nonzero value if 'path' is
+        // relative.  Note that the meaning of the root part is
+        // platform-dependent.  See {Parsing and Performance ('rootEnd'
+        // argument)}.  See also {Terminology} for the definition of root.
 
-  static void splitFilename(bsl::string_view *head, bsl::string_view *tail,
-                            const bsl::string_view &path, int rootEnd = -1);
-  // Load the last pathname component from the specified 'path' into the
-  // specified 'tail' and everything leading up to that to the specified
-  // 'head'.  If the optionally specified 'rootEnd' offset is
-  // non-negative, it is taken as the position in 'path' of the character
-  // following the root.  The 'tail' part never contains a slash; if
-  // 'path' ends in a slash, 'tail' is empty.  If there is no slash in
-  // 'path', 'head' is empty.  If 'path' is empty, both 'head' and 'tail'
-  // are empty.  Trailing slashes are stripped from 'head' unless it is
-  // the root.
-  //..
-  //  +------------------+------------+---------+
-  //  |      PATH        |    HEAD    |   TAIL  |
-  //  +==================+============+=========+
-  //  | "one"            | ""         | "one"   |
-  //  +------------------+------------+---------+
-  //  | "/one/two/three" | "/one/two" | "three" |
-  //  +------------------+------------+---------+
-  //  | "//one/two///"   | "/one/two" | ""      |
-  //  +------------------+------------+---------+
-  //  | "c:\\one\\two"   | "c:\\one"  | "two"   |
-  //  +------------------+------------+---------+
-  //..
-  // See {'Terminology'} for the definition of root.  The behavior is
-  // undefined unless 'head != tail' and 'INT_MAX >= path.length()'.
-  // Note that 'head' or 'tail' may point to the 'path' object when the
-  // method is called.
+    static void splitFilename(bsl::string_view        *head,
+                              bsl::string_view        *tail,
+                              const bsl::string_view&  path,
+                              int                      rootEnd = -1);
+        // Load the last pathname component from the specified 'path' into the
+        // specified 'tail' and everything leading up to that to the specified
+        // 'head'.  If the optionally specified 'rootEnd' offset is
+        // non-negative, it is taken as the position in 'path' of the character
+        // following the root.  The 'tail' part never contains a slash; if
+        // 'path' ends in a slash, 'tail' is empty.  If there is no slash in
+        // 'path', 'head' is empty.  If 'path' is empty, both 'head' and 'tail'
+        // are empty.  Trailing slashes are stripped from 'head' unless it is
+        // the root.
+        //..
+        //  +------------------+------------+---------+
+        //  |      PATH        |    HEAD    |   TAIL  |
+        //  +==================+============+=========+
+        //  | "one"            | ""         | "one"   |
+        //  +------------------+------------+---------+
+        //  | "/one/two/three" | "/one/two" | "three" |
+        //  +------------------+------------+---------+
+        //  | "//one/two///"   | "/one/two" | ""      |
+        //  +------------------+------------+---------+
+        //  | "c:\\one\\two"   | "c:\\one"  | "two"   |
+        //  +------------------+------------+---------+
+        //..
+        // See {'Terminology'} for the definition of root.  The behavior is
+        // undefined unless 'head != tail' and 'INT_MAX >= path.length()'.
+        // Note that 'head' or 'tail' may point to the 'path' object when the
+        // method is called.
 
-  static bool isAbsolute(const bsl::string_view &path, int rootEnd = -1);
-  // Return 'true' if the specified 'path' is absolute (has a root), and
-  // 'false' otherwise.  If the optionally specified 'rootEnd' offset is
-  // non-negative, it is taken as the position in 'path' of the character
-  // following the root.  See {Parsing and Performance ('rootEnd'
-  // argument)}.  See also {Terminology} for the definition of root.
+    static bool isAbsolute(const bsl::string_view& path, int rootEnd = -1);
+        // Return 'true' if the specified 'path' is absolute (has a root), and
+        // 'false' otherwise.  If the optionally specified 'rootEnd' offset is
+        // non-negative, it is taken as the position in 'path' of the character
+        // following the root.  See {Parsing and Performance ('rootEnd'
+        // argument)}.  See also {Terminology} for the definition of root.
 
-  static bool isRelative(const bsl::string_view &path, int rootEnd = -1);
-  // Return 'true' if the specified 'path' is relative (lacks a root),
-  // and 'false' otherwise.  If the optionally specified 'rootEnd' offset
-  // is non-negative, it is taken as the position in 'path' of the
-  // character following the root.  See {Parsing and Performance
-  // ('rootEnd' argument)}.  See also {Terminology} for the definition of
-  // root.
+    static bool isRelative(const bsl::string_view& path, int rootEnd = -1);
+        // Return 'true' if the specified 'path' is relative (lacks a root),
+        // and 'false' otherwise.  If the optionally specified 'rootEnd' offset
+        // is non-negative, it is taken as the position in 'path' of the
+        // character following the root.  See {Parsing and Performance
+        // ('rootEnd' argument)}.  See also {Terminology} for the definition of
+        // root.
 
-  static bool hasLeaf(const bsl::string_view &path, int rootEnd = -1);
-  // Return 'true' if the specified 'path' has a filename following the
-  // root, and 'false' otherwise.  If the optionally specified 'rootEnd'
-  // offset is non-negative, it is taken as the position in 'path' of the
-  // character following the root.  See {Parsing and Performance
-  // ('rootEnd' argument)}.  See also {Terminology} for the definition of
-  // leaf.
+    static bool hasLeaf(const bsl::string_view& path, int rootEnd = -1);
+        // Return 'true' if the specified 'path' has a filename following the
+        // root, and 'false' otherwise.  If the optionally specified 'rootEnd'
+        // offset is non-negative, it is taken as the position in 'path' of the
+        // character following the root.  See {Parsing and Performance
+        // ('rootEnd' argument)}.  See also {Terminology} for the definition of
+        // leaf.
 
-  static int getRootEnd(const bsl::string_view &path);
-  // Return the 0-based position in the specified 'path' of the character
-  // following the root.  Note that a return value of 0 indicates a
-  // relative path.  See {Parsing and Performance ('rootEnd' argument)}.
-  // See also {Terminology} for the definition of root.
+    static int getRootEnd(const bsl::string_view& path);
+        // Return the 0-based position in the specified 'path' of the character
+        // following the root.  Note that a return value of 0 indicates a
+        // relative path.  See {Parsing and Performance ('rootEnd' argument)}.
+        // See also {Terminology} for the definition of root.
 };
 
 // ============================================================================
 //                            INLINE DEFINITIONS
 // ============================================================================
 
-// --------------
-// class PathUtil
-// --------------
+                               // --------------
+                               // class PathUtil
+                               // --------------
 
 // CLASS METHODS
-inline int PathUtil::getBasename(bsl::string *leaf,
-                                 const bsl::string_view &path, int rootEnd) {
-  BSLS_ASSERT(leaf);
+inline
+int PathUtil::getBasename(bsl::string              *leaf,
+                          const bsl::string_view&  path,
+                          int                       rootEnd)
+{
+    BSLS_ASSERT(leaf);
 
-  return getLeaf(leaf, path, rootEnd);
+    return getLeaf(leaf, path, rootEnd);
 }
 
-inline int PathUtil::getBasename(std::string *leaf,
-                                 const bsl::string_view &path, int rootEnd) {
-  BSLS_ASSERT(leaf);
+inline
+int PathUtil::getBasename(std::string              *leaf,
+                          const bsl::string_view&  path,
+                          int                       rootEnd)
+{
+    BSLS_ASSERT(leaf);
 
-  return getLeaf(leaf, path, rootEnd);
+    return getLeaf(leaf, path, rootEnd);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-inline int PathUtil::getBasename(std::experimental::pmr::string *leaf,
-                                 const bsl::string_view &path, int rootEnd) {
-  BSLS_ASSERT(leaf);
+inline
+int PathUtil::getBasename(std::pmr::string        *leaf,
+                          const bsl::string_view&  path,
+                          int                      rootEnd)
+{
+    BSLS_ASSERT(leaf);
 
-  return getLeaf(leaf, path, rootEnd);
+    return getLeaf(leaf, path, rootEnd);
 }
 #endif
 
-} // namespace bdls
+}  // close package namespace
 
-} // namespace BloombergLP
+}  // close enterprise namespace
 
 #endif
 

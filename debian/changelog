@@ -748,7 +748,7 @@ bsl-internal (3.111.0.0) git; urgency=low
   * c99dfbbf9 Bumped version to 3.111.0.0
   * 838ae31bc Adjust documentation [rebased main] (#4021)
   * d7608aaa8 bdljsn: Remove C11 Limit Macro Use (#4012)
-  * 0d2ef8a16 bdljsn_jsonutil: Use 'get_allocator' w/ 'std::experimental::pmr::string' (#4011)
+  * 0d2ef8a16 bdljsn_jsonutil: Use 'get_allocator' w/ 'std::pmr::string' (#4011)
   * dc543adf0 Add Jenkinsfile (#4013)
   * 0a0d55caf bdljsn: Add package documentation (#4008)
   * bdf4b71da Integrate bdljsn (#4006)

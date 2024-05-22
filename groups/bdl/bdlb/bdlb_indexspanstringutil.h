@@ -22,12 +22,12 @@ BSLS_IDENT("$Id: $")
 // create 'IndexSpan' objects of a string object (of any kind) using positions
 // defined by iterators and/or positions and/or length.
 //
-/// Usage
+///Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-/// Example 1: Creating 'IndexSpan' Objects Safely
-///  - - - - - - - - - - - - - - - - - - - - - - -
+///Example 1: Creating 'IndexSpan' Objects Safely
+/// - - - - - - - - - - - - - - - - - - - - - - -
 // Suppose that we are creating a parser, and we want the results of the
 // parsing to be stored in 'IndexSpan' objects.  The parser will have either a
 // pointer (or "begin" iterator) into the original string input and then
@@ -79,8 +79,8 @@ BSLS_IDENT("$Id: $")
 //  assert(full.substr(last.position(), last.length()) == "Kirk");
 //..
 //
-/// Example 2: Creating String Views
-///  - - - - - - - - - - - - - - - -
+///Example 2: Creating String Views
+/// - - - - - - - - - - - - - - - -
 // Suppose that we have 'IndexSpan' objects that define the 'first', 'middle',
 // and 'last' part of a string that has a full name in it and we want to get
 // actual string views that correspond to those parts of the string.  The
@@ -128,640 +128,774 @@ BSLS_IDENT("$Id: $")
 namespace BloombergLP {
 namespace bdlb {
 
-// ==========================
-// struct IndexSpanStringUtil
-// ==========================
+                      // ==========================
+                      // struct IndexSpanStringUtil
+                      // ==========================
 
 struct IndexSpanStringUtil {
-  // This struct serves as a namespace for utility functions that operate on
-  // 'IndexSpan' and string objects.
+    // This struct serves as a namespace for utility functions that operate on
+    // 'IndexSpan' and string objects.
 
-private:
-  // PRIVATE CLASS METHODS
-  template <class CHAR_TYPE, class CHAR_TRAITS>
-  static bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>
-  bindImp(const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-          const IndexSpan &span);
-  // Return a string view to the substring of the specified 'string' as
-  // described by the specified 'span', meaning the substring starting at
-  // the 'span.position()' index in 'string' and having 'span.length()'
-  // characters.  The behavior is undefined unless
-  // 'span.position() <= string.length()' and
-  // 'span.position() + span.length() <= string.length()'.
+  private:
+    // PRIVATE CLASS METHODS
+    template <class CHAR_TYPE, class CHAR_TRAITS>
+    static bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> bindImp(
+                  const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+                  const IndexSpan&                                      span);
+        // Return a string view to the substring of the specified 'string' as
+        // described by the specified 'span', meaning the substring starting at
+        // the 'span.position()' index in 'string' and having 'span.length()'
+        // characters.  The behavior is undefined unless
+        // 'span.position() <= string.length()' and
+        // 'span.position() + span.length() <= string.length()'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS>
-  static IndexSpan
-  createFromPosImp(const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-                   IndexSpan::size_type begin, IndexSpan::size_type end);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' as starting at the specified 'begin' and ending at the
-  // character preceding the specified 'end'.  The behavior is undefined
-  // unless 'begin <= string.end()', 'end <= string.end()', and
-  // 'begin <= end'.
+    template <class CHAR_TYPE, class CHAR_TRAITS>
+    static IndexSpan createFromPosImp(
+                  const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+                  IndexSpan::size_type                                  begin,
+                  IndexSpan::size_type                                  end);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' as starting at the specified 'begin' and ending at the
+        // character preceding the specified 'end'.  The behavior is undefined
+        // unless 'begin <= string.end()', 'end <= string.end()', and
+        // 'begin <= end'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS>
-  static IndexSpan
-  createImp(const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-            IndexSpan::size_type begin, IndexSpan::size_type length);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' as starting at the specified 'begin' and having the
-  // specified 'length'.  The behavior is undefined unless
-  // 'begin <= string.length()' and 'begin + length <= string.length()'.
+    template <class CHAR_TYPE, class CHAR_TRAITS>
+    static IndexSpan createImp(
+                 const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+                 IndexSpan::size_type                                  begin,
+                 IndexSpan::size_type                                  length);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' as starting at the specified 'begin' and having the
+        // specified 'length'.  The behavior is undefined unless
+        // 'begin <= string.length()' and 'begin + length <= string.length()'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS>
-  static IndexSpan
-  createImp(const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-            const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &subString);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' as defined by the 'begin()' and 'end()' of the specified
-  // 'subString'.  The behavior is undefined unless
-  // 'subString.begin() <= string.end()',
-  // 'subString.end() <= string.end()',
-  // 'subString.begin() >= string.begin()', and
-  // 'subString.end() <= string.end()'.
+    template <class CHAR_TYPE, class CHAR_TRAITS>
+    static IndexSpan createImp(
+              const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+              const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& subString);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' as defined by the 'begin()' and 'end()' of the specified
+        // 'subString'.  The behavior is undefined unless
+        // 'subString.begin() <= string.end()',
+        // 'subString.end() <= string.end()',
+        // 'subString.begin() >= string.begin()', and
+        // 'subString.end() <= string.end()'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS>
-  static IndexSpan
-  createImp(const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-            typename bsl::basic_string_view<CHAR_TYPE,
-                                            CHAR_TRAITS>::const_iterator begin,
-            IndexSpan::size_type length);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and having the specified
-  // 'length'.  The behavior is undefined unless
-  // 'string.begin() <= begin', 'begin <= string.end()', and
-  // 'begin + length <= string.end()'.
+    template <class CHAR_TYPE, class CHAR_TRAITS>
+    static IndexSpan createImp(
+          const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>&        string,
+          typename bsl::basic_string_view<CHAR_TYPE,
+                                          CHAR_TRAITS>::const_iterator begin,
+          IndexSpan::size_type                                         length);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and having the specified
+        // 'length'.  The behavior is undefined unless
+        // 'string.begin() <= begin', 'begin <= string.end()', and
+        // 'begin + length <= string.end()'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS>
-  static IndexSpan createImp(
-      const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-      typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_iterator
-          begin,
-      typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_iterator
-          end);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and ending (not
-  // including) the specified 'end'.  The behavior is undefined unless
-  // 'begin >= string.begin()', 'end >= string.begin()',
-  // 'begin <= string.end()', 'end <= string.end()', and 'begin <= end'.
+    template <class CHAR_TYPE, class CHAR_TRAITS>
+    static IndexSpan createImp(
+           const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>&        string,
+           typename bsl::basic_string_view<CHAR_TYPE,
+                                           CHAR_TRAITS>::const_iterator begin,
+           typename bsl::basic_string_view<CHAR_TYPE,
+                                           CHAR_TRAITS>::const_iterator end);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and ending (not
+        // including) the specified 'end'.  The behavior is undefined unless
+        // 'begin >= string.begin()', 'end >= string.begin()',
+        // 'begin <= string.end()', 'end <= string.end()', and 'begin <= end'.
 
-  template <class CHAR_TYPE>
-  static IndexSpan
-  createImp(const bslstl::StringRefImp<CHAR_TYPE> &string,
-            typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
-            IndexSpan::size_type length);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and having the specified
-  // 'length'.  The behavior is undefined unless
-  // 'string.begin() <= begin', 'begin <= string.end()', and
-  // 'begin + length <= string.end()'.
+    template <class CHAR_TYPE>
+    static IndexSpan createImp(
+              const bslstl::StringRefImp<CHAR_TYPE>&                   string,
+              typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
+              IndexSpan::size_type                                     length);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and having the specified
+        // 'length'.  The behavior is undefined unless
+        // 'string.begin() <= begin', 'begin <= string.end()', and
+        // 'begin + length <= string.end()'.
 
-  template <class CHAR_TYPE>
-  static IndexSpan
-  createImp(const bslstl::StringRefImp<CHAR_TYPE> &string,
-            typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
-            typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator end);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and ending (not
-  // including) the specified 'end'.  The behavior is undefined unless
-  // 'begin >= string.begin()', 'end >= string.begin()',
-  // 'begin <= string.end()', 'end <= string.end()', and 'begin <= end'.
+    template <class CHAR_TYPE>
+    static IndexSpan createImp(
+               const bslstl::StringRefImp<CHAR_TYPE>&                   string,
+               typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
+               typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator end);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and ending (not
+        // including) the specified 'end'.  The behavior is undefined unless
+        // 'begin >= string.begin()', 'end >= string.begin()',
+        // 'begin <= string.end()', 'end <= string.end()', and 'begin <= end'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-  static IndexSpan
-  createImp(const bsl::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-            typename bsl::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                                       ALLOCATOR>::const_iterator begin,
-            IndexSpan::size_type length);
-  template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-  static IndexSpan
-  createImp(const std::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-            typename std::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                                       ALLOCATOR>::const_iterator begin,
-            IndexSpan::size_type length);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and having the specified
-  // 'length'.  The behavior is undefined unless
-  // 'begin >= string.begin()', 'begin <= string.end()', and
-  // 'begin + length <= string.end()'.
+    template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
+    static IndexSpan createImp(
+                 const bsl::basic_string<CHAR_TYPE,
+                                         CHAR_TRAITS,
+                                         ALLOCATOR>&                   string,
+                 typename bsl::basic_string<CHAR_TYPE,
+                                            CHAR_TRAITS,
+                                            ALLOCATOR>::const_iterator begin,
+                 IndexSpan::size_type                                  length);
+    template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
+    static IndexSpan createImp(
+                 const std::basic_string<CHAR_TYPE,
+                                         CHAR_TRAITS,
+                                         ALLOCATOR>&                   string,
+                 typename std::basic_string<CHAR_TYPE,
+                                            CHAR_TRAITS,
+                                            ALLOCATOR>::const_iterator begin,
+                 IndexSpan::size_type                                  length);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and having the specified
+        // 'length'.  The behavior is undefined unless
+        // 'begin >= string.begin()', 'begin <= string.end()', and
+        // 'begin + length <= string.end()'.
 
-  template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-  static IndexSpan
-  createImp(const bsl::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-            typename bsl::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                                       ALLOCATOR>::const_iterator begin,
-            typename bsl::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                                       ALLOCATOR>::const_iterator end);
-  template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-  static IndexSpan
-  createImp(const std::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-            typename std::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                                       ALLOCATOR>::const_iterator begin,
-            typename std::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                                       ALLOCATOR>::const_iterator end);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and ending (not
-  // including) the specified 'end'.  The behavior is undefined unless
-  // 'begin >= string.begin()', 'begin <= string.end()',
-  // 'end <= string.end()', and 'begin <= end'.
+    template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
+    static IndexSpan createImp(
+                  const bsl::basic_string<CHAR_TYPE,
+                                          CHAR_TRAITS,
+                                          ALLOCATOR>&                   string,
+                  typename bsl::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator begin,
+                  typename bsl::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator end);
+    template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
+    static IndexSpan createImp(
+                  const std::basic_string<CHAR_TYPE,
+                                          CHAR_TRAITS,
+                                          ALLOCATOR>&                   string,
+                  typename std::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator begin,
+                  typename std::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator end);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and ending (not
+        // including) the specified 'end'.  The behavior is undefined unless
+        // 'begin >= string.begin()', 'begin <= string.end()',
+        // 'end <= string.end()', and 'begin <= end'.
 
-public:
-  // CLASS METHODS
-  static bsl::string_view bind(const bsl::string_view &string,
-                               const IndexSpan &span);
-  static bsl::wstring_view bind(const bsl::wstring_view &string,
-                                const IndexSpan &span);
-  // Return a string reference to the substring of the specified 'string'
-  // as described by the specified 'span', meaning the substring starting
-  // at the 'span.position()' index in 'string' and having
-  // 'span.length()' characters.  The behavior is undefined unless
-  // 'span.position() <= string.length()' and
-  // 'span.position() + span.length() <= string.length()'.
+  public:
+    // CLASS METHODS
+    static bsl::string_view  bind(const bsl::string_view&  string,
+                                  const IndexSpan&         span);
+    static bsl::wstring_view bind(const bsl::wstring_view& string,
+                                  const IndexSpan&         span);
+        // Return a string reference to the substring of the specified 'string'
+        // as described by the specified 'span', meaning the substring starting
+        // at the 'span.position()' index in 'string' and having
+        // 'span.length()' characters.  The behavior is undefined unless
+        // 'span.position() <= string.length()' and
+        // 'span.position() + span.length() <= string.length()'.
 
-  static IndexSpan createFromPositions(const bsl::string_view &string,
-                                       IndexSpan::size_type begin,
-                                       IndexSpan::size_type end);
-  static IndexSpan createFromPositions(const bsl::wstring_view &string,
-                                       IndexSpan::size_type begin,
-                                       IndexSpan::size_type end);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and ending (not
-  // including) the specified 'end'.  The behavior is undefined unless
-  // 'begin <= string.length()' and 'end <= string.length()'.
+    static IndexSpan createFromPositions(const bsl::string_view&  string,
+                                         IndexSpan::size_type     begin,
+                                         IndexSpan::size_type     end);
+    static IndexSpan createFromPositions(const bsl::wstring_view& string,
+                                         IndexSpan::size_type     begin,
+                                         IndexSpan::size_type     end);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and ending (not
+        // including) the specified 'end'.  The behavior is undefined unless
+        // 'begin <= string.length()' and 'end <= string.length()'.
 
-  static IndexSpan create(const bsl::string_view &string,
-                          IndexSpan::size_type begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const bsl::wstring_view &string,
-                          IndexSpan::size_type begin,
-                          IndexSpan::size_type length);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and having the specified
-  // 'length'.  The behavior is undefined unless
-  // 'begin <= string.length()' and 'begin + length <= string.length()'.
+    static IndexSpan create(const bsl::string_view&  string,
+                            IndexSpan::size_type     begin,
+                            IndexSpan::size_type     length);
+    static IndexSpan create(const bsl::wstring_view& string,
+                            IndexSpan::size_type     begin,
+                            IndexSpan::size_type     length);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and having the specified
+        // 'length'.  The behavior is undefined unless
+        // 'begin <= string.length()' and 'begin + length <= string.length()'.
 
-  static IndexSpan create(const bsl::string_view &string,
-                          const bsl::string_view &subString);
-  static IndexSpan create(const bsl::wstring_view &string,
-                          const bsl::wstring_view &subString);
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' as defined by the 'begin()' and 'end()' of the specified
-  // 'subString'.  The behavior is undefined unless
-  // 'subString.begin() <= string.end()',
-  // 'subString.end() <= string.end()',
-  // 'subString.begin() >= string.begin()', and
-  // 'subString.end() <= string.begin()'.
+    static IndexSpan create(const bsl::string_view&  string,
+                            const bsl::string_view&  subString);
+    static IndexSpan create(const bsl::wstring_view& string,
+                            const bsl::wstring_view& subString);
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' as defined by the 'begin()' and 'end()' of the specified
+        // 'subString'.  The behavior is undefined unless
+        // 'subString.begin() <= string.end()',
+        // 'subString.end() <= string.end()',
+        // 'subString.begin() >= string.begin()', and
+        // 'subString.end() <= string.begin()'.
 
-  static IndexSpan create(const bsl::string_view &string,
-                          bsl::string_view::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const bsl::wstring_view &string,
-                          bsl::wstring_view::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const bslstl::StringRef &string,
-                          bslstl::StringRef::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const bslstl::StringRefWide &string,
-                          bslstl::StringRefWide::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const bsl::string &string,
-                          bsl::string::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const bsl::wstring &string,
-                          bsl::wstring::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const std::string &string,
-                          std::string::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const std::wstring &string,
-                          std::wstring::const_iterator begin,
-                          IndexSpan::size_type length);
+    static IndexSpan create(const bsl::string_view&               string,
+                            bsl::string_view::const_iterator      begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const bsl::wstring_view&              string,
+                            bsl::wstring_view::const_iterator     begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const bslstl::StringRef&              string,
+                            bslstl::StringRef::const_iterator     begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const bslstl::StringRefWide&          string,
+                            bslstl::StringRefWide::const_iterator begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const bsl::string&                    string,
+                            bsl::string::const_iterator           begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const bsl::wstring&                   string,
+                            bsl::wstring::const_iterator          begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const std::string&                    string,
+                            std::string::const_iterator           begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const std::wstring&                   string,
+                            std::wstring::const_iterator          begin,
+                            IndexSpan::size_type                  length);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static IndexSpan create(const std::experimental::pmr::string &string,
-                          std::experimental::pmr::string::const_iterator begin,
-                          IndexSpan::size_type length);
-  static IndexSpan create(const std::experimental::pmr::wstring &string,
-                          std::experimental::pmr::wstring::const_iterator begin,
-                          IndexSpan::size_type length);
+    static IndexSpan create(const std::pmr::string&               string,
+                            std::pmr::string::const_iterator      begin,
+                            IndexSpan::size_type                  length);
+    static IndexSpan create(const std::pmr::wstring&              string,
+                            std::pmr::wstring::const_iterator     begin,
+                            IndexSpan::size_type                  length);
 #endif
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and having the specified
-  // 'length'.  The behavior is undefined unless
-  // 'begin >= string.begin()', 'begin <= string.end()', and
-  // 'begin + length <= string.end()'.
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and having the specified
+        // 'length'.  The behavior is undefined unless
+        // 'begin >= string.begin()', 'begin <= string.end()', and
+        // 'begin + length <= string.end()'.
 
-  static IndexSpan create(const bsl::string_view &string,
-                          bsl::string_view::const_iterator begin,
-                          bsl::string_view::const_iterator end);
-  static IndexSpan create(const bsl::wstring_view &string,
-                          bsl::wstring_view::const_iterator begin,
-                          bsl::wstring_view::const_iterator end);
-  static IndexSpan create(const bslstl::StringRef &string,
-                          bslstl::StringRef::const_iterator begin,
-                          bslstl::StringRef::const_iterator end);
-  static IndexSpan create(const bslstl::StringRefWide &string,
-                          bslstl::StringRefWide::const_iterator begin,
-                          bslstl::StringRefWide::const_iterator end);
-  static IndexSpan create(const bsl::string &string,
-                          bsl::string::const_iterator begin,
-                          bsl::string::const_iterator end);
-  static IndexSpan create(const bsl::wstring &string,
-                          bsl::wstring::const_iterator begin,
-                          bsl::wstring::const_iterator end);
-  static IndexSpan create(const std::string &string,
-                          std::string::const_iterator begin,
-                          std::string::const_iterator end);
-  static IndexSpan create(const std::wstring &string,
-                          std::wstring::const_iterator begin,
-                          std::wstring::const_iterator end);
+    static IndexSpan create(const bsl::string_view&               string,
+                            bsl::string_view::const_iterator      begin,
+                            bsl::string_view::const_iterator      end);
+    static IndexSpan create(const bsl::wstring_view&              string,
+                            bsl::wstring_view::const_iterator     begin,
+                            bsl::wstring_view::const_iterator     end);
+    static IndexSpan create(const bslstl::StringRef&              string,
+                            bslstl::StringRef::const_iterator     begin,
+                            bslstl::StringRef::const_iterator     end);
+    static IndexSpan create(const bslstl::StringRefWide&          string,
+                            bslstl::StringRefWide::const_iterator begin,
+                            bslstl::StringRefWide::const_iterator end);
+    static IndexSpan create(const bsl::string&                    string,
+                            bsl::string::const_iterator           begin,
+                            bsl::string::const_iterator           end);
+    static IndexSpan create(const bsl::wstring&                   string,
+                            bsl::wstring::const_iterator          begin,
+                            bsl::wstring::const_iterator          end);
+    static IndexSpan create(const std::string&                    string,
+                            std::string::const_iterator           begin,
+                            std::string::const_iterator           end);
+    static IndexSpan create(const std::wstring&                   string,
+                            std::wstring::const_iterator          begin,
+                            std::wstring::const_iterator          end);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  static IndexSpan create(const std::experimental::pmr::string &string,
-                          std::experimental::pmr::string::const_iterator begin,
-                          std::experimental::pmr::string::const_iterator end);
-  static IndexSpan create(const std::experimental::pmr::wstring &string,
-                          std::experimental::pmr::wstring::const_iterator begin,
-                          std::experimental::pmr::wstring::const_iterator end);
+    static IndexSpan create(const std::pmr::string&               string,
+                            std::pmr::string::const_iterator      begin,
+                            std::pmr::string::const_iterator      end);
+    static IndexSpan create(const std::pmr::wstring&              string,
+                            std::pmr::wstring::const_iterator     begin,
+                            std::pmr::wstring::const_iterator     end);
 #endif
-  // Return an 'IndexSpan' describing the substring of the specified
-  // 'string' starting at the specified 'begin' and ending (not
-  // including) the specified 'end'.  The behavior is undefined unless
-  // 'begin >= string.begin()', 'begin <= string.end()',
-  // 'end <= string.end()', and 'begin <= end'.
+        // Return an 'IndexSpan' describing the substring of the specified
+        // 'string' starting at the specified 'begin' and ending (not
+        // including) the specified 'end'.  The behavior is undefined unless
+        // 'begin >= string.begin()', 'begin <= string.end()',
+        // 'end <= string.end()', and 'begin <= end'.
 };
 
 // ============================================================================
 //                             INLINE DEFINITIONS
 // ============================================================================
 
-// --------------------------
-// struct IndexSpanStringUtil
-// --------------------------
+                       // --------------------------
+                       // struct IndexSpanStringUtil
+                       // --------------------------
 
 // PRIVATE CLASS METHODS
 template <class CHAR_TYPE, class CHAR_TRAITS>
-inline bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>
+inline
+bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>
 IndexSpanStringUtil::bindImp(
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-    const IndexSpan &span) {
-  BSLS_ASSERT(span.position() <= string.length());
-  BSLS_ASSERT(span.position() + span.length() <= string.length());
+                  const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+                  const IndexSpan&                                      span)
+{
+    BSLS_ASSERT(span.position()                 <= string.length());
+    BSLS_ASSERT(span.position() + span.length() <= string.length());
 
-  return bslstl::StringRefImp<CHAR_TYPE>(string.data() + span.position(),
-                                         span.length());
+    return bslstl::StringRefImp<CHAR_TYPE>(string.data() + span.position(),
+                                           span.length());
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS>
-inline IndexSpan IndexSpanStringUtil::createFromPosImp(
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-    IndexSpan::size_type begin, IndexSpan::size_type end) {
-  BSLS_ASSERT(begin <= string.size());
-  BSLS_ASSERT(end <= string.size());
-  BSLS_ASSERT(begin <= end);
+inline
+IndexSpan
+IndexSpanStringUtil::createFromPosImp(
+                  const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+                  IndexSpan::size_type                                  begin,
+                  IndexSpan::size_type                                  end)
+{
+    BSLS_ASSERT(begin <= string.size());
+    BSLS_ASSERT(end   <= string.size());
+    BSLS_ASSERT(begin <= end);
 
-  (void)string; // remove unused parameter warnings
+    (void)string;  // remove unused parameter warnings
 
-  return IndexSpan(begin, end - begin);
+    return IndexSpan(begin, end - begin);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-    IndexSpan::size_type begin, IndexSpan::size_type length) {
-  BSLS_ASSERT(begin <= string.size());
-  BSLS_ASSERT(begin + length <= string.size());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+                  const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+                  IndexSpan::size_type                                  begin,
+                  IndexSpan::size_type                                  length)
+{
+    BSLS_ASSERT(begin          <= string.size());
+    BSLS_ASSERT(begin + length <= string.size());
 
-  (void)string; // remove unused parameter warnings
+    (void)string;  // remove unused parameter warnings
 
-  return IndexSpan(begin, length);
+    return IndexSpan(begin, length);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &subString) {
-  typedef typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_pointer
-      const_pointer;
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+               const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& string,
+               const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>& subString)
+{
+    typedef
+        typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_pointer
+            const_pointer;
 
-  bsl::less_equal<const_pointer> lessEqual;
-  bsl::greater_equal<const_pointer> greaterEqual;
+    bsl::less_equal<const_pointer>    lessEqual;
+    bsl::greater_equal<const_pointer> greaterEqual;
 
-  const_pointer stringBegin = string.data();
-  const_pointer stringEnd = string.data() + string.length();
-  const_pointer subStringBegin = subString.data();
-  const_pointer subStringEnd = subString.data() + subString.length();
+    const_pointer stringBegin    = string.data();
+    const_pointer stringEnd      = string.data() + string.length();
+    const_pointer subStringBegin = subString.data();
+    const_pointer subStringEnd   = subString.data() + subString.length();
 
-  // Suppress unused variable warnings
-  (void)lessEqual;
-  (void)greaterEqual;
-  (void)stringEnd;
-  (void)subStringEnd;
+    // Suppress unused variable warnings
+    (void)lessEqual;
+    (void)greaterEqual;
+    (void)stringEnd;
+    (void)subStringEnd;
 
-  BSLS_ASSERT(lessEqual(subStringBegin, stringEnd));
-  BSLS_ASSERT(lessEqual(subStringEnd, stringEnd));
-  BSLS_ASSERT(greaterEqual(subStringBegin, stringBegin));
-  BSLS_ASSERT(greaterEqual(subStringEnd, stringBegin));
+    BSLS_ASSERT(lessEqual(   subStringBegin, stringEnd  ));
+    BSLS_ASSERT(lessEqual(   subStringEnd,   stringEnd  ));
+    BSLS_ASSERT(greaterEqual(subStringBegin, stringBegin));
+    BSLS_ASSERT(greaterEqual(subStringEnd,   stringBegin));
 
-  return IndexSpan(subStringBegin - stringBegin, subString.length());
+    return IndexSpan(subStringBegin - stringBegin, subString.length());
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-    typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_iterator
-        begin,
-    IndexSpan::size_type length) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(begin + length <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+           const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>&        string,
+           typename bsl::basic_string_view<CHAR_TYPE,
+                                           CHAR_TRAITS>::const_iterator begin,
+           IndexSpan::size_type                                         length)
+{
+    BSLS_ASSERT(begin          >= string.begin());
+    BSLS_ASSERT(begin          <= string.end());
+    BSLS_ASSERT(begin + length <= string.end());
 
-  return IndexSpan(begin - string.begin(), length);
+    return IndexSpan(begin - string.begin(), length);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS> &string,
-    typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_iterator
-        begin,
-    typename bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>::const_iterator
-        end) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= end);
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(end <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+           const bsl::basic_string_view<CHAR_TYPE, CHAR_TRAITS>&        string,
+           typename bsl::basic_string_view<CHAR_TYPE,
+                                           CHAR_TRAITS>::const_iterator begin,
+           typename bsl::basic_string_view<CHAR_TYPE,
+                                           CHAR_TRAITS>::const_iterator end)
+{
+    BSLS_ASSERT(begin >= string.begin());
+    BSLS_ASSERT(begin <= end);
+    BSLS_ASSERT(begin <= string.end());
+    BSLS_ASSERT(end   <= string.end());
 
-  return IndexSpan(begin - string.begin(), end - begin);
+    return IndexSpan(begin - string.begin(), end - begin);
 }
 
 template <class CHAR_TYPE>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bslstl::StringRefImp<CHAR_TYPE> &string,
-    typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
-    IndexSpan::size_type length) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(begin + length <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+           const bslstl::StringRefImp<CHAR_TYPE>&                   string,
+           typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
+           IndexSpan::size_type                                     length)
+{
+    BSLS_ASSERT(begin          >= string.begin());
+    BSLS_ASSERT(begin          <= string.end()  );
+    BSLS_ASSERT(begin + length <= string.end()  );
 
-  return IndexSpan(begin - string.begin(), length);
+    return IndexSpan(begin - string.begin(), length);
 }
 
 template <class CHAR_TYPE>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bslstl::StringRefImp<CHAR_TYPE> &string,
-    typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
-    typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator end) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= end);
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(end <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+           const bslstl::StringRefImp<CHAR_TYPE>&                   string,
+           typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator begin,
+           typename bslstl::StringRefImp<CHAR_TYPE>::const_iterator end)
+{
+    BSLS_ASSERT(begin >= string.begin());
+    BSLS_ASSERT(begin <= end           );
+    BSLS_ASSERT(begin <= string.end()  );
+    BSLS_ASSERT(end   <= string.end()  );
 
-  return IndexSpan(begin - string.begin(), end - begin);
+    return IndexSpan(begin - string.begin(), end - begin);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bsl::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-    typename bsl::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                               ALLOCATOR>::const_iterator begin,
-    IndexSpan::size_type length) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(begin + length <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+                  const bsl::basic_string<CHAR_TYPE,
+                                          CHAR_TRAITS,
+                                          ALLOCATOR>&                   string,
+                  typename bsl::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator begin,
+                  IndexSpan::size_type                                  length)
+{
+    BSLS_ASSERT(begin          >= string.begin());
+    BSLS_ASSERT(begin          <= string.end());
+    BSLS_ASSERT(begin + length <= string.end());
 
-  return IndexSpan(begin - string.begin(), length);
+    return IndexSpan(begin - string.begin(), length);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const std::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-    typename std::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                               ALLOCATOR>::const_iterator begin,
-    IndexSpan::size_type length) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(begin + length <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+                  const std::basic_string<CHAR_TYPE,
+                                          CHAR_TRAITS,
+                                          ALLOCATOR>&                   string,
+                  typename std::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator begin,
+                  IndexSpan::size_type                                  length)
+{
+    BSLS_ASSERT(begin          >= string.begin());
+    BSLS_ASSERT(begin          <= string.end());
+    BSLS_ASSERT(begin + length <= string.end());
 
-  return IndexSpan(begin - string.begin(), length);
+    return IndexSpan(begin - string.begin(), length);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const bsl::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-    typename bsl::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                               ALLOCATOR>::const_iterator begin,
-    typename bsl::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                               ALLOCATOR>::const_iterator end) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= end);
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(end <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+                  const bsl::basic_string<CHAR_TYPE,
+                                          CHAR_TRAITS,
+                                          ALLOCATOR>&                   string,
+                  typename bsl::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator begin,
+                  typename bsl::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator end)
+{
+    BSLS_ASSERT(begin >= string.begin());
+    BSLS_ASSERT(begin <= end);
+    BSLS_ASSERT(begin <= string.end());
+    BSLS_ASSERT(end   <= string.end());
 
-  return IndexSpan(begin - string.begin(), end - begin);
+    return IndexSpan(begin - string.begin(), end - begin);
 }
 
 template <class CHAR_TYPE, class CHAR_TRAITS, class ALLOCATOR>
-inline IndexSpan IndexSpanStringUtil::createImp(
-    const std::basic_string<CHAR_TYPE, CHAR_TRAITS, ALLOCATOR> &string,
-    typename std::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                               ALLOCATOR>::const_iterator begin,
-    typename std::basic_string<CHAR_TYPE, CHAR_TRAITS,
-                               ALLOCATOR>::const_iterator end) {
-  BSLS_ASSERT(begin >= string.begin());
-  BSLS_ASSERT(begin <= end);
-  BSLS_ASSERT(begin <= string.end());
-  BSLS_ASSERT(end <= string.end());
+inline
+IndexSpan
+IndexSpanStringUtil::createImp(
+                  const std::basic_string<CHAR_TYPE,
+                                          CHAR_TRAITS,
+                                          ALLOCATOR>&                   string,
+                  typename std::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator begin,
+                  typename std::basic_string<CHAR_TYPE,
+                                             CHAR_TRAITS,
+                                             ALLOCATOR>::const_iterator end)
+{
+    BSLS_ASSERT(begin >= string.begin());
+    BSLS_ASSERT(begin <= end);
+    BSLS_ASSERT(begin <= string.end());
+    BSLS_ASSERT(end   <= string.end());
 
-  return IndexSpan(begin - string.begin(), end - begin);
+    return IndexSpan(begin - string.begin(), end - begin);
 }
 
 // CLASS METHODS
-inline bsl::string_view
-IndexSpanStringUtil::bind(const bsl::string_view &string,
-                          const IndexSpan &span) {
-  return bindImp(string, span);
+inline
+bsl::string_view
+IndexSpanStringUtil::bind(const bsl::string_view& string,
+                          const IndexSpan&        span)
+{
+    return bindImp(string, span);
 }
 
-inline bsl::wstring_view
-IndexSpanStringUtil::bind(const bsl::wstring_view &string,
-                          const IndexSpan &span) {
-  return bindImp(string, span);
+inline
+bsl::wstring_view
+IndexSpanStringUtil::bind(const bsl::wstring_view& string,
+                          const IndexSpan&         span)
+{
+    return bindImp(string, span);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::createFromPositions(const bsl::string_view &string,
-                                         IndexSpan::size_type begin,
-                                         IndexSpan::size_type end) {
-  return createFromPosImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::createFromPositions(const bsl::string_view& string,
+                                         IndexSpan::size_type    begin,
+                                         IndexSpan::size_type    end)
+{
+    return createFromPosImp(string, begin, end);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::createFromPositions(const bsl::wstring_view &string,
-                                         IndexSpan::size_type begin,
-                                         IndexSpan::size_type end) {
-  return createFromPosImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::createFromPositions(const bsl::wstring_view& string,
+                                         IndexSpan::size_type     begin,
+                                         IndexSpan::size_type     end)
+{
+    return createFromPosImp(string, begin, end);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const bsl::string_view &string,
-                                             IndexSpan::size_type begin,
-                                             IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::string_view& string,
+                            IndexSpan::size_type    begin,
+                            IndexSpan::size_type    length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const bsl::wstring_view &string,
-                                             IndexSpan::size_type begin,
-                                             IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::wstring_view& string,
+                            IndexSpan::size_type     begin,
+                            IndexSpan::size_type     length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bsl::string_view &string,
-                            const bsl::string_view &subString) {
-  return createImp(string, subString);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::string_view& string,
+                            const bsl::string_view& subString)
+{
+    return createImp(string, subString);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bsl::wstring_view &string,
-                            const bsl::wstring_view &subString) {
-  return createImp(string, subString);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::wstring_view& string,
+                            const bsl::wstring_view& subString)
+{
+    return createImp(string, subString);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bsl::string_view &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::string_view&          string,
                             bsl::string_view::const_iterator begin,
-                            IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+                            IndexSpan::size_type             length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bsl::wstring_view &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::wstring_view&          string,
                             bsl::wstring_view::const_iterator begin,
-                            IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+                            IndexSpan::size_type              length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bslstl::StringRef &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bslstl::StringRef&          string,
                             bslstl::StringRef::const_iterator begin,
-                            IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+                            IndexSpan::size_type              length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bslstl::StringRefWide &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bslstl::StringRefWide&          string,
                             bslstl::StringRefWide::const_iterator begin,
-                            IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+                            IndexSpan::size_type                  length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const bsl::string &string,
-                                             bsl::string::const_iterator begin,
-                                             IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::string&          string,
+                            bsl::string::const_iterator begin,
+                            IndexSpan::size_type        length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const bsl::wstring &string,
-                                             bsl::wstring::const_iterator begin,
-                                             IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::wstring&          string,
+                            bsl::wstring::const_iterator begin,
+                            IndexSpan::size_type         length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const std::string &string,
-                                             std::string::const_iterator begin,
-                                             IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::string&          string,
+                            std::string::const_iterator begin,
+                            IndexSpan::size_type        length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const std::wstring &string,
-                                             std::wstring::const_iterator begin,
-                                             IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::wstring&          string,
+                            std::wstring::const_iterator begin,
+                            IndexSpan::size_type         length)
+{
+    return createImp(string, begin, length);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-inline IndexSpan IndexSpanStringUtil::create(
-    const std::experimental::pmr::string &string,
-    std::experimental::pmr::string::const_iterator begin,
-    IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::pmr::string&          string,
+                            std::pmr::string::const_iterator begin,
+                            IndexSpan::size_type             length)
+{
+    return createImp(string, begin, length);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(
-    const std::experimental::pmr::wstring &string,
-    std::experimental::pmr::wstring::const_iterator begin,
-    IndexSpan::size_type length) {
-  return createImp(string, begin, length);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::pmr::wstring&          string,
+                            std::pmr::wstring::const_iterator begin,
+                            IndexSpan::size_type              length)
+{
+    return createImp(string, begin, length);
 }
 #endif
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bsl::string_view &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::string_view&          string,
                             bsl::string_view::const_iterator begin,
-                            bsl::string_view::const_iterator end) {
-  return createImp(string, begin, end);
+                            bsl::string_view::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bsl::wstring_view &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::wstring_view&          string,
                             bsl::wstring_view::const_iterator begin,
-                            bsl::wstring_view::const_iterator end) {
-  return createImp(string, begin, end);
+                            bsl::wstring_view::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bslstl::StringRef &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bslstl::StringRef&          string,
                             bslstl::StringRef::const_iterator begin,
-                            bslstl::StringRef::const_iterator end) {
-  return createImp(string, begin, end);
+                            bslstl::StringRef::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan
-IndexSpanStringUtil::create(const bslstl::StringRefWide &string,
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bslstl::StringRefWide&          string,
                             bslstl::StringRefWide::const_iterator begin,
-                            bslstl::StringRefWide::const_iterator end) {
-  return createImp(string, begin, end);
+                            bslstl::StringRefWide::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const bsl::string &string,
-                                             bsl::string::const_iterator begin,
-                                             bsl::string::const_iterator end) {
-  return createImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::string&          string,
+                            bsl::string::const_iterator begin,
+                            bsl::string::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const bsl::wstring &string,
-                                             bsl::wstring::const_iterator begin,
-                                             bsl::wstring::const_iterator end) {
-  return createImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const bsl::wstring&          string,
+                            bsl::wstring::const_iterator begin,
+                            bsl::wstring::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const std::string &string,
-                                             std::string::const_iterator begin,
-                                             std::string::const_iterator end) {
-  return createImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::string&          string,
+                            std::string::const_iterator begin,
+                            std::string::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(const std::wstring &string,
-                                             std::wstring::const_iterator begin,
-                                             std::wstring::const_iterator end) {
-  return createImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::wstring&          string,
+                            std::wstring::const_iterator begin,
+                            std::wstring::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-inline IndexSpan IndexSpanStringUtil::create(
-    const std::experimental::pmr::string &string,
-    std::experimental::pmr::string::const_iterator begin,
-    std::experimental::pmr::string::const_iterator end) {
-  return createImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::pmr::string&          string,
+                            std::pmr::string::const_iterator begin,
+                            std::pmr::string::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 
-inline IndexSpan IndexSpanStringUtil::create(
-    const std::experimental::pmr::wstring &string,
-    std::experimental::pmr::wstring::const_iterator begin,
-    std::experimental::pmr::wstring::const_iterator end) {
-  return createImp(string, begin, end);
+inline
+IndexSpan
+IndexSpanStringUtil::create(const std::pmr::wstring&          string,
+                            std::pmr::wstring::const_iterator begin,
+                            std::pmr::wstring::const_iterator end)
+{
+    return createImp(string, begin, end);
 }
 #endif
 
-} // namespace bdlb
-} // namespace BloombergLP
+}  // close package namespace
+}  // close enterprise namespace
 
 #endif
 

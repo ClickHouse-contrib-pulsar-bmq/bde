@@ -1,23 +1,23 @@
 // baltzo_localtimeoffsetutil.t.cpp                                   -*-C++-*-
 #include <baltzo_localtimeoffsetutil.h>
 
-#include <baltzo_defaultzoneinfocache.h> // for testing only
 #include <baltzo_localtimedescriptor.h>
-#include <baltzo_testloader.h> // for testing only
+#include <baltzo_defaultzoneinfocache.h>  // for testing only
+#include <baltzo_testloader.h>            // for testing only
 #include <baltzo_zoneinfo.h>
-#include <baltzo_zoneinfocache.h> // for testing only
-#include <baltzo_zoneinfoutil.h>  // for testing only
+#include <baltzo_zoneinfocache.h>         // for testing only
+#include <baltzo_zoneinfoutil.h>          // for testing only
 
 #include <bsla_maybeunused.h>
 
+#include <bslmt_barrier.h>       // case -1
+#include <bslmt_configuration.h> // case -1
+#include <bslmt_threadutil.h>    // case -1
 #include <bdlt_epochutil.h>
-#include <bdlt_iso8601util.h> // case 5
+#include <bdlt_iso8601util.h>                // case 5
 #include <bslma_default.h>
-#include <bslma_defaultallocatorguard.h> // case 5
-#include <bslma_testallocator.h>         // case 5
-#include <bslmt_barrier.h>               // case -1
-#include <bslmt_configuration.h>         // case -1
-#include <bslmt_threadutil.h>            // case -1
+#include <bslma_defaultallocatorguard.h>  // case 5
+#include <bslma_testallocator.h>          // case 5
 
 #include <bslmf_assert.h>
 
@@ -29,9 +29,9 @@
 
 #include <bsl_cstdio.h>
 #include <bsl_cstdlib.h>
-#include <bsl_cstring.h> // 'strcmp'
+#include <bsl_cstring.h>         // 'strcmp'
 #include <bsl_iostream.h>
-#include <bsl_vector.h> // case -1
+#include <bsl_vector.h>          // case -1
 
 #if defined(BSLS_PLATFORM_CMP_MSVC)
 #define snprintf _snprintf
@@ -74,7 +74,7 @@ using namespace bsl;
 // [ 2] void loadLocalTimePeriod(LocalTimePeriod *localTimePeriod);
 // [ 2] void loadTimezone(bsl::string      *timezone);
 // [ 2] void loadTimezone(std::string      *timezone);
-// [ 2] void loadTimezone(std::experimental::pmr::string *timezone);
+// [ 2] void loadTimezone(std::pmr::string *timezone);
 // [ 6] int updateCount();
 // [ 6] void loadLocalTimeOffset(int *result, const bdlt::Datetime& utc);
 // [ 6] blsl::TimeInterval loadLocalTimeOffset(const bdlt::Datetime& utc);
@@ -95,45 +95,31 @@ using namespace bsl;
 // ----------------------------------------------------------------------------
 
 static int testStatus = 0;
-static void aSsErT(int c, const char *s, int i) {
-  if (c) {
-    cout << "Error " << __FILE__ << "(" << i << "): " << s << "    (failed)"
-         << endl;
-    if (testStatus >= 0 && testStatus <= 100)
-      ++testStatus;
-  }
+static void aSsErT(int c, const char *s, int i)
+{
+    if (c) {
+        cout << "Error " << __FILE__ << "(" << i << "): " << s
+             << "    (failed)" << endl;
+        if (testStatus >= 0 && testStatus <= 100) ++testStatus;
+    }
 }
-#define ASSERT(X)                                                              \
-  { aSsErT(!(X), #X, __LINE__); }
+#define ASSERT(X) { aSsErT(!(X), #X, __LINE__); }
 
 // ============================================================================
 //                   STANDARD BDE LOOP-ASSERT TEST MACROS
 // ----------------------------------------------------------------------------
 
-#define LOOP_ASSERT(I, X)                                                      \
-  {                                                                            \
-    if (!(X)) {                                                                \
-      cout << #I << ": " << I << "\n";                                         \
-      aSsErT(1, #X, __LINE__);                                                 \
-    }                                                                          \
-  }
+#define LOOP_ASSERT(I,X) { \
+   if (!(X)) { cout << #I << ": " << I << "\n"; aSsErT(1, #X, __LINE__); }}
 
-#define LOOP2_ASSERT(I, J, X)                                                  \
-  {                                                                            \
-    if (!(X)) {                                                                \
-      cout << #I << ": " << I << "\t" << #J << ": " << J << "\n";              \
-      aSsErT(1, #X, __LINE__);                                                 \
-    }                                                                          \
-  }
+#define LOOP2_ASSERT(I,J,X) { \
+   if (!(X)) { cout << #I << ": " << I << "\t" << #J << ": " \
+              << J << "\n"; aSsErT(1, #X, __LINE__); } }
 
-#define LOOP3_ASSERT(I, J, K, X)                                               \
-  {                                                                            \
-    if (!(X)) {                                                                \
-      cout << #I << ": " << I << "\t" << #J << ": " << J << "\t" << #K << ": " \
-           << K << "\n";                                                       \
-      aSsErT(1, #X, __LINE__);                                                 \
-    }                                                                          \
-  }
+#define LOOP3_ASSERT(I,J,K,X) { \
+   if (!(X)) { cout << #I << ": " << I << "\t" << #J << ": " \
+                    << J << "\t" \
+                    << #K << ": " << K <<  "\n"; aSsErT(1, #X, __LINE__); } }
 
 // ============================================================================
 //                     SEMI-STANDARD TEST OUTPUT MACROS
@@ -141,13 +127,13 @@ static void aSsErT(int c, const char *s, int i) {
 
 #define P(X) cout << #X " = " << (X) << endl; // Print identifier and value.
 #define Q(X) cout << "<| " #X " |>" << endl;  // Quote identifier literally.
-#define P_(X) cout << #X " = " << (X) << ", " << flush; // P(X) without '\n'
-#define T_ cout << "\t" << flush; // Print a tab (w/o newline)
-#define L_ __LINE__               // current Line number
+#define P_(X) cout << #X " = " << (X) << ", "<< flush; // P(X) without '\n'
+#define T_  cout << "\t" << flush;          // Print a tab (w/o newline)
+#define L_ __LINE__                           // current Line number
 
-bool g_verbose;
-bool g_veryVerbose;
-bool g_veryVeryVerbose;
+bool             g_verbose;
+bool         g_veryVerbose;
+bool     g_veryVeryVerbose;
 bool g_veryVeryVeryVerbose;
 
 // ============================================================================
@@ -156,10 +142,10 @@ bool g_veryVeryVeryVerbose;
 
 #define ASSERT_SAFE_PASS(EXPR) BSLS_ASSERTTEST_ASSERT_SAFE_PASS(EXPR)
 #define ASSERT_SAFE_FAIL(EXPR) BSLS_ASSERTTEST_ASSERT_SAFE_FAIL(EXPR)
-#define ASSERT_PASS(EXPR) BSLS_ASSERTTEST_ASSERT_PASS(EXPR)
-#define ASSERT_FAIL(EXPR) BSLS_ASSERTTEST_ASSERT_FAIL(EXPR)
-#define ASSERT_OPT_PASS(EXPR) BSLS_ASSERTTEST_ASSERT_OPT_PASS(EXPR)
-#define ASSERT_OPT_FAIL(EXPR) BSLS_ASSERTTEST_ASSERT_OPT_FAIL(EXPR)
+#define ASSERT_PASS(EXPR)      BSLS_ASSERTTEST_ASSERT_PASS(EXPR)
+#define ASSERT_FAIL(EXPR)      BSLS_ASSERTTEST_ASSERT_FAIL(EXPR)
+#define ASSERT_OPT_PASS(EXPR)  BSLS_ASSERTTEST_ASSERT_OPT_PASS(EXPR)
+#define ASSERT_OPT_FAIL(EXPR)  BSLS_ASSERTTEST_ASSERT_OPT_FAIL(EXPR)
 
 // ============================================================================
 //                   GLOBAL TYPEDEFS/CONSTANTS FOR TESTING
@@ -167,10 +153,10 @@ bool g_veryVeryVeryVerbose;
 
 typedef baltzo::LocalTimeOffsetUtil Util;
 
-const char *NY = "America/New_York";
-const char *BE = "Europe/Berlin";
-const char *RY = "Asia/Riyadh";
-const char *SA = "Asia/Saigon";
+const char *NY  = "America/New_York";
+const char *BE  = "Europe/Berlin";
+const char *RY  = "Asia/Riyadh";
+const char *SA  = "Asia/Saigon";
 const char *GMT = "Etc/GMT";
 const char *GP1 = "Etc/GMT+1";
 const char *GM1 = "Etc/GMT-1";
@@ -179,26 +165,27 @@ const char *GM1 = "Etc/GMT-1";
 //                             GLOBAL TEST DATA
 // ----------------------------------------------------------------------------
 
-const char *DEFAULT_TZ_ARRAY[] = {NY, BE, RY, SA, GMT, GP1, GM1};
-const int DEFAULT_NUM_TZ_ARRAY =
-    sizeof DEFAULT_TZ_ARRAY / sizeof *DEFAULT_TZ_ARRAY;
+const char *DEFAULT_TZ_ARRAY[]   = { NY, BE, RY, SA, GMT, GP1, GM1 };
+const int   DEFAULT_NUM_TZ_ARRAY = sizeof  DEFAULT_TZ_ARRAY
+                                 / sizeof *DEFAULT_TZ_ARRAY;
 
-const bdlt::Datetime DEFAULT_DT_ARRAY[] = {bdlt::Datetime(2012, 1, 1),
-                                           bdlt::Datetime(2013, 6, 20),
-                                           bdlt::Datetime(2014, 12, 31)};
-const int DEFAULT_NUM_DT_ARRAY =
-    sizeof DEFAULT_DT_ARRAY / sizeof *DEFAULT_DT_ARRAY;
+const bdlt::Datetime DEFAULT_DT_ARRAY[] = { bdlt::Datetime(2012,  1,  1),
+                                           bdlt::Datetime(2013,  6, 20),
+                                           bdlt::Datetime(2014, 12, 31)
+                                          };
+const int DEFAULT_NUM_DT_ARRAY = sizeof  DEFAULT_DT_ARRAY
+                               / sizeof *DEFAULT_DT_ARRAY;
 
 #ifdef BSLS_PLATFORM_CPU_32_BIT
 #define SUFFICIENTLY_LONG_STRING "123456789012345678901234567890123"
-#else // 64_BIT
-#define SUFFICIENTLY_LONG_STRING                                               \
-  "12345678901234567890123456789012"                                           \
-  "123456789012345678901234567890123"
+#else  // 64_BIT
+#define SUFFICIENTLY_LONG_STRING "12345678901234567890123456789012" \
+                                 "123456789012345678901234567890123"
 #endif
 BSLMF_ASSERT(sizeof SUFFICIENTLY_LONG_STRING > sizeof(bsl::string));
 
-BSLA_MAYBE_UNUSED const char *const LONG_STRING = "a_" SUFFICIENTLY_LONG_STRING;
+BSLA_MAYBE_UNUSED const char *const LONG_STRING =
+    "a_" SUFFICIENTLY_LONG_STRING;
 BSLA_MAYBE_UNUSED const char *const LONGER_STRING =
     "ab_" SUFFICIENTLY_LONG_STRING;
 BSLA_MAYBE_UNUSED const char *const LONGEST_STRING =
@@ -503,7 +490,8 @@ static const unsigned char AMERICA_NEW_YORK_DATA[] = {
     0x00, 0x45, 0x50, 0x54, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
     0x00, 0x00, 0x01, 0x0a, 0x45, 0x53, 0x54, 0x35, 0x45, 0x44, 0x54, 0x2c,
     0x4d, 0x33, 0x2e, 0x32, 0x2e, 0x30, 0x2c, 0x4d, 0x31, 0x31, 0x2e, 0x31,
-    0x2e, 0x30, 0x0a};
+    0x2e, 0x30, 0x0a
+};
 
 // GMT
 static const unsigned char GMT_DATA[] = {
@@ -1038,44 +1026,45 @@ static const unsigned char EUROPE_BERLIN_DATA[] = {
     0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
     0x01, 0x0a, 0x43, 0x45, 0x54, 0x2d, 0x31, 0x43, 0x45, 0x53, 0x54, 0x2c,
     0x4d, 0x33, 0x2e, 0x35, 0x2e, 0x30, 0x2c, 0x4d, 0x31, 0x30, 0x2e, 0x35,
-    0x2e, 0x30, 0x2f, 0x33, 0x0a};
+    0x2e, 0x30, 0x2f, 0x33, 0x0a
+};
 
 // ============================================================================
 //                        GLOBAL CLASSES FOR TESTING
 // ----------------------------------------------------------------------------
 
 struct LogVerbosityGuard {
-  // The Logger verbosity guard disables logging on construction, and
-  // re-enables logging, based on the prior default pass-through level, when
-  // it goes out of scope and is destroyed.  It is intended to suppress
-  // logged output for intentional errors when the test driver is run in
-  // non-verbose mode.
+    // The Logger verbosity guard disables logging on construction, and
+    // re-enables logging, based on the prior default pass-through level, when
+    // it goes out of scope and is destroyed.  It is intended to suppress
+    // logged output for intentional errors when the test driver is run in
+    // non-verbose mode.
 
-  bool d_verbose; // verbose mode does not
-                  // disable logging
+    bool                    d_verbose;             // verbose mode does not
+                                                   // disable logging
 
-  bsls::LogSeverity::Enum d_defaultPassthrough; // default passthrough
-                                                // log level
+    bsls::LogSeverity::Enum d_defaultPassthrough;  // default passthrough
+                                                   // log level
 
-  explicit LogVerbosityGuard(bool verbose = false)
-  // If the optionally specified 'verbose' is 'false' disable logging
-  // until this guard is destroyed.
-  {
-    d_verbose = verbose;
-    d_defaultPassthrough = bsls::Log::severityThreshold();
+    explicit LogVerbosityGuard(bool verbose = false)
+        // If the optionally specified 'verbose' is 'false' disable logging
+        // until this guard is destroyed.
+    {
+        d_verbose            = verbose;
+        d_defaultPassthrough = bsls::Log::severityThreshold();
 
-    if (!d_verbose) {
-      bsls::Log::setSeverityThreshold(bsls::LogSeverity::e_FATAL);
+        if (!d_verbose) {
+            bsls::Log::setSeverityThreshold(bsls::LogSeverity::e_FATAL);
+        }
     }
-  }
 
-  ~LogVerbosityGuard()
-  // Set the logging verbosity back to its default state.
-  {
-    if (!d_verbose) {
-      bsls::Log::setSeverityThreshold(d_defaultPassthrough);
+    ~LogVerbosityGuard()
+        // Set the logging verbosity back to its default state.
+    {
+        if (!d_verbose) {
+            bsls::Log::setSeverityThreshold(d_defaultPassthrough);
+        }
     }
-  }
 };
 
 // ============================================================================
@@ -1083,73 +1072,75 @@ struct LogVerbosityGuard {
 // ----------------------------------------------------------------------------
 
 struct ThreadArg {
-  bsls::Types::Int64 d_offset;
-  bdlt::Datetime d_utcDatetime;
-  bslmt::Barrier *d_barrier_p;
+    bsls::Types::Int64  d_offset;
+    bdlt::Datetime      d_utcDatetime;
+    bslmt::Barrier     *d_barrier_p;
 };
 
 typedef bsl::vector<struct ThreadArg> ThreadArgs;
 
-extern "C" void *workerThread(void *arg) {
-  ThreadArg *p = static_cast<ThreadArg *>(arg);
+extern "C" void *workerThread(void *arg)
+{
+    ThreadArg *p = static_cast<ThreadArg *>(arg);
 
-  p->d_barrier_p->wait();
+    p->d_barrier_p->wait();
 
-  p->d_offset = baltzo::LocalTimeOffsetUtil::localTimeOffset(p->d_utcDatetime)
-                    .totalSeconds();
-  return 0;
+    p->d_offset = baltzo::LocalTimeOffsetUtil::localTimeOffset(
+                                              p->d_utcDatetime).totalSeconds();
+    return 0;
 }
 
 typedef bsl::vector<bslmt::ThreadUtil::Handle> Handles;
 
-bdlt::EpochUtil::TimeT64 toTimeT(const bdlt::Datetime &value)
-// Return the interval in seconds from UNIX epoch time of the specified
-// 'value'.  Note that this method is shorthand for
-// 'bdlt::EpochUtil::convertToTimeT64'.
+bdlt::EpochUtil::TimeT64 toTimeT(const bdlt::Datetime& value)
+    // Return the interval in seconds from UNIX epoch time of the specified
+    // 'value'.  Note that this method is shorthand for
+    // 'bdlt::EpochUtil::convertToTimeT64'.
 {
-  return bdlt::EpochUtil::convertToTimeT64(value);
+    return bdlt::EpochUtil::convertToTimeT64(value);
 }
 
 bdlt::Datetime toDatetime(const char *iso8601TimeString)
-// Return the datetime value indicated by the specified
-// 'iso8601TimeString'.  The behavior is undefined unless
-// 'iso8601TimeString' is a null-terminated C-string containing a time
-// description matching the iso8601 specification (see 'bdlt_iso8601util').
+    // Return the datetime value indicated by the specified
+    // 'iso8601TimeString'.  The behavior is undefined unless
+    // 'iso8601TimeString' is a null-terminated C-string containing a time
+    // description matching the iso8601 specification (see 'bdlt_iso8601util').
 {
-  bdlt::Datetime time;
-  BSLA_MAYBE_UNUSED int rc = bdlt::Iso8601Util::parse(
-      &time, iso8601TimeString,
-      static_cast<int>(bsl::strlen(iso8601TimeString)));
-  BSLS_ASSERT(0 == rc);
-  return time;
+    bdlt::Datetime time;
+    BSLA_MAYBE_UNUSED int rc = bdlt::Iso8601Util::parse(
+                             &time,
+                             iso8601TimeString,
+                             static_cast<int>(bsl::strlen(iso8601TimeString)));
+    BSLS_ASSERT(0 == rc);
+    return time;
 }
 
 struct TransitionDescription {
-  // A 'struct' describing a transitions.  Note that this type is meant to
-  // be used to create data tables for use with 'addTransitions'.
+    // A 'struct' describing a transitions.  Note that this type is meant to
+    // be used to create data tables for use with 'addTransitions'.
 
-  int d_line;
-  const char *d_transitionTime;
-  int d_offsetMins;
-  const char *d_abbrev;
-  bool d_isDst;
+    int         d_line;
+    const char *d_transitionTime;
+    int         d_offsetMins;
+    const char *d_abbrev;
+    bool        d_isDst;
 };
 
-void addTransitions(baltzo::Zoneinfo *result,
+void addTransitions(baltzo::Zoneinfo            *result,
                     const TransitionDescription *descriptions,
-                    int numDescriptions)
-// Insert to the specified 'result' the contiguous sequence of specified
-// 'descriptions', of length 'numDescriptions'.
+                    int                          numDescriptions)
+    // Insert to the specified 'result' the contiguous sequence of specified
+    // 'descriptions', of length 'numDescriptions'.
 {
-  BSLS_ASSERT(result);
+    BSLS_ASSERT(result);
 
-  for (int i = 0; i < numDescriptions; ++i) {
-    const char *TRANS = descriptions[i].d_transitionTime;
-    baltzo::LocalTimeDescriptor desc(descriptions[i].d_offsetMins * 60,
-                                     descriptions[i].d_isDst,
-                                     descriptions[i].d_abbrev);
-    result->addTransition(toTimeT(toDatetime(TRANS)), desc);
-  }
+    for (int i = 0; i < numDescriptions; ++i) {
+        const char *TRANS = descriptions[i].d_transitionTime;
+        baltzo::LocalTimeDescriptor desc(descriptions[i].d_offsetMins * 60,
+                                        descriptions[i].d_isDst,
+                                        descriptions[i].d_abbrev);
+        result->addTransition(toTimeT(toDatetime(TRANS)), desc);
+    }
 }
 
 // ============================================================================
@@ -1158,12 +1149,12 @@ void addTransitions(baltzo::Zoneinfo *result,
 
 namespace UsageExample1 {
 //
-/// Usage
+///Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-/// Example 1: Using 'localTimeOffset' as the Local Time Offset Callback
-///  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+///Example 1: Using 'localTimeOffset' as the Local Time Offset Callback
+/// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Suppose we must quickly generate time stamp values in local time (e.g., on
 // records for a high frequency logger) and the default performance of the
 // relevant methods of 'bdlt::CurrentTime' is inadequate.  Further suppose that
@@ -1175,1197 +1166,1172 @@ namespace UsageExample1 {
 // First, specify the time zone to be used by the callback and a UTC date time
 // for the initial offset information in the cache.
 //..
-void main1() {
-  ASSERT(0 == baltzo::LocalTimeOffsetUtil::updateCount());
+void main1()
+{
+    ASSERT(0 == baltzo::LocalTimeOffsetUtil::updateCount());
 
-  int status = baltzo::LocalTimeOffsetUtil::configure(
-      "America/New_York", bdlt::Datetime(2013, 2, 26));
-  ASSERT(0 == status);
-  ASSERT(1 == baltzo::LocalTimeOffsetUtil::updateCount());
+    int status = baltzo::LocalTimeOffsetUtil::configure("America/New_York",
+                                                        bdlt::Datetime(2013,
+                                                                         2,
+                                                                        26));
+    ASSERT(0 == status);
+    ASSERT(1 == baltzo::LocalTimeOffsetUtil::updateCount());
 
-  bsl::string timezone;
+    bsl::string timezone;
 
-  baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
-  ASSERT(0 == strcmp("America/New_York", timezone.c_str()));
-  //..
-  // Notice that the value returned by the 'updateCount' method is increased by
-  // one after then time zone information has been set.
-  //
-  // Then, use the 'setLoadLocalTimeOffsetCallback' method to set the
-  // 'localTimeOffset' of 'baltzo::LocalTimeOffsetUtil' as the local time
-  // offset callback used in 'bdlt::CurrentTime'.
-  //..
-  bdlt::LocalTimeOffset::LocalTimeOffsetCallback previousCallback =
-      baltzo::LocalTimeOffsetUtil::setLoadLocalTimeOffsetCallback();
+    baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
+    ASSERT(0 == strcmp("America/New_York", timezone.c_str()));
+//..
+// Notice that the value returned by the 'updateCount' method is increased by
+// one after then time zone information has been set.
+//
+// Then, use the 'setLoadLocalTimeOffsetCallback' method to set the
+// 'localTimeOffset' of 'baltzo::LocalTimeOffsetUtil' as the local time
+// offset callback used in 'bdlt::CurrentTime'.
+//..
+    bdlt::LocalTimeOffset::LocalTimeOffsetCallback previousCallback =
+                 baltzo::LocalTimeOffsetUtil::setLoadLocalTimeOffsetCallback();
 
-  ASSERT(&baltzo::LocalTimeOffsetUtil::localTimeOffset ==
-         bdlt::LocalTimeOffset::localTimeOffsetCallback());
-  //..
-  // Notice that previously installed callback was saved so we can restore it,
-  // if needed.
-  //
-  // Now, calls to 'bdlt::CurrentTime' methods will use the method we installed.
-  // For example, we can check the time offset in New York for three dates of
-  // interest:
-  //..
-  bsls::Types::Int64 offsetInSeconds =
-      bdlt::LocalTimeOffset::localTimeOffset(bdlt::Datetime(2013, 2, 26))
-          .totalSeconds();
-  ASSERT(0 == status);
-  ASSERT(-5 * 3600 == offsetInSeconds);
-  ASSERT(1 == baltzo::LocalTimeOffsetUtil::updateCount());
+    ASSERT(&baltzo::LocalTimeOffsetUtil::localTimeOffset
+        == bdlt::LocalTimeOffset::localTimeOffsetCallback());
+//..
+// Notice that previously installed callback was saved so we can restore it, if
+// needed.
+//
+// Now, calls to 'bdlt::CurrentTime' methods will use the method we installed.
+// For example, we can check the time offset in New York for three dates of
+// interest:
+//..
+    bsls::Types::Int64 offsetInSeconds =
+        bdlt::LocalTimeOffset::localTimeOffset(bdlt::Datetime(2013, 2, 26))
+                                                               .totalSeconds();
+    ASSERT(        0 == status);
+    ASSERT(-5 * 3600 == offsetInSeconds);
+    ASSERT(        1 == baltzo::LocalTimeOffsetUtil::updateCount());
 
-  baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
-  ASSERT(0 == strcmp("America/New_York", timezone.c_str()));
+    baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
+    ASSERT(        0 == strcmp("America/New_York", timezone.c_str()));
 
-  offsetInSeconds =
-      bdlt::LocalTimeOffset::localTimeOffset(bdlt::Datetime(2013, 7, 4))
-          .totalSeconds();
-  ASSERT(-4 * 3600 == offsetInSeconds);
-  ASSERT(2 == baltzo::LocalTimeOffsetUtil::updateCount());
-  baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
-  ASSERT(0 == strcmp("America/New_York", timezone.c_str()));
+    offsetInSeconds =
+        bdlt::LocalTimeOffset::localTimeOffset(bdlt::Datetime(2013, 7, 4))
+                                                               .totalSeconds();
+    ASSERT(-4 * 3600 == offsetInSeconds);
+    ASSERT(        2 == baltzo::LocalTimeOffsetUtil::updateCount());
+    baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
+    ASSERT(        0 == strcmp("America/New_York", timezone.c_str()));
 
-  offsetInSeconds =
-      bdlt::LocalTimeOffset::localTimeOffset(bdlt::Datetime(2013, 12, 21))
-          .totalSeconds();
-  ASSERT(-5 * 3600 == offsetInSeconds);
-  ASSERT(3 == baltzo::LocalTimeOffsetUtil::updateCount());
-  baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
-  ASSERT(0 == strcmp("America/New_York", timezone.c_str()));
-  //..
-  // Notice that the value returned by 'updateCount()' is unchanged by our first
-  // request, but incremented by the second and third request, which transitions
-  // into and then out of daylight saving time.  Also notice that the updates
-  // change the offset information but do not change the timezone.
-  //
-  // Finally, we restore the original local time callback.
-  //..
-  previousCallback =
-      bdlt::LocalTimeOffset::setLocalTimeOffsetCallback(previousCallback);
-  ASSERT(previousCallback == &baltzo::LocalTimeOffsetUtil::localTimeOffset);
-  //..
+    offsetInSeconds =
+        bdlt::LocalTimeOffset::localTimeOffset(bdlt::Datetime(2013, 12, 21))
+                                                               .totalSeconds();
+    ASSERT(-5 * 3600 == offsetInSeconds);
+    ASSERT(        3 == baltzo::LocalTimeOffsetUtil::updateCount());
+    baltzo::LocalTimeOffsetUtil::loadTimezone(&timezone);
+    ASSERT(        0 == strcmp("America/New_York", timezone.c_str()));
+//..
+// Notice that the value returned by 'updateCount()' is unchanged by our first
+// request, but incremented by the second and third request, which transitions
+// into and then out of daylight saving time.  Also notice that the updates
+// change the offset information but do not change the timezone.
+//
+// Finally, we restore the original local time callback.
+//..
+    previousCallback = bdlt::LocalTimeOffset::setLocalTimeOffsetCallback(
+                                                             previousCallback);
+    ASSERT(previousCallback == &baltzo::LocalTimeOffsetUtil::localTimeOffset);
+//..
 }
-} // namespace UsageExample1
+}  // close namespace UsageExample1
 
 // ============================================================================
 //                               MAIN PROGRAM
 // ----------------------------------------------------------------------------
 
-int main(int argc, char *argv[]) {
-  int test = argc > 1 ? atoi(argv[1]) : 0;
-  bool verbose = argc > 2;
-  bool veryVerbose = argc > 3;
-  bool veryVeryVerbose = argc > 4;
-  bool veryVeryVeryVerbose = argc > 5;
+int main(int argc, char *argv[])
+{
+    int                 test = argc > 1 ? atoi(argv[1]) : 0;
+    bool             verbose = argc > 2;
+    bool         veryVerbose = argc > 3;
+    bool     veryVeryVerbose = argc > 4;
+    bool veryVeryVeryVerbose = argc > 5;
 
-  g_verbose = verbose;
-  g_veryVerbose = veryVerbose;
-  g_veryVeryVerbose = veryVeryVerbose;
-  g_veryVeryVeryVerbose = veryVeryVeryVerbose;
+                g_verbose =             verbose;
+            g_veryVerbose =         veryVerbose;
+        g_veryVeryVerbose =     veryVeryVerbose;
+    g_veryVeryVeryVerbose = veryVeryVeryVerbose;
 
-  cout << "TEST " << __FILE__ << " CASE " << test << endl;
+    cout << "TEST " << __FILE__ << " CASE " << test << endl;
 
-  // CONCERN: 'BSLS_REVIEW' failures should lead to test failures.
-  bsls::ReviewFailureHandlerGuard reviewGuard(&bsls::Review::failByAbort);
+    // CONCERN: 'BSLS_REVIEW' failures should lead to test failures.
+    bsls::ReviewFailureHandlerGuard reviewGuard(&bsls::Review::failByAbort);
 
-  bslma::TestAllocator allocator("Test", veryVeryVeryVerbose);
-  bslma::TestAllocator defaultAllocator("Default", veryVeryVeryVerbose);
-  bslma::DefaultAllocatorGuard guard(&defaultAllocator);
-  bslma::TestAllocator *Z = &allocator;
+    bslma::TestAllocator allocator("Test", veryVeryVeryVerbose);
+    bslma::TestAllocator defaultAllocator("Default", veryVeryVeryVerbose);
+    bslma::DefaultAllocatorGuard guard(&defaultAllocator);
+    bslma::TestAllocator *Z = &allocator;
 
-  baltzo::TestLoader testLoader(Z);
-  baltzo::ZoneinfoCache testCache(&testLoader, Z);
-  ASSERT(0 == testLoader.setTimeZone("GMT",
-                                     reinterpret_cast<const char *>(GMT_DATA),
-                                     sizeof(GMT_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Etc/GMT", reinterpret_cast<const char *>(ETC_GMT_DATA),
-                  sizeof(ETC_GMT_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Etc/GMT+1", reinterpret_cast<const char *>(ETC_GMTP1_DATA),
-                  sizeof(ETC_GMTP1_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Etc/GMT+2", reinterpret_cast<const char *>(ETC_GMTP2_DATA),
-                  sizeof(ETC_GMTP2_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Etc/GMT-1", reinterpret_cast<const char *>(ETC_GMTM1_DATA),
-                  sizeof(ETC_GMTM1_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "America/New_York",
-                  reinterpret_cast<const char *>(AMERICA_NEW_YORK_DATA),
-                  sizeof(AMERICA_NEW_YORK_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Asia/Riyadh",
-                  reinterpret_cast<const char *>(ASIA_RIYADH_DATA),
-                  sizeof(ASIA_RIYADH_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Asia/Saigon",
-                  reinterpret_cast<const char *>(ASIA_SAIGON_DATA),
-                  sizeof(ASIA_SAIGON_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Europe/Rome",
-                  reinterpret_cast<const char *>(EUROPE_ROME_DATA),
-                  sizeof(EUROPE_ROME_DATA)));
-  ASSERT(0 == testLoader.setTimeZone(
-                  "Europe/Berlin",
-                  reinterpret_cast<const char *>(EUROPE_BERLIN_DATA),
-                  sizeof(EUROPE_BERLIN_DATA)));
+    baltzo::TestLoader     testLoader(Z);
+    baltzo::ZoneinfoCache  testCache(&testLoader, Z);
+    ASSERT(0 == testLoader.setTimeZone("GMT",
+                         reinterpret_cast<const char *>(GMT_DATA),
+                         sizeof(GMT_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Etc/GMT",
+                         reinterpret_cast<const char *>(ETC_GMT_DATA),
+                         sizeof(ETC_GMT_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Etc/GMT+1",
+                         reinterpret_cast<const char *>(ETC_GMTP1_DATA),
+                         sizeof(ETC_GMTP1_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Etc/GMT+2",
+                         reinterpret_cast<const char *>(ETC_GMTP2_DATA),
+                         sizeof(ETC_GMTP2_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Etc/GMT-1",
+                         reinterpret_cast<const char *>(ETC_GMTM1_DATA),
+                         sizeof(ETC_GMTM1_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("America/New_York",
+                         reinterpret_cast<const char *>(AMERICA_NEW_YORK_DATA),
+                         sizeof(AMERICA_NEW_YORK_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Asia/Riyadh",
+                         reinterpret_cast<const char *>(ASIA_RIYADH_DATA),
+                         sizeof(ASIA_RIYADH_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Asia/Saigon",
+                         reinterpret_cast<const char *>(ASIA_SAIGON_DATA),
+                         sizeof(ASIA_SAIGON_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Europe/Rome",
+                         reinterpret_cast<const char *>(EUROPE_ROME_DATA),
+                         sizeof(EUROPE_ROME_DATA)));
+    ASSERT(0 == testLoader.setTimeZone("Europe/Berlin",
+                         reinterpret_cast<const char *>(EUROPE_BERLIN_DATA),
+                         sizeof(EUROPE_BERLIN_DATA)));
 
-  baltzo::DefaultZoneinfoCache::setDefaultCache(&testCache);
+    baltzo::DefaultZoneinfoCache::setDefaultCache(&testCache);
 
-  switch (test) {
-  case 0:
-  case 7: {
-    // --------------------------------------------------------------------
-    // USAGE EXAMPLE
-    //   Extracted from component header file.
-    //
-    // Concerns:
-    //: 1 The usage example provided in the component header file compiles,
-    //:   links, and runs as shown.
-    //
-    // Plan:
-    //: 1 Incorporate usage example from header into test driver, remove
-    //:   leading comment characters, and replace 'assert' with 'ASSERT'.
-    //:   (C-1)
-    //
-    // Testing:
-    //   USAGE EXAMPLE
-    // --------------------------------------------------------------------
+    switch (test) { case 0:
+      case 7: {
+        // --------------------------------------------------------------------
+        // USAGE EXAMPLE
+        //   Extracted from component header file.
+        //
+        // Concerns:
+        //: 1 The usage example provided in the component header file compiles,
+        //:   links, and runs as shown.
+        //
+        // Plan:
+        //: 1 Incorporate usage example from header into test driver, remove
+        //:   leading comment characters, and replace 'assert' with 'ASSERT'.
+        //:   (C-1)
+        //
+        // Testing:
+        //   USAGE EXAMPLE
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << endl << "USAGE EXAMPLE" << endl << "=============" << endl;
+        if (verbose) cout << endl
+                          << "USAGE EXAMPLE" << endl
+                          << "=============" << endl;
 
-    UsageExample1::main1();
+        UsageExample1::main1();
 
-  } break;
-  case 6: {
-    // --------------------------------------------------------------------
-    // CALLBACK FUNCTION
-    //
-    // Concerns:
-    //: 1 The callback function loads the correct offset and returns 0 for
-    //:   arbitrary Zoneinfo timezones for arbitrary UTC datetimes.
-    //:
-    //: 2 For a given timezone, the callback function updates the cached
-    //:   local time offset information on transitions into and out of
-    //:   daylight saving time.
-    //:
-    //: 3 The value returned by the 'updateCall' method increases by one
-    //:   for each transition into and out of daylight saving time, and for
-    //:   no other invocations of the callback.
-    //
-    // Plan:
-    //: 1 Using the array-driven approach, compare the results of calling
-    //:   to those obtained from an independent source.  (C-1)
-    //:
-    //: 2 Using the array-driven approach, for a fixed timezone, invoke the
-    //:   call back method on both sides of the boundaries of daylight
-    //:   saving time for a year.  Confirm that the expected values are
-    //:   returned throughout, and that the static members are updated when
-    //:   times transition into and out of daylight saving time.  Also
-    //:   confirm the same behavior when the series of datetimes are used
-    //:   in reverse order.  (C-2..3)
-    //
-    // Testing:
-    //  void loadLocalTimeOffset(int *result, const bdlt::Datetime& utc);
-    //  bsls::TimeInterval loadLocalTimeOffset(const bdlt::Datetime& utc);
-    //  int updateCount();
-    // --------------------------------------------------------------------
+      } break;
+      case 6: {
+        // --------------------------------------------------------------------
+        // CALLBACK FUNCTION
+        //
+        // Concerns:
+        //: 1 The callback function loads the correct offset and returns 0 for
+        //:   arbitrary Zoneinfo timezones for arbitrary UTC datetimes.
+        //:
+        //: 2 For a given timezone, the callback function updates the cached
+        //:   local time offset information on transitions into and out of
+        //:   daylight saving time.
+        //:
+        //: 3 The value returned by the 'updateCall' method increases by one
+        //:   for each transition into and out of daylight saving time, and for
+        //:   no other invocations of the callback.
+        //
+        // Plan:
+        //: 1 Using the array-driven approach, compare the results of calling
+        //:   to those obtained from an independent source.  (C-1)
+        //:
+        //: 2 Using the array-driven approach, for a fixed timezone, invoke the
+        //:   call back method on both sides of the boundaries of daylight
+        //:   saving time for a year.  Confirm that the expected values are
+        //:   returned throughout, and that the static members are updated when
+        //:   times transition into and out of daylight saving time.  Also
+        //:   confirm the same behavior when the series of datetimes are used
+        //:   in reverse order.  (C-2..3)
+        //
+        // Testing:
+        //  void loadLocalTimeOffset(int *result, const bdlt::Datetime& utc);
+        //  bsls::TimeInterval loadLocalTimeOffset(const bdlt::Datetime& utc);
+        //  int updateCount();
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << endl
-           << "CALLBACK FUNCTION" << endl
-           << "=================" << endl;
+        if (verbose) cout << endl
+                          << "CALLBACK FUNCTION" << endl
+                          << "=================" << endl;
 
-    if (verbose)
-      cout << "\nCheck arbitrary timezones and UTCs" << endl;
-    {
-      for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
-        const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
+        if (verbose) cout << "\nCheck arbitrary timezones and UTCs" << endl;
+        {
+            for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
+                const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
 
-        if (veryVerbose) {
-          P(TIMEZONE)
-        }
+                if (veryVerbose) { P(TIMEZONE) }
 
-        for (int j = 0; j < DEFAULT_NUM_DT_ARRAY; ++j) {
-          const bdlt::Datetime &UTC = DEFAULT_DT_ARRAY[j];
-          int status;
+                for (int j = 0; j < DEFAULT_NUM_DT_ARRAY; ++j) {
+                    const bdlt::Datetime& UTC = DEFAULT_DT_ARRAY[j];
+                    int                  status;
 
-          if (veryVerbose) {
-            T_ P(UTC)
-          }
+                    if (veryVerbose) { T_ P(UTC) }
 
-          baltzo::LocalTimePeriod expected;
-          status = baltzo::TimeZoneUtil::loadLocalTimePeriodForUtc(
-              &expected, TIMEZONE, UTC);
-          ASSERT(0 == status);
+                    baltzo::LocalTimePeriod expected;
+                    status = baltzo::TimeZoneUtil::loadLocalTimePeriodForUtc(
+                                                                    &expected,
+                                                                    TIMEZONE,
+                                                                    UTC);
+                    ASSERT(0 == status);
 
-          status = Util::configure(TIMEZONE, UTC);
-          ASSERT(0 == status);
+                    status = Util::configure(TIMEZONE, UTC);
+                    ASSERT(0 == status);
 
-          bsls::Types::Int64 reportedOffset =
-              Util::localTimeOffset(UTC).totalSeconds();
-          ASSERT(expected.descriptor().utcOffsetInSeconds() == reportedOffset);
+                    bsls::Types::Int64 reportedOffset =
+                                     Util::localTimeOffset(UTC).totalSeconds();
+                    ASSERT(expected.descriptor().utcOffsetInSeconds()
+                        == reportedOffset);
 #ifndef BDE_OMIT_INTERNAL_DEPRECATED
-          int loadOffset;
-          Util::loadLocalTimeOffset(&loadOffset, UTC);
-          ASSERT(reportedOffset == loadOffset);
+                    int loadOffset;
+                    Util::loadLocalTimeOffset(&loadOffset, UTC);
+                    ASSERT(reportedOffset == loadOffset);
 #endif
-        }
-      }
-    }
-
-    if (verbose)
-      cout << "\nCheck daylight saving transitions" << endl;
-    {
-      bdlt::Datetime newYearsDay(2013, 1, 1, 0);
-      int status = Util::configure("America/New_York", newYearsDay);
-      ASSERT(0 == status);
-
-      bdlt::Datetime startOfDst(2013, 3, 10, 7);
-      bdlt::Datetime resumeOfStd(2013, 11, 3, 6);
-
-      bdlt::Datetime startOfDstMinus(startOfDst);
-      startOfDstMinus.addMilliseconds(-1);
-
-      bdlt::Datetime startOfDstPlus(startOfDst);
-      startOfDstPlus.addMilliseconds(1);
-
-      bdlt::Datetime resumeOfStdMinus(resumeOfStd);
-      resumeOfStdMinus.addMilliseconds(-1);
-
-      bdlt::Datetime resumeOfStdPlus(resumeOfStd);
-      resumeOfStdPlus.addMilliseconds(1);
-
-      baltzo::LocalTimePeriod priorLocalTimePeriod;
-      Util::loadLocalTimePeriod(&priorLocalTimePeriod);
-      int priorUpdateCount = Util::updateCount();
-      bsl::string priorTimezone;
-      Util::loadTimezone(&priorTimezone);
-
-      const struct {
-        int d_line;
-        bdlt::Datetime d_utcDatetime;
-        int d_expectedOffset;
-      } DATA[] = {
-
-          // LINE UTC_DATETIME      EXP. OFFSET
-          //---- ----------------  -----------
-          {L_, startOfDstMinus, -5 * 3600},  {L_, startOfDst, -4 * 3600},
-          {L_, startOfDstPlus, -4 * 3600},
-
-          {L_, resumeOfStdMinus, -4 * 3600}, {L_, resumeOfStd, -5 * 3600},
-          {L_, resumeOfStdPlus, -5 * 3600},
-      };
-      const int NUM_DATA = sizeof DATA / sizeof *DATA;
-
-      for (int ti = 0; ti < NUM_DATA; ++ti) {
-        const int LINE = DATA[ti].d_line;
-        const bdlt::Datetime &UTC_DATETIME = DATA[ti].d_utcDatetime;
-        const int EXP_OFFSET = DATA[ti].d_expectedOffset;
-
-        if (veryVeryVerbose) {
-          T_ P(ti)
-        }
-        if (veryVerbose) {
-          T_ P_(LINE) P_(UTC_DATETIME) P(EXP_OFFSET)
+                }
+            }
         }
 
-        bsls::Types::Int64 reportedOffset =
-            Util::localTimeOffset(UTC_DATETIME).totalSeconds();
-        ASSERT(EXP_OFFSET == reportedOffset);
-
+        if (verbose) cout << "\nCheck daylight saving transitions" << endl;
         {
-          bsl::string timezone;
-          Util::loadTimezone(&timezone);
-          LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
-        }
-        {
-          std::string timezone;
-          Util::loadTimezone(&timezone);
-          LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
-        }
+            bdlt::Datetime newYearsDay(2013,  1,  1, 0);
+            int status = Util::configure("America/New_York", newYearsDay);
+            ASSERT(0 == status);
+
+            bdlt::Datetime  startOfDst(2013,  3, 10, 7);
+            bdlt::Datetime resumeOfStd(2013, 11,  3, 6);
+
+            bdlt::Datetime startOfDstMinus(startOfDst);
+                          startOfDstMinus.addMilliseconds(-1);
+
+            bdlt::Datetime startOfDstPlus(startOfDst);
+                          startOfDstPlus.addMilliseconds(1);
+
+            bdlt::Datetime resumeOfStdMinus(resumeOfStd);
+                          resumeOfStdMinus.addMilliseconds(-1);
+
+            bdlt::Datetime resumeOfStdPlus(resumeOfStd);
+                          resumeOfStdPlus.addMilliseconds(1);
+
+            baltzo::LocalTimePeriod priorLocalTimePeriod;
+            Util::loadLocalTimePeriod(&priorLocalTimePeriod);
+            int                    priorUpdateCount     = Util::updateCount();
+            bsl::string            priorTimezone;
+            Util::loadTimezone(&priorTimezone);
+
+            const struct {
+                int           d_line;
+                bdlt::Datetime d_utcDatetime;
+                int           d_expectedOffset;
+            } DATA[] = {
+
+                //LINE UTC_DATETIME      EXP. OFFSET
+                //---- ----------------  -----------
+                { L_,  startOfDstMinus,    -5 * 3600 },
+                { L_,  startOfDst,         -4 * 3600 },
+                { L_,  startOfDstPlus,     -4 * 3600 },
+
+                { L_,  resumeOfStdMinus,   -4 * 3600 },
+                { L_,  resumeOfStd,        -5 * 3600 },
+                { L_,  resumeOfStdPlus,    -5 * 3600 },
+            };
+            const int NUM_DATA = sizeof DATA / sizeof *DATA;
+
+            for (int ti = 0; ti < NUM_DATA; ++ti) {
+                const int             LINE         = DATA[ti].d_line;
+                const bdlt::Datetime& UTC_DATETIME = DATA[ti].d_utcDatetime;
+                const int             EXP_OFFSET   = DATA[ti].d_expectedOffset;
+
+                if (veryVeryVerbose) { T_ P(ti) }
+                if (veryVerbose) { T_ P_(LINE) P_(UTC_DATETIME) P(EXP_OFFSET) }
+
+                bsls::Types::Int64 reportedOffset =
+                            Util::localTimeOffset(UTC_DATETIME).totalSeconds();
+                ASSERT(EXP_OFFSET == reportedOffset);
+
+                {
+                    bsl::string timezone; Util::loadTimezone(&timezone);
+                    LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
+                }
+                {
+                    std::string timezone; Util::loadTimezone(&timezone);
+                    LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
+                }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        {
-          std::experimental::pmr::string timezone;
-          Util::loadTimezone(&timezone);
-          LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
-        }
+                {
+                    std::pmr::string timezone; Util::loadTimezone(&timezone);
+                    LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
+                }
 #endif
 
-        if (ti > 0 && DATA[ti - 1].d_expectedOffset != EXP_OFFSET) {
-          baltzo::LocalTimePeriod localTimePeriod;
-          Util::loadLocalTimePeriod(&localTimePeriod);
-          LOOP_ASSERT(LINE, priorLocalTimePeriod != localTimePeriod);
-          LOOP_ASSERT(LINE, priorUpdateCount + 1 == Util::updateCount());
+                if (ti > 0 && DATA[ti - 1].d_expectedOffset != EXP_OFFSET) {
+                    baltzo::LocalTimePeriod localTimePeriod;
+                    Util::loadLocalTimePeriod(&localTimePeriod);
+                    LOOP_ASSERT(LINE, priorLocalTimePeriod != localTimePeriod);
+                    LOOP_ASSERT(LINE, priorUpdateCount + 1 ==
+                                                          Util::updateCount());
 
-        } else {
-          baltzo::LocalTimePeriod localTimePeriod;
-          Util::loadLocalTimePeriod(&localTimePeriod);
-          LOOP_ASSERT(LINE, priorLocalTimePeriod == localTimePeriod);
-          LOOP_ASSERT(LINE, priorUpdateCount == Util::updateCount());
-        }
+                } else {
+                    baltzo::LocalTimePeriod localTimePeriod;
+                    Util::loadLocalTimePeriod(&localTimePeriod);
+                    LOOP_ASSERT(LINE, priorLocalTimePeriod == localTimePeriod);
+                    LOOP_ASSERT(LINE, priorUpdateCount     ==
+                                                          Util::updateCount());
+                }
 
-        priorUpdateCount = Util::updateCount();
-        Util::loadTimezone(&priorTimezone);
-        Util::loadLocalTimePeriod(&priorLocalTimePeriod);
-      }
+                priorUpdateCount = Util::updateCount();
+                Util::loadTimezone(&priorTimezone);
+                Util::loadLocalTimePeriod(&priorLocalTimePeriod);
+            }
 
-      ASSERT(0 <= NUM_DATA - 1);
+            ASSERT(0 <= NUM_DATA - 1);
 
-      for (int ti = NUM_DATA - 1; 0 <= ti; --ti) {
-        const int LINE = DATA[ti].d_line;
-        const bdlt::Datetime &UTC_DATETIME = DATA[ti].d_utcDatetime;
-        const int EXP_OFFSET = DATA[ti].d_expectedOffset;
+            for (int ti = NUM_DATA - 1; 0 <= ti; --ti) {
+                const int             LINE         = DATA[ti].d_line;
+                const bdlt::Datetime& UTC_DATETIME = DATA[ti].d_utcDatetime;
+                const int             EXP_OFFSET   = DATA[ti].d_expectedOffset;
 
-        if (veryVeryVerbose) {
-          T_ P(ti)
-        }
-        if (veryVerbose) {
-          T_ P_(LINE) P_(UTC_DATETIME) P(EXP_OFFSET)
-        }
+                if (veryVeryVerbose) { T_ P(ti) }
+                if (veryVerbose) { T_ P_(LINE) P_(UTC_DATETIME) P(EXP_OFFSET) }
 
-        bsls::Types::Int64 reportedOffset =
-            Util::localTimeOffset(UTC_DATETIME).totalSeconds();
-        ASSERT(EXP_OFFSET == reportedOffset);
+                bsls::Types::Int64 reportedOffset =
+                            Util::localTimeOffset(UTC_DATETIME).totalSeconds();
+                ASSERT(EXP_OFFSET == reportedOffset);
 
-        {
-          bsl::string timezone;
-          Util::loadTimezone(&timezone);
-          LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
-        }
-        {
-          std::string timezone;
-          Util::loadTimezone(&timezone);
-          LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
-        }
+                {
+                    bsl::string timezone; Util::loadTimezone(&timezone);
+                    LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
+                }
+                {
+                    std::string timezone; Util::loadTimezone(&timezone);
+                    LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
+                }
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-        {
-          std::experimental::pmr::string timezone;
-          Util::loadTimezone(&timezone);
-          LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
-        }
+                {
+                    std::pmr::string timezone; Util::loadTimezone(&timezone);
+                    LOOP_ASSERT(LINE, priorTimezone == timezone); // invariant
+                }
 #endif
 
-        if (ti < NUM_DATA - 1 && DATA[ti + 1].d_expectedOffset != EXP_OFFSET) {
-          baltzo::LocalTimePeriod localTimePeriod;
-          Util::loadLocalTimePeriod(&localTimePeriod);
-          LOOP_ASSERT(LINE, priorLocalTimePeriod != localTimePeriod);
-          LOOP_ASSERT(LINE, priorUpdateCount + 1 == Util::updateCount());
+                if (ti < NUM_DATA - 1
+                 && DATA[ti + 1].d_expectedOffset != EXP_OFFSET) {
+                    baltzo::LocalTimePeriod localTimePeriod;
+                    Util::loadLocalTimePeriod(&localTimePeriod);
+                    LOOP_ASSERT(LINE, priorLocalTimePeriod != localTimePeriod);
+                    LOOP_ASSERT(LINE, priorUpdateCount + 1 ==
+                                                          Util::updateCount());
 
-        } else {
-          baltzo::LocalTimePeriod localTimePeriod;
-          Util::loadLocalTimePeriod(&localTimePeriod);
-          LOOP_ASSERT(LINE, priorLocalTimePeriod == localTimePeriod);
-          LOOP_ASSERT(LINE, priorUpdateCount == Util::updateCount());
+                } else {
+                    baltzo::LocalTimePeriod localTimePeriod;
+                    Util::loadLocalTimePeriod(&localTimePeriod);
+                    LOOP_ASSERT(LINE, priorLocalTimePeriod == localTimePeriod);
+                    LOOP_ASSERT(LINE, priorUpdateCount     ==
+                                                          Util::updateCount());
+                }
+
+                priorUpdateCount = Util::updateCount();
+                Util::loadTimezone(&priorTimezone);
+                Util::loadLocalTimePeriod(&priorLocalTimePeriod);
+            }
+        }
+      } break;
+      case 5: {
+        // --------------------------------------------------------------------
+        // STATIC INITIALIZATION
+        //
+        // Concerns:
+        //: 1 The 'updateCount' method returns 0 before configuration.
+        //:
+        //: 2 The static members of 'baltzo::LocalTimeOffsetUtil' that take
+        //:   allocators use the default global allocator.
+        //:
+        // Plan:
+        //: 1 Before any other use of 'baltzo::LocalTimeOffsetUtil', check the
+        //:   value returned by the 'updateCount' method.
+        //:
+        //: 2 Install the test allocators as the default and global allocators.
+        //:   Since the memory for the static members will be deleted after the
+        //:   return of 'main', we use a statically initialized allocator for
+        //:   the global allocator which will outlive the static members.
+        //:
+        //: 3 Using 'baltzo::TestLoader' and several helper functions, define a
+        //:   time zone with a description and a timezone name sufficiently
+        //:   long as to require memory allocation from 'bsl::string' (which
+        //:   has a short string optimization).  Construct a
+        //:   'baltzo::ZoneinfoCache' using the configured test loader and
+        //:   install that cache as the default timezone cache.
+        //:
+        //: 4 Configure our mechanism to use the custom-made timezone.  Check
+        //:   the block count of each allocator before and after configuration
+        //:   and compare to the expected values.
+        //
+        // Testing:
+        //  CONCERN: This component uses the global allocator.
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "STATIC INITIALIZATION" << endl
+                          << "=====================" << endl;
+
+        if (verbose) cout << "\nCheck Initial Values" << endl;
+        {
+            ASSERT(0 == Util::updateCount());
         }
 
-        priorUpdateCount = Util::updateCount();
-        Util::loadTimezone(&priorTimezone);
-        Util::loadLocalTimePeriod(&priorLocalTimePeriod);
-      }
-    }
-  } break;
-  case 5: {
-    // --------------------------------------------------------------------
-    // STATIC INITIALIZATION
-    //
-    // Concerns:
-    //: 1 The 'updateCount' method returns 0 before configuration.
-    //:
-    //: 2 The static members of 'baltzo::LocalTimeOffsetUtil' that take
-    //:   allocators use the default global allocator.
-    //:
-    // Plan:
-    //: 1 Before any other use of 'baltzo::LocalTimeOffsetUtil', check the
-    //:   value returned by the 'updateCount' method.
-    //:
-    //: 2 Install the test allocators as the default and global allocators.
-    //:   Since the memory for the static members will be deleted after the
-    //:   return of 'main', we use a statically initialized allocator for
-    //:   the global allocator which will outlive the static members.
-    //:
-    //: 3 Using 'baltzo::TestLoader' and several helper functions, define a
-    //:   time zone with a description and a timezone name sufficiently
-    //:   long as to require memory allocation from 'bsl::string' (which
-    //:   has a short string optimization).  Construct a
-    //:   'baltzo::ZoneinfoCache' using the configured test loader and
-    //:   install that cache as the default timezone cache.
-    //:
-    //: 4 Configure our mechanism to use the custom-made timezone.  Check
-    //:   the block count of each allocator before and after configuration
-    //:   and compare to the expected values.
-    //
-    // Testing:
-    //  CONCERN: This component uses the global allocator.
-    // --------------------------------------------------------------------
+        if (verbose) cout << "\nCheck For Global Allocators" << endl;
+        {
+            const char LONG_DESCRIPTION[] = "Description: "
+                                                      SUFFICIENTLY_LONG_STRING;
+            const char LONG_TIMEZONE[]    = "Timezone: "
+                                                      SUFFICIENTLY_LONG_STRING;
 
-    if (verbose)
-      cout << endl
-           << "STATIC INITIALIZATION" << endl
-           << "=====================" << endl;
+            const TransitionDescription TZ_DATA[] = {
+              { L_, "0001-01-01T00:00:00.000",     0, "A",              false},
+              { L_, "2013-01-01T12:00:00.000",  1439, LONG_DESCRIPTION, false},
+              { L_, "9999-12-31T23:59:59.000",     0, "B",              false}
+             };
+            const int NUM_TZ_DATA = sizeof TZ_DATA / sizeof *TZ_DATA;
 
-    if (verbose)
-      cout << "\nCheck Initial Values" << endl;
-    { ASSERT(0 == Util::updateCount()); }
+            baltzo::Zoneinfo testZoneInfo;
+            addTransitions(&testZoneInfo, TZ_DATA, NUM_TZ_DATA);
+            testZoneInfo.setIdentifier(LONG_TIMEZONE);
+            ASSERT(baltzo::ZoneinfoUtil::isWellFormed(testZoneInfo));
 
-    if (verbose)
-      cout << "\nCheck For Global Allocators" << endl;
-    {
-      const char LONG_DESCRIPTION[] = "Description: " SUFFICIENTLY_LONG_STRING;
-      const char LONG_TIMEZONE[] = "Timezone: " SUFFICIENTLY_LONG_STRING;
+            baltzo::TestLoader testLoader;
+            testLoader.setTimeZone(testZoneInfo);
 
-      const TransitionDescription TZ_DATA[] = {
-          {L_, "0001-01-01T00:00:00.000", 0, "A", false},
-          {L_, "2013-01-01T12:00:00.000", 1439, LONG_DESCRIPTION, false},
-          {L_, "9999-12-31T23:59:59.000", 0, "B", false}};
-      const int NUM_TZ_DATA = sizeof TZ_DATA / sizeof *TZ_DATA;
+            baltzo::ZoneinfoCache testCache(&testLoader);
+            baltzo::DefaultZoneinfoCache::setDefaultCache(&testCache);
 
-      baltzo::Zoneinfo testZoneInfo;
-      addTransitions(&testZoneInfo, TZ_DATA, NUM_TZ_DATA);
-      testZoneInfo.setIdentifier(LONG_TIMEZONE);
-      ASSERT(baltzo::ZoneinfoUtil::isWellFormed(testZoneInfo));
+            static bslma::TestAllocator staticGlobalAllocator(
+                                                          "global",
+                                                          veryVeryVeryVerbose);
 
-      baltzo::TestLoader testLoader;
-      testLoader.setTimeZone(testZoneInfo);
+            bslma::Default::setGlobalAllocator(&staticGlobalAllocator);
 
-      baltzo::ZoneinfoCache testCache(&testLoader);
-      baltzo::DefaultZoneinfoCache::setDefaultCache(&testCache);
+            bslma::TestAllocator         da("default", veryVeryVeryVerbose);
+            bslma::DefaultAllocatorGuard dag(&da);
 
-      static bslma::TestAllocator staticGlobalAllocator("global",
-                                                        veryVeryVeryVerbose);
+            ASSERT(0 == staticGlobalAllocator.numBlocksInUse());
+            ASSERT(0 == da.numBlocksInUse());
 
-      bslma::Default::setGlobalAllocator(&staticGlobalAllocator);
+            int status = Util::configure(LONG_TIMEZONE,
+                                         bdlt::Datetime(2013, 1, 1, 12));
+            (void)status;
 
-      bslma::TestAllocator da("default", veryVeryVeryVerbose);
-      bslma::DefaultAllocatorGuard dag(&da);
-
-      ASSERT(0 == staticGlobalAllocator.numBlocksInUse());
-      ASSERT(0 == da.numBlocksInUse());
-
-      int status =
-          Util::configure(LONG_TIMEZONE, bdlt::Datetime(2013, 1, 1, 12));
-      (void)status;
-
-      ASSERT(2 == staticGlobalAllocator.numBlocksInUse());
-      ASSERT(0 == da.numBlocksInUse());
-    }
-
-  } break;
-  case 4: {
-    // --------------------------------------------------------------------
-    // SETTING THE LOCAL TIME OFFSET CALLBACK
-    //
-    // Concerns:
-    //: 1 The 'setLoadLocalTimeOffsetCallback' method sets the
-    //:   'localTimeOffset' method as the current local time offset
-    //:   callback used by 'bdlt::CurrentTime'.
-    //:
-    //: 2 The 'setLoadLocalTimeOffsetCallback' method returns the installed
-    //:   previously callback.
-    //
-    // Plan:
-    //: 1 Use the 'bdlt::CurrentTime::currentLocalTimeOffsetCallback'
-    //:   method to check the current local time offset callback before and
-    //:   after calls to 'setLoadLocalTimeOffsetCallback'.  (C-1)
-    //:
-    //: 2 Compare the value returned by the initial call to the
-    //:   'bdlt::CurrentTime::currentLocalTimeOffsetCallback' method with
-    //:   that returned by the 'setLoadLocalTimeOffsetCallback' method.
-    //:   (C-2)
-    //
-    // Testing:
-    //   bdlt::CurrentTime::LLTOC setLoadLocalTimeOffsetCallback();
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "SETTING THE LOCAL TIME OFFSET CALLBACK" << endl
-           << "======================================" << endl;
-
-    const bdlt::LocalTimeOffset::LocalTimeOffsetCallback initialCallback =
-        bdlt::LocalTimeOffset::localTimeOffsetCallback();
-    ASSERT(&Util::localTimeOffset != initialCallback);
-
-    const bdlt::LocalTimeOffset::LocalTimeOffsetCallback previousCallback =
-        Util::setLoadLocalTimeOffsetCallback();
-    ASSERT(initialCallback == previousCallback);
-    ASSERT(&Util::localTimeOffset ==
-           bdlt::LocalTimeOffset::localTimeOffsetCallback());
-
-  } break;
-  case 3: {
-    // --------------------------------------------------------------------
-    // OTHER MANIPULATORS
-    //
-    // Concerns:
-    //: 1 The other (non-primary) manipulators apply their expected default
-    //:   values.
-    //:
-    //: 2 The manipulators return a non-zero value when an invalid timezone
-    //:   is specified, and (QoI) there is no change in the static members.
-    //:
-    //: 3 The value returned by the 'updateCall' method increases by one
-    //:   for each successful call of a 'configure' method, and remains the
-    //:   same after unsuccessful calls.
-    //:
-    //: 4 The value returned by the 'updateCall' method increases by one
-    //:   for each successful call of a 'configure' method, and remains the
-    //:   same after unsuccessful calls.
-    //
-    // Plan:
-    //: 1 Invoke the non-primary manipulators and compare the results with
-    //:   obtained from the primary manipulator using the expected default
-    //:   values.  (C-1)
-    //:
-    //:   o One default value is the current UTC time which, of course,
-    //:     changes between the invocation of the two manipulators;
-    //:     however, this is only a problem in the unlikely event that the
-    //:     local time zone information changes in that short interval.
-    //:
-    //: 2 Save the values of the static members and call each 'configure'
-    //:   method with an unknown timezone.  After each 'configure' call,
-    //:   check the return value, and compare the current values of the
-    //:   static members to the saved values.  (C-2..4)
-    //
-    // Testing:
-    //   int configure();
-    //   int configure(const char *timezone);
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "OTHER MANIPULATORS" << endl
-           << "==================" << endl;
-
-    int updateCount = Util::updateCount();
-    int priorUpdateCount = Util::updateCount();
-    ASSERT(0 == updateCount);
-    ASSERT(0 == priorUpdateCount);
-
-    if (verbose)
-      cout << "\nTesting 'configure(const char *timezone)'" << endl;
-    {
-      for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
-        const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
-
-        if (veryVerbose) {
-          P(TIMEZONE)
+            ASSERT(2 == staticGlobalAllocator.numBlocksInUse());
+            ASSERT(0 == da.numBlocksInUse());
         }
 
-        int status = Util::configure(TIMEZONE);
-        ASSERT(0 == status);
-        bsl::string timezone;
-        Util::loadTimezone(&timezone);
-        ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
+      } break;
+      case 4: {
+        // --------------------------------------------------------------------
+        // SETTING THE LOCAL TIME OFFSET CALLBACK
+        //
+        // Concerns:
+        //: 1 The 'setLoadLocalTimeOffsetCallback' method sets the
+        //:   'localTimeOffset' method as the current local time offset
+        //:   callback used by 'bdlt::CurrentTime'.
+        //:
+        //: 2 The 'setLoadLocalTimeOffsetCallback' method returns the installed
+        //:   previously callback.
+        //
+        // Plan:
+        //: 1 Use the 'bdlt::CurrentTime::currentLocalTimeOffsetCallback'
+        //:   method to check the current local time offset callback before and
+        //:   after calls to 'setLoadLocalTimeOffsetCallback'.  (C-1)
+        //:
+        //: 2 Compare the value returned by the initial call to the
+        //:   'bdlt::CurrentTime::currentLocalTimeOffsetCallback' method with
+        //:   that returned by the 'setLoadLocalTimeOffsetCallback' method.
+        //:   (C-2)
+        //
+        // Testing:
+        //   bdlt::CurrentTime::LLTOC setLoadLocalTimeOffsetCallback();
+        // --------------------------------------------------------------------
 
-        updateCount = Util::updateCount();
-        ASSERT(priorUpdateCount + 1 == updateCount);
-        priorUpdateCount = updateCount;
+        if (verbose) cout << endl
+                          << "SETTING THE LOCAL TIME OFFSET CALLBACK" << endl
+                          << "======================================" << endl;
 
-        // Race: utcDatetime is changing.
+        const bdlt::LocalTimeOffset::LocalTimeOffsetCallback initialCallback =
+                              bdlt::LocalTimeOffset::localTimeOffsetCallback();
+        ASSERT(&Util::localTimeOffset != initialCallback);
 
-        baltzo::LocalTimePeriod observedLocalTimePeriod;
-        Util::loadLocalTimePeriod(&observedLocalTimePeriod);
 
-        bdlt::Datetime now = bdlt::CurrentTime::utc();
-        status = Util::configure(TIMEZONE, now);
-        ASSERT(0 == status);
+        const bdlt::LocalTimeOffset::LocalTimeOffsetCallback previousCallback =
+                                        Util::setLoadLocalTimeOffsetCallback();
+        ASSERT(initialCallback == previousCallback);
+        ASSERT(&Util::localTimeOffset
+            == bdlt::LocalTimeOffset::localTimeOffsetCallback());
+
+      } break;
+      case 3: {
+        // --------------------------------------------------------------------
+        // OTHER MANIPULATORS
+        //
+        // Concerns:
+        //: 1 The other (non-primary) manipulators apply their expected default
+        //:   values.
+        //:
+        //: 2 The manipulators return a non-zero value when an invalid timezone
+        //:   is specified, and (QoI) there is no change in the static members.
+        //:
+        //: 3 The value returned by the 'updateCall' method increases by one
+        //:   for each successful call of a 'configure' method, and remains the
+        //:   same after unsuccessful calls.
+        //:
+        //: 4 The value returned by the 'updateCall' method increases by one
+        //:   for each successful call of a 'configure' method, and remains the
+        //:   same after unsuccessful calls.
+        //
+        // Plan:
+        //: 1 Invoke the non-primary manipulators and compare the results with
+        //:   obtained from the primary manipulator using the expected default
+        //:   values.  (C-1)
+        //:
+        //:   o One default value is the current UTC time which, of course,
+        //:     changes between the invocation of the two manipulators;
+        //:     however, this is only a problem in the unlikely event that the
+        //:     local time zone information changes in that short interval.
+        //:
+        //: 2 Save the values of the static members and call each 'configure'
+        //:   method with an unknown timezone.  After each 'configure' call,
+        //:   check the return value, and compare the current values of the
+        //:   static members to the saved values.  (C-2..4)
+        //
+        // Testing:
+        //   int configure();
+        //   int configure(const char *timezone);
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "OTHER MANIPULATORS" << endl
+                          << "==================" << endl;
+
+        int      updateCount = Util::updateCount();
+        int priorUpdateCount = Util::updateCount();
+        ASSERT(0 ==      updateCount);
+        ASSERT(0 == priorUpdateCount);
+
+        if (verbose) cout << "\nTesting 'configure(const char *timezone)'"
+                          << endl;
+        {
+            for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
+                const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
+
+                if (veryVerbose) { P(TIMEZONE) }
+
+                int status = Util::configure(TIMEZONE);
+                ASSERT(0 == status);
+                bsl::string timezone; Util::loadTimezone(&timezone);
+                ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
+
+                updateCount = Util::updateCount();
+                ASSERT(priorUpdateCount + 1 == updateCount);
+                priorUpdateCount = updateCount;
+
+                // Race: utcDatetime is changing.
+
+                baltzo::LocalTimePeriod observedLocalTimePeriod;
+                Util::loadLocalTimePeriod(&observedLocalTimePeriod);
+
+                bdlt::Datetime now = bdlt::CurrentTime::utc();
+                status = Util::configure(TIMEZONE, now);
+                ASSERT(0 == status);
+                baltzo::LocalTimePeriod localTimePeriod;
+                Util::loadLocalTimePeriod(&localTimePeriod);
+                ASSERT(localTimePeriod == observedLocalTimePeriod);
+
+                updateCount = Util::updateCount();
+                ASSERT(priorUpdateCount + 1 == updateCount);
+                priorUpdateCount = updateCount;
+            }
+        }
+
+        if (verbose) cout << "\nTesting 'configure()' for valid timezones"
+                          << endl;
+        {
+            static char tzEquals[] = "TZ=";
+
+            for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
+                const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
+
+                if (veryVerbose) { P(TIMEZONE) }
+
+                char buffer[80];
+                ASSERT(sizeof(buffer) >
+                                  sizeof(tzEquals) -1 + strlen(TIMEZONE) + 1);
+                snprintf(buffer, sizeof(buffer), "%s%s", tzEquals, TIMEZONE);
+
+                if (veryVeryVerbose) { T_ P(buffer) }
+
+                int status = putenv(buffer);
+                ASSERT(0 == status);
+                ASSERT(0 == strcmp(TIMEZONE, getenv("TZ")));
+
+                status = Util::configure();
+
+                ASSERT(0 == status);
+                bsl::string timezone; Util::loadTimezone(&timezone);
+                ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
+
+                updateCount = Util::updateCount();
+                ASSERT(priorUpdateCount + 1 == updateCount);
+                priorUpdateCount = updateCount;
+
+                // Race: The UTC datetime  is changing.
+
+                baltzo::LocalTimePeriod observedLocalTimePeriod;
+                Util::loadLocalTimePeriod(&observedLocalTimePeriod);
+
+                bdlt::Datetime now = bdlt::CurrentTime::utc();
+                status = Util::configure(TIMEZONE, now);
+                ASSERT(0 == status);
+                baltzo::LocalTimePeriod localTimePeriod;
+                Util::loadLocalTimePeriod(&localTimePeriod);
+                ASSERT(localTimePeriod == observedLocalTimePeriod);
+
+                updateCount = Util::updateCount();
+                ASSERT(priorUpdateCount + 1 == updateCount);
+                priorUpdateCount = updateCount;
+            }
+        }
+
+        if (verbose) cout << "\nTesting Manipulators with invalid timezone"
+                          << endl;
+        {
+            int         status;
+            const char *invalidTimezone =    "FOO";
+            char buffer[]               = "TZ=FOO";
+
+            bsl::string timezone0;
+            Util::loadTimezone(&timezone0);
+            baltzo::LocalTimePeriod localTimePeriod0;
+            Util::loadLocalTimePeriod(&localTimePeriod0);
+
+            if (veryVeryVerbose) { T_ P(invalidTimezone) }
+
+            {
+                LogVerbosityGuard guard;
+                status = Util::configure(invalidTimezone);
+            }
+
+            ASSERT(0                != status);
+            bsl::string timezone; Util::loadTimezone(&timezone);
+            ASSERT(timezone0        == timezone);
+            baltzo::LocalTimePeriod localTimePeriod;
+            Util::loadLocalTimePeriod(&localTimePeriod);
+            ASSERT(localTimePeriod0 == localTimePeriod);
+
+            updateCount = Util::updateCount();
+            ASSERT(priorUpdateCount == updateCount);
+
+            if (veryVeryVerbose) { T_ P(buffer) }
+
+            status = putenv(buffer);
+            ASSERT(0 == status);
+            ASSERT(0 == strcmp(invalidTimezone, getenv("TZ")));
+
+            {
+                LogVerbosityGuard guard;
+                status = Util::configure();
+            }
+
+            ASSERT(0                != status);
+            Util::loadTimezone(&timezone);
+            Util::loadLocalTimePeriod(&localTimePeriod);
+            ASSERT(localTimePeriod0 == localTimePeriod);
+
+            updateCount = Util::updateCount();
+            ASSERT(priorUpdateCount == updateCount);
+        }
+
+      } break;
+      case 2: {
+        // --------------------------------------------------------------------
+        // PRIMARY MANIPULATOR and BASIC ACCESSORS
+        //
+        // Concerns:
+        //: 1 The primary manipulator can set the cached local time offset
+        //:   information for any entry in the Zoneinfo database for arbitrary
+        //:   UTC datetime.
+        //:
+        //: 2 The basic accessors report the currently cached local time offset
+        //:   information.
+        //:
+        //: 3 The primary manipulator returns a non-zero value when an invalid
+        //:   timezone is specified, and (QoI) there is no change in the static
+        //:   members.
+        //:
+        //: 4 QoI: Asserted precondition violations are detected when enabled.
+        //
+        // Plan:
+        //: 1 Using the array-driven approach, generate test cases for several
+        //:   entries representing several categories of Zoneinfo entries
+        //:   (i.e., timezone before and after "Etc/GMT" and "Etc/GMT" itself)
+        //:   and for several categories of UTC datetimes (i.e., before,
+        //:   during, and after daylight saving time, if defined in a
+        //:   timezone).  For each entry confirm that 'configure' returns
+        //:   successfully, and use the accessors to confirm that the cached
+        //:   information matches the expected results.  The expected results
+        //:   for the local time period is obtained using the
+        //:   'baltzo::TimeZoneUtil::loadLocalTimePeriodForUtc' method.
+        //:   (C-1..2)
+        //:
+        //: 2 Save the values of the static members, call 'configure' with an
+        //:   unknown timezone, check the return value, and compare the current
+        //:   values of the static members to the saved values.
+        //:
+        //: 3 Verify that, in appropriate build modes, defensive checks are
+        //:   triggered for invalid attribute values, but not triggered for
+        //:   adjacent valid ones (using the 'BSLS_ASSERTTEST_*' macros).
+        //:   (C-4)
+        //
+        // Testing:
+        //   int configure(const char *timezone, const bdlt::Datetime& utc);
+        //   void loadLocalTimePeriod(LocalTimePeriod *localTimePeriod);
+        //   bsl::string loadTimezone(bsl::string      *timezone);
+        //   bsl::string loadTimezone(std::string      *timezone);
+        //   bsl::string loadTimezone(std::pmr::string *timezone);
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "PRIMARY MANIPULATOR and BASIC ACCESSORS" << endl
+                          << "=======================================" << endl;
+
+        int      updateCount = Util::updateCount();
+        int priorUpdateCount = Util::updateCount();
+        ASSERT(0 ==      updateCount);
+        ASSERT(0 == priorUpdateCount);
+
+        if (verbose) cout << "\nCheck valid timezones" << endl;
+        {
+            for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
+                const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
+
+                if (veryVerbose) { P(TIMEZONE) }
+
+                for (int j = 0; j < DEFAULT_NUM_DT_ARRAY; ++j) {
+                    const bdlt::Datetime& UTC = DEFAULT_DT_ARRAY[j];
+
+                    if (veryVerbose) { T_ P(UTC) }
+
+                    int status = Util::configure(TIMEZONE, UTC);
+                    ASSERT(0 == status);
+
+                    {
+                        bsl::string timezone;
+                        Util::loadTimezone(&timezone);
+                        ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
+                    }
+                    {
+                        std::string timezone;
+                        Util::loadTimezone(&timezone);
+                        ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
+                    }
+#ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
+                    {
+                        std::pmr::string timezone;
+                        Util::loadTimezone(&timezone);
+                        ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
+                    }
+#endif
+
+                    updateCount = Util::updateCount();
+                    ASSERT(priorUpdateCount + 1 == updateCount);
+                    priorUpdateCount = updateCount;
+
+                    baltzo::LocalTimePeriod expectedLocalTimePeriod;
+
+                    status = baltzo::TimeZoneUtil::loadLocalTimePeriodForUtc(
+                                                      &expectedLocalTimePeriod,
+                                                      TIMEZONE,
+                                                      UTC);
+                    ASSERT(0 == status);
+
+                    baltzo::LocalTimePeriod localTimePeriod;
+                    Util::loadLocalTimePeriod(&localTimePeriod);
+
+                    ASSERT(expectedLocalTimePeriod == localTimePeriod);
+                }
+            }
+        }
+
+        if (verbose) cout << "\nCheck invalid timezone" << endl;
+        {
+            bsl::string timezone0; Util::loadTimezone(&timezone0);
+            baltzo::LocalTimePeriod localTimePeriod0;
+            Util::loadLocalTimePeriod(&localTimePeriod0);
+
+            int status;
+
+            {
+                LogVerbosityGuard guard;
+                status = Util::configure("hello, world", bdlt::Datetime(2013,
+                                                                          2,
+                                                                         28));
+            }
+            bsl::string timezone; Util::loadTimezone(&timezone);
+            ASSERT(0                != status);
+            ASSERT(timezone0        == timezone);
+            baltzo::LocalTimePeriod localTimePeriod;
+            Util::loadLocalTimePeriod(&localTimePeriod);
+            ASSERT(localTimePeriod0 == localTimePeriod);
+
+            updateCount = Util::updateCount();
+            ASSERT(priorUpdateCount == updateCount);
+        }
+
+        if (verbose) cout << "\nNegative Testing." << endl;
+        {
+            bsls::AssertTestHandlerGuard hG;
+
+            if (veryVerbose) cout << "\t'loadLocalTimePeriod'" << endl;
+            {
+                baltzo::LocalTimePeriod ltp;
+                ASSERT_PASS(Util::loadLocalTimePeriod(&ltp));
+                ASSERT_FAIL(Util::loadLocalTimePeriod(0));
+            }
+
+            if (veryVerbose) cout << "\t'loadTimezone'" << endl;
+            {
+                bsl::string s, *pz = 0;
+                ASSERT_PASS(Util::loadTimezone(&s));
+                ASSERT_FAIL(Util::loadTimezone(pz));
+            }
+            {
+                std::string s, *pz = 0;
+                ASSERT_PASS(Util::loadTimezone(&s));
+                ASSERT_FAIL(Util::loadTimezone(pz));
+            }
+#ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
+            {
+                std::pmr::string s, *pz = 0;
+                ASSERT_PASS(Util::loadTimezone(&s));
+                ASSERT_FAIL(Util::loadTimezone(pz));
+            }
+#endif
+        }
+      } break;
+      case 1: {
+        // --------------------------------------------------------------------
+        // BREATHING TEST
+        //   This case exercises (but does not fully test) basic functionality.
+        //
+        // Concerns:
+        //: 1 The class is sufficiently functional to enable comprehensive
+        //:   testing in subsequent test cases.
+        //
+        // Plan:
+        //: 1 Set the time zone to "America/New_York" for several dates in
+        //:   succession, and examine the local time period information at each
+        //:   stage.
+        //
+        // Testing:
+        //   BREATHING TEST
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "BREATHING TEST" << endl
+                          << "==============" << endl;
+
         baltzo::LocalTimePeriod localTimePeriod;
-        Util::loadLocalTimePeriod(&localTimePeriod);
-        ASSERT(localTimePeriod == observedLocalTimePeriod);
 
-        updateCount = Util::updateCount();
-        ASSERT(priorUpdateCount + 1 == updateCount);
-        priorUpdateCount = updateCount;
-      }
-    }
+        int status1 = Util::configure(NY);
+        ASSERT(0 == status1);
 
-    if (verbose)
-      cout << "\nTesting 'configure()' for valid timezones" << endl;
-    {
-      static char tzEquals[] = "TZ=";
-
-      for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
-        const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
-
-        if (veryVerbose) {
-          P(TIMEZONE)
+        if (verbose) {
+            Util::loadLocalTimePeriod(&localTimePeriod);
+            cout << localTimePeriod << endl;
         }
 
-        char buffer[80];
-        ASSERT(sizeof(buffer) > sizeof(tzEquals) - 1 + strlen(TIMEZONE) + 1);
-        snprintf(buffer, sizeof(buffer), "%s%s", tzEquals, TIMEZONE);
+        bdlt::Datetime startOfDst(2013, 3, 10, 7);
+        int status2 = Util::configure(NY, startOfDst);
+        ASSERT(0 == status2);
 
-        if (veryVeryVerbose) {
-          T_ P(buffer)
+        if (verbose) {
+            Util::loadLocalTimePeriod(&localTimePeriod);
+            cout << localTimePeriod << endl;
         }
 
-        int status = putenv(buffer);
-        ASSERT(0 == status);
-        ASSERT(0 == strcmp(TIMEZONE, getenv("TZ")));
+        bdlt::Datetime resumeOfStd(2013, 11, 3, 6);
+        int status3 = Util::configure(NY, resumeOfStd);
+        ASSERT(0 == status3);
 
-        status = Util::configure();
-
-        ASSERT(0 == status);
-        bsl::string timezone;
-        Util::loadTimezone(&timezone);
-        ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
-
-        updateCount = Util::updateCount();
-        ASSERT(priorUpdateCount + 1 == updateCount);
-        priorUpdateCount = updateCount;
-
-        // Race: The UTC datetime  is changing.
-
-        baltzo::LocalTimePeriod observedLocalTimePeriod;
-        Util::loadLocalTimePeriod(&observedLocalTimePeriod);
-
-        bdlt::Datetime now = bdlt::CurrentTime::utc();
-        status = Util::configure(TIMEZONE, now);
-        ASSERT(0 == status);
-        baltzo::LocalTimePeriod localTimePeriod;
-        Util::loadLocalTimePeriod(&localTimePeriod);
-        ASSERT(localTimePeriod == observedLocalTimePeriod);
-
-        updateCount = Util::updateCount();
-        ASSERT(priorUpdateCount + 1 == updateCount);
-        priorUpdateCount = updateCount;
-      }
-    }
-
-    if (verbose)
-      cout << "\nTesting Manipulators with invalid timezone" << endl;
-    {
-      int status;
-      const char *invalidTimezone = "FOO";
-      char buffer[] = "TZ=FOO";
-
-      bsl::string timezone0;
-      Util::loadTimezone(&timezone0);
-      baltzo::LocalTimePeriod localTimePeriod0;
-      Util::loadLocalTimePeriod(&localTimePeriod0);
-
-      if (veryVeryVerbose) {
-        T_ P(invalidTimezone)
-      }
-
-      {
-        LogVerbosityGuard guard;
-        status = Util::configure(invalidTimezone);
-      }
-
-      ASSERT(0 != status);
-      bsl::string timezone;
-      Util::loadTimezone(&timezone);
-      ASSERT(timezone0 == timezone);
-      baltzo::LocalTimePeriod localTimePeriod;
-      Util::loadLocalTimePeriod(&localTimePeriod);
-      ASSERT(localTimePeriod0 == localTimePeriod);
-
-      updateCount = Util::updateCount();
-      ASSERT(priorUpdateCount == updateCount);
-
-      if (veryVeryVerbose) {
-        T_ P(buffer)
-      }
-
-      status = putenv(buffer);
-      ASSERT(0 == status);
-      ASSERT(0 == strcmp(invalidTimezone, getenv("TZ")));
-
-      {
-        LogVerbosityGuard guard;
-        status = Util::configure();
-      }
-
-      ASSERT(0 != status);
-      Util::loadTimezone(&timezone);
-      Util::loadLocalTimePeriod(&localTimePeriod);
-      ASSERT(localTimePeriod0 == localTimePeriod);
-
-      updateCount = Util::updateCount();
-      ASSERT(priorUpdateCount == updateCount);
-    }
-
-  } break;
-  case 2: {
-    // --------------------------------------------------------------------
-    // PRIMARY MANIPULATOR and BASIC ACCESSORS
-    //
-    // Concerns:
-    //: 1 The primary manipulator can set the cached local time offset
-    //:   information for any entry in the Zoneinfo database for arbitrary
-    //:   UTC datetime.
-    //:
-    //: 2 The basic accessors report the currently cached local time offset
-    //:   information.
-    //:
-    //: 3 The primary manipulator returns a non-zero value when an invalid
-    //:   timezone is specified, and (QoI) there is no change in the static
-    //:   members.
-    //:
-    //: 4 QoI: Asserted precondition violations are detected when enabled.
-    //
-    // Plan:
-    //: 1 Using the array-driven approach, generate test cases for several
-    //:   entries representing several categories of Zoneinfo entries
-    //:   (i.e., timezone before and after "Etc/GMT" and "Etc/GMT" itself)
-    //:   and for several categories of UTC datetimes (i.e., before,
-    //:   during, and after daylight saving time, if defined in a
-    //:   timezone).  For each entry confirm that 'configure' returns
-    //:   successfully, and use the accessors to confirm that the cached
-    //:   information matches the expected results.  The expected results
-    //:   for the local time period is obtained using the
-    //:   'baltzo::TimeZoneUtil::loadLocalTimePeriodForUtc' method.
-    //:   (C-1..2)
-    //:
-    //: 2 Save the values of the static members, call 'configure' with an
-    //:   unknown timezone, check the return value, and compare the current
-    //:   values of the static members to the saved values.
-    //:
-    //: 3 Verify that, in appropriate build modes, defensive checks are
-    //:   triggered for invalid attribute values, but not triggered for
-    //:   adjacent valid ones (using the 'BSLS_ASSERTTEST_*' macros).
-    //:   (C-4)
-    //
-    // Testing:
-    //   int configure(const char *timezone, const bdlt::Datetime& utc);
-    //   void loadLocalTimePeriod(LocalTimePeriod *localTimePeriod);
-    //   bsl::string loadTimezone(bsl::string      *timezone);
-    //   bsl::string loadTimezone(std::string      *timezone);
-    //   bsl::string loadTimezone(std::experimental::pmr::string *timezone);
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "PRIMARY MANIPULATOR and BASIC ACCESSORS" << endl
-           << "=======================================" << endl;
-
-    int updateCount = Util::updateCount();
-    int priorUpdateCount = Util::updateCount();
-    ASSERT(0 == updateCount);
-    ASSERT(0 == priorUpdateCount);
-
-    if (verbose)
-      cout << "\nCheck valid timezones" << endl;
-    {
-      for (int i = 0; i < DEFAULT_NUM_TZ_ARRAY; ++i) {
-        const char *TIMEZONE = DEFAULT_TZ_ARRAY[i];
-
-        if (veryVerbose) {
-          P(TIMEZONE)
+        if (verbose) {
+            Util::loadLocalTimePeriod(&localTimePeriod);
+            cout << localTimePeriod << endl;
         }
 
-        for (int j = 0; j < DEFAULT_NUM_DT_ARRAY; ++j) {
-          const bdlt::Datetime &UTC = DEFAULT_DT_ARRAY[j];
+      } break;
+      case -1: {
+        // --------------------------------------------------------------------
+        // THREAD SAFETY
+        //   The primary concern is the thread-safety of the
+        //   'localTimeOffset' method.  The other public methods will
+        //   typically be called once near the start of a process, and before
+        //   multiple threads are launched.  Since the limit on thread creation
+        //   vary significantly with platform, this test is designed to be run
+        //   interactively (i.e., the test has a negative test number).
+        //
+        // Concerns:
+        //: 1 Concurrent threads calling the 'localTimeOffset' method each
+        //:   receive the correct result and return value indicating success.
+        //:
+        //: 2 When needed, the cached local time zone information is updated
+        //:   exactly once.
+        //
+        // Plan:
+        //: 1 Set the timezone and UTC time to some day in 2013 before the
+        //:   start of daylight saving time in New York).
+        //:
+        //: 2 Launch multiple threads (where the number is determined by a
+        //:   command-line argument) that each wait at a common barrier until
+        //:   all the threads have been created, and then invoke the
+        //:   'localTimeOffset' method requesting the offset for the start
+        //:   of daylight saving time.
+        //:
+        //: 3 Compare the values obtained by each thread with the expected
+        //:   offset for the start of daylight saving time.
+        //:
+        //: 4 Confirm that the value returned by 'updateCount' increased by
+        //:   exactly one.
+        //:
+        //: 5 Repeat the test a number of times specified by a command-line
+        //:   argument.
+        //
+        // Testing:
+        //   CONCERN: The public methods of this component are *thread-safe*.
+        // --------------------------------------------------------------------
 
-          if (veryVerbose) {
-            T_ P(UTC)
-          }
+        if (verbose) cout << endl
+                          << "THREAD SAFETY" << endl
+                          << "=============" << endl;
 
-          int status = Util::configure(TIMEZONE, UTC);
-          ASSERT(0 == status);
+        const int numThreads    = argc > 2 ? atoi(argv[2]) : 1;
+        const int numIterations = argc > 3 ? atoi(argv[3]) : 1;
 
-          {
-            bsl::string timezone;
-            Util::loadTimezone(&timezone);
-            ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
-          }
-          {
-            std::string timezone;
-            Util::loadTimezone(&timezone);
-            ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
-          }
-#ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-          {
-            std::experimental::pmr::string timezone;
-            Util::loadTimezone(&timezone);
-            ASSERT(0 == strcmp(TIMEZONE, timezone.c_str()));
-          }
-#endif
+        P(numThreads)
+        P(numIterations)
 
-          updateCount = Util::updateCount();
-          ASSERT(priorUpdateCount + 1 == updateCount);
-          priorUpdateCount = updateCount;
+        bslmt::Configuration::setDefaultThreadStackSize(
+                    bslmt::Configuration::recommendedDefaultThreadStackSize());
 
-          baltzo::LocalTimePeriod expectedLocalTimePeriod;
+        const bdlt::Datetime newYearsDay(2013, 1,  1);
+        const bdlt::Datetime  startOfDst(2013, 3, 10, 7);
+        const char          *timezone             = "America/New_York";
+        int                  previousUpdateCount = Util::updateCount();
 
-          status = baltzo::TimeZoneUtil::loadLocalTimePeriodForUtc(
-              &expectedLocalTimePeriod, TIMEZONE, UTC);
-          ASSERT(0 == status);
+        ASSERT(0 == previousUpdateCount);
 
-          baltzo::LocalTimePeriod localTimePeriod;
-          Util::loadLocalTimePeriod(&localTimePeriod);
+        bsls::Stopwatch stopwatch;
+        stopwatch.start(true);
 
-          ASSERT(expectedLocalTimePeriod == localTimePeriod);
+        for (int i = 0;  i < numIterations; ++i) {
+
+            int status = Util::configure(timezone, newYearsDay);
+            ASSERT(0 == status);
+
+            int updateCount = Util::updateCount();
+            ASSERT(previousUpdateCount + 1 == updateCount);
+            previousUpdateCount = updateCount;
+
+            Handles       handles(numThreads);
+            ThreadArgs threadArgs(numThreads);
+
+            bslmt::Barrier   barrier(numThreads);
+
+            // Setup and launch threads.
+
+            for (int j = 0; j < numThreads; ++j) {
+                threadArgs[j].d_offset      = 0x0BADCAFE;
+                threadArgs[j].d_utcDatetime = startOfDst;
+                threadArgs[j].d_barrier_p   = &barrier;
+
+                int status = bslmt::ThreadUtil::create(&handles[j],
+                                                      workerThread,
+                                                      &threadArgs[j]);
+                ASSERT(0 == status);
+            }
+
+            // Wait for all threads to complete.
+
+
+            for (Handles::iterator itr  = handles.begin(),
+                                   end  = handles.end();
+                                   end != itr; ++itr) {
+                bslmt::ThreadUtil::join(*itr);
+            }
+
+
+            // Examine results.
+
+            updateCount = Util::updateCount();
+            ASSERT(previousUpdateCount + 1 == updateCount);
+            previousUpdateCount = updateCount;
+
+            for (ThreadArgs::iterator itr  = threadArgs.begin(),
+                                      end  = threadArgs.end();
+                                      end != itr; ++itr) {
+                ASSERT(-4 * 3600 == itr->d_offset);
+            }
+
         }
-      }
-    }
 
-    if (verbose)
-      cout << "\nCheck invalid timezone" << endl;
-    {
-      bsl::string timezone0;
-      Util::loadTimezone(&timezone0);
-      baltzo::LocalTimePeriod localTimePeriod0;
-      Util::loadLocalTimePeriod(&localTimePeriod0);
+        stopwatch.stop();
 
-      int status;
+        double systemTime;
+        double   userTime;
+        double   wallTime;
 
-      {
-        LogVerbosityGuard guard;
-        status = Util::configure("hello, world", bdlt::Datetime(2013, 2, 28));
-      }
-      bsl::string timezone;
-      Util::loadTimezone(&timezone);
-      ASSERT(0 != status);
-      ASSERT(timezone0 == timezone);
-      baltzo::LocalTimePeriod localTimePeriod;
-      Util::loadLocalTimePeriod(&localTimePeriod);
-      ASSERT(localTimePeriod0 == localTimePeriod);
+        stopwatch.accumulatedTimes(&systemTime, &userTime, &wallTime);
+        P_(systemTime) P_(userTime) P(wallTime)
 
-      updateCount = Util::updateCount();
-      ASSERT(priorUpdateCount == updateCount);
-    }
+      } break;
+      case -2: {
+        // --------------------------------------------------------------------
+        // PERFORMANCE: CACHE-HITS
+        //
+        // Concerns:
+        //: 1 The time needed to deliver an offset value from the cached
+        //:   information should be known.
+        //
+        // Plan:
+        //: 1 Set the timezone and UTC time to some day in 2013 before the
+        //:   start of daylight saving time in New York).
+        //:
+        //: 2 Use a stopwatch mechanism to measure the time needed to
+        //:   iteratively request the local time offset at the UTC datetime set
+        //:   in P-1.  The number of iterations is determined by a command-line
+        //:   parameter.  (C-1)
+        //
+        // Testing:
+        //   CONCERN: Performance on cache hits.
+        // --------------------------------------------------------------------
 
-    if (verbose)
-      cout << "\nNegative Testing." << endl;
-    {
-      bsls::AssertTestHandlerGuard hG;
+        if (verbose) cout << endl
+                          << "PERFORMANCE: CACHE-HITS" << endl
+                          << "=======================" << endl;
 
-      if (veryVerbose)
-        cout << "\t'loadLocalTimePeriod'" << endl;
-      {
-        baltzo::LocalTimePeriod ltp;
-        ASSERT_PASS(Util::loadLocalTimePeriod(&ltp));
-        ASSERT_FAIL(Util::loadLocalTimePeriod(0));
-      }
+        const int numIterations = argc > 2 ? atoi(argv[2]) : 0;
 
-      if (veryVerbose)
-        cout << "\t'loadTimezone'" << endl;
-      {
-        bsl::string s, *pz = 0;
-        ASSERT_PASS(Util::loadTimezone(&s));
-        ASSERT_FAIL(Util::loadTimezone(pz));
-      }
-      {
-        std::string s, *pz = 0;
-        ASSERT_PASS(Util::loadTimezone(&s));
-        ASSERT_FAIL(Util::loadTimezone(pz));
-      }
-#ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-      {
-        std::experimental::pmr::string s, *pz = 0;
-        ASSERT_PASS(Util::loadTimezone(&s));
-        ASSERT_FAIL(Util::loadTimezone(pz));
-      }
-#endif
-    }
-  } break;
-  case 1: {
-    // --------------------------------------------------------------------
-    // BREATHING TEST
-    //   This case exercises (but does not fully test) basic functionality.
-    //
-    // Concerns:
-    //: 1 The class is sufficiently functional to enable comprehensive
-    //:   testing in subsequent test cases.
-    //
-    // Plan:
-    //: 1 Set the time zone to "America/New_York" for several dates in
-    //:   succession, and examine the local time period information at each
-    //:   stage.
-    //
-    // Testing:
-    //   BREATHING TEST
-    // --------------------------------------------------------------------
+        P(numIterations);
 
-    if (verbose)
-      cout << endl << "BREATHING TEST" << endl << "==============" << endl;
+        const bdlt::Datetime newYearsDay(2013, 1,  1);
+        const char          *timezone             = "America/New_York";
 
-    baltzo::LocalTimePeriod localTimePeriod;
-
-    int status1 = Util::configure(NY);
-    ASSERT(0 == status1);
-
-    if (verbose) {
-      Util::loadLocalTimePeriod(&localTimePeriod);
-      cout << localTimePeriod << endl;
-    }
-
-    bdlt::Datetime startOfDst(2013, 3, 10, 7);
-    int status2 = Util::configure(NY, startOfDst);
-    ASSERT(0 == status2);
-
-    if (verbose) {
-      Util::loadLocalTimePeriod(&localTimePeriod);
-      cout << localTimePeriod << endl;
-    }
-
-    bdlt::Datetime resumeOfStd(2013, 11, 3, 6);
-    int status3 = Util::configure(NY, resumeOfStd);
-    ASSERT(0 == status3);
-
-    if (verbose) {
-      Util::loadLocalTimePeriod(&localTimePeriod);
-      cout << localTimePeriod << endl;
-    }
-
-  } break;
-  case -1: {
-    // --------------------------------------------------------------------
-    // THREAD SAFETY
-    //   The primary concern is the thread-safety of the
-    //   'localTimeOffset' method.  The other public methods will
-    //   typically be called once near the start of a process, and before
-    //   multiple threads are launched.  Since the limit on thread creation
-    //   vary significantly with platform, this test is designed to be run
-    //   interactively (i.e., the test has a negative test number).
-    //
-    // Concerns:
-    //: 1 Concurrent threads calling the 'localTimeOffset' method each
-    //:   receive the correct result and return value indicating success.
-    //:
-    //: 2 When needed, the cached local time zone information is updated
-    //:   exactly once.
-    //
-    // Plan:
-    //: 1 Set the timezone and UTC time to some day in 2013 before the
-    //:   start of daylight saving time in New York).
-    //:
-    //: 2 Launch multiple threads (where the number is determined by a
-    //:   command-line argument) that each wait at a common barrier until
-    //:   all the threads have been created, and then invoke the
-    //:   'localTimeOffset' method requesting the offset for the start
-    //:   of daylight saving time.
-    //:
-    //: 3 Compare the values obtained by each thread with the expected
-    //:   offset for the start of daylight saving time.
-    //:
-    //: 4 Confirm that the value returned by 'updateCount' increased by
-    //:   exactly one.
-    //:
-    //: 5 Repeat the test a number of times specified by a command-line
-    //:   argument.
-    //
-    // Testing:
-    //   CONCERN: The public methods of this component are *thread-safe*.
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl << "THREAD SAFETY" << endl << "=============" << endl;
-
-    const int numThreads = argc > 2 ? atoi(argv[2]) : 1;
-    const int numIterations = argc > 3 ? atoi(argv[3]) : 1;
-
-    P(numThreads)
-    P(numIterations)
-
-    bslmt::Configuration::setDefaultThreadStackSize(
-        bslmt::Configuration::recommendedDefaultThreadStackSize());
-
-    const bdlt::Datetime newYearsDay(2013, 1, 1);
-    const bdlt::Datetime startOfDst(2013, 3, 10, 7);
-    const char *timezone = "America/New_York";
-    int previousUpdateCount = Util::updateCount();
-
-    ASSERT(0 == previousUpdateCount);
-
-    bsls::Stopwatch stopwatch;
-    stopwatch.start(true);
-
-    for (int i = 0; i < numIterations; ++i) {
-
-      int status = Util::configure(timezone, newYearsDay);
-      ASSERT(0 == status);
-
-      int updateCount = Util::updateCount();
-      ASSERT(previousUpdateCount + 1 == updateCount);
-      previousUpdateCount = updateCount;
-
-      Handles handles(numThreads);
-      ThreadArgs threadArgs(numThreads);
-
-      bslmt::Barrier barrier(numThreads);
-
-      // Setup and launch threads.
-
-      for (int j = 0; j < numThreads; ++j) {
-        threadArgs[j].d_offset = 0x0BADCAFE;
-        threadArgs[j].d_utcDatetime = startOfDst;
-        threadArgs[j].d_barrier_p = &barrier;
-
-        int status = bslmt::ThreadUtil::create(&handles[j], workerThread,
-                                               &threadArgs[j]);
+        int status = Util::configure(timezone, newYearsDay);
         ASSERT(0 == status);
-      }
 
-      // Wait for all threads to complete.
+        // Confirm that the callback is working
 
-      for (Handles::iterator itr = handles.begin(), end = handles.end();
-           end != itr; ++itr) {
-        bslmt::ThreadUtil::join(*itr);
-      }
+        bsls::Types::Int64 offset =
+                             Util::localTimeOffset(newYearsDay).totalSeconds();
+        (void)offset;
 
-      // Examine results.
+        bsls::Stopwatch stopwatch;
+        stopwatch.start(true);
 
-      updateCount = Util::updateCount();
-      ASSERT(previousUpdateCount + 1 == updateCount);
-      previousUpdateCount = updateCount;
+        for (int i = 0;  i < numIterations; ++i) {
+            offset = Util::localTimeOffset(newYearsDay).totalSeconds();
+        }
 
-      for (ThreadArgs::iterator itr = threadArgs.begin(),
-                                end = threadArgs.end();
-           end != itr; ++itr) {
-        ASSERT(-4 * 3600 == itr->d_offset);
+        double systemTime;
+        double   userTime;
+        double   wallTime;
+        stopwatch.accumulatedTimes(&systemTime, &userTime, &wallTime);
+
+        P_(systemTime) P_(userTime) P(wallTime);
+
+      } break;
+      case -3: {
+        // --------------------------------------------------------------------
+        // PERFORMANCE: CACHE MISSES
+        //
+        // Concerns:
+        //: 1 The time needed to deliver an offset value when the information
+        //:   is not in the cache information should be known.
+        //
+        // Plan:
+        //: 1 Set the timezone and UTC time to some day in 2013 before the
+        //:   start of daylight saving time in New York).
+        //:
+        //: 2 Use a stopwatch mechanism to measure the time needed to
+        //:   iteratively request the local time offset at the UTC datetime
+        //:   corresponding to the start of daylight saving time in New York,
+        //:   a cache-miss, which resets the cache.  Then, request the result
+        //:   for the UTC time set in P-1, another cache-miss.  The number of
+        // requests is determined by a command-line parameter.
+        //:   parameter.  (C-1)
+        //
+        // Testing:
+        //   CONCERN: Performance on cache misses.
+        // --------------------------------------------------------------------
+
+        if (verbose) cout << endl
+                          << "PERFORMANCE: CACHE-MISSES" << endl
+                          << "=========================" << endl;
+
+        const int numIterations = argc > 2 ? atoi(argv[2]) : 0;
+
+        P(numIterations);
+
+        const bdlt::Datetime  newYearsDay(2013,  1,  1);
+        const bdlt::Datetime   startOfDst(2013,  3, 10, 7);
+        const char          *timezone = "America/New_York";
+
+        int status = Util::configure(timezone, newYearsDay);
+        ASSERT(0 == status);
+
+        // Confirm that the callback is working
+
+        bsls::Types::Int64 offset =
+                             Util::localTimeOffset(newYearsDay).totalSeconds();
+        (void)offset;
+
+        const int numIterations2 = numIterations/2;
+
+        bsls::Stopwatch stopwatch;
+        stopwatch.start(true);
+
+        for (int i = 0;  i < numIterations2; ++i) {
+            offset = Util::localTimeOffset(startOfDst).totalSeconds();
+            offset = Util::localTimeOffset(newYearsDay).totalSeconds();
+        }
+
+        stopwatch.stop();
+
+        double systemTime;
+        double   userTime;
+        double   wallTime;
+        stopwatch.accumulatedTimes(&systemTime, &userTime, &wallTime);
+
+        P_(systemTime) P_(userTime) P(wallTime);
+
+      } break;
+      default: {
+        cerr << "WARNING: CASE `" << test << "' NOT FOUND." << endl;
+        testStatus = -1;
       }
     }
 
-    stopwatch.stop();
-
-    double systemTime;
-    double userTime;
-    double wallTime;
-
-    stopwatch.accumulatedTimes(&systemTime, &userTime, &wallTime);
-    P_(systemTime) P_(userTime) P(wallTime)
-
-  } break;
-  case -2: {
-    // --------------------------------------------------------------------
-    // PERFORMANCE: CACHE-HITS
-    //
-    // Concerns:
-    //: 1 The time needed to deliver an offset value from the cached
-    //:   information should be known.
-    //
-    // Plan:
-    //: 1 Set the timezone and UTC time to some day in 2013 before the
-    //:   start of daylight saving time in New York).
-    //:
-    //: 2 Use a stopwatch mechanism to measure the time needed to
-    //:   iteratively request the local time offset at the UTC datetime set
-    //:   in P-1.  The number of iterations is determined by a command-line
-    //:   parameter.  (C-1)
-    //
-    // Testing:
-    //   CONCERN: Performance on cache hits.
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "PERFORMANCE: CACHE-HITS" << endl
-           << "=======================" << endl;
-
-    const int numIterations = argc > 2 ? atoi(argv[2]) : 0;
-
-    P(numIterations);
-
-    const bdlt::Datetime newYearsDay(2013, 1, 1);
-    const char *timezone = "America/New_York";
-
-    int status = Util::configure(timezone, newYearsDay);
-    ASSERT(0 == status);
-
-    // Confirm that the callback is working
-
-    bsls::Types::Int64 offset =
-        Util::localTimeOffset(newYearsDay).totalSeconds();
-    (void)offset;
-
-    bsls::Stopwatch stopwatch;
-    stopwatch.start(true);
-
-    for (int i = 0; i < numIterations; ++i) {
-      offset = Util::localTimeOffset(newYearsDay).totalSeconds();
+    if (testStatus > 0) {
+        cerr << "Error, non-zero test status = " << testStatus << "." << endl;
     }
-
-    double systemTime;
-    double userTime;
-    double wallTime;
-    stopwatch.accumulatedTimes(&systemTime, &userTime, &wallTime);
-
-    P_(systemTime) P_(userTime) P(wallTime);
-
-  } break;
-  case -3: {
-    // --------------------------------------------------------------------
-    // PERFORMANCE: CACHE MISSES
-    //
-    // Concerns:
-    //: 1 The time needed to deliver an offset value when the information
-    //:   is not in the cache information should be known.
-    //
-    // Plan:
-    //: 1 Set the timezone and UTC time to some day in 2013 before the
-    //:   start of daylight saving time in New York).
-    //:
-    //: 2 Use a stopwatch mechanism to measure the time needed to
-    //:   iteratively request the local time offset at the UTC datetime
-    //:   corresponding to the start of daylight saving time in New York,
-    //:   a cache-miss, which resets the cache.  Then, request the result
-    //:   for the UTC time set in P-1, another cache-miss.  The number of
-    // requests is determined by a command-line parameter.
-    //:   parameter.  (C-1)
-    //
-    // Testing:
-    //   CONCERN: Performance on cache misses.
-    // --------------------------------------------------------------------
-
-    if (verbose)
-      cout << endl
-           << "PERFORMANCE: CACHE-MISSES" << endl
-           << "=========================" << endl;
-
-    const int numIterations = argc > 2 ? atoi(argv[2]) : 0;
-
-    P(numIterations);
-
-    const bdlt::Datetime newYearsDay(2013, 1, 1);
-    const bdlt::Datetime startOfDst(2013, 3, 10, 7);
-    const char *timezone = "America/New_York";
-
-    int status = Util::configure(timezone, newYearsDay);
-    ASSERT(0 == status);
-
-    // Confirm that the callback is working
-
-    bsls::Types::Int64 offset =
-        Util::localTimeOffset(newYearsDay).totalSeconds();
-    (void)offset;
-
-    const int numIterations2 = numIterations / 2;
-
-    bsls::Stopwatch stopwatch;
-    stopwatch.start(true);
-
-    for (int i = 0; i < numIterations2; ++i) {
-      offset = Util::localTimeOffset(startOfDst).totalSeconds();
-      offset = Util::localTimeOffset(newYearsDay).totalSeconds();
-    }
-
-    stopwatch.stop();
-
-    double systemTime;
-    double userTime;
-    double wallTime;
-    stopwatch.accumulatedTimes(&systemTime, &userTime, &wallTime);
-
-    P_(systemTime) P_(userTime) P(wallTime);
-
-  } break;
-  default: {
-    cerr << "WARNING: CASE `" << test << "' NOT FOUND." << endl;
-    testStatus = -1;
-  }
-  }
-
-  if (testStatus > 0) {
-    cerr << "Error, non-zero test status = " << testStatus << "." << endl;
-  }
-  return testStatus;
+    return testStatus;
 }
 
 // ----------------------------------------------------------------------------

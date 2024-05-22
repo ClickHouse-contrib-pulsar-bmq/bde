@@ -56,7 +56,7 @@ BSLS_IDENT("$Id: $")
 // below).  In addition, a file observer may be configured to perform automatic
 // log file rotation (see {Log File Rotation} below).
 //
-/// File Observer Configuration Synopsis
+///File Observer Configuration Synopsis
 ///------------------------------------
 // 'ball::FileObserver2' offers several manipulators that may be used to
 // configure various aspects of a file observer object.  These are summarized
@@ -97,7 +97,7 @@ BSLS_IDENT("$Id: $")
 // those records that are published subsequent to making the configuration
 // change.
 //
-/// Log Record Formatting
+///Log Record Formatting
 ///---------------------
 // By default, the output format of published log records is:
 //..
@@ -132,7 +132,7 @@ BSLS_IDENT("$Id: $")
 // instead, consider using either the '%D' or '%O' format specification
 // supported by 'ball_recordstringformatter'.
 //
-/// Log Record Timestamps
+///Log Record Timestamps
 ///---------------------
 // By default, the timestamp attributes of published records are written in UTC
 // time.  To write timestamps in local time instead, call the
@@ -144,8 +144,8 @@ BSLS_IDENT("$Id: $")
 // 'setLogFileFunctor' that is not a 'ball::RecordStringFormatter', then the
 // supplied functor determines how record timestamps are rendered to the log.
 //
-/// Local Time Offset Calculations
-///  - - - - - - - - - - - - - - -
+///Local Time Offset Calculations
+/// - - - - - - - - - - - - - - -
 // The calculation of the local time offset adds some overhead to the
 // publication of each log record.  If this overhead is an issue, it can be
 // mitigated by installing a high-performance local-time offset callback for
@@ -154,7 +154,7 @@ BSLS_IDENT("$Id: $")
 // example facility.  Note that such callbacks can improve performance for all
 // users of 'bdlt::CurrentTime', not just the 'ball' logger.
 //
-/// Log Filename Patterns
+///Log Filename Patterns
 ///---------------------
 // The 'enableFileLogging' method supports the use of '%'-escape sequences to
 // specify log filenames.  The recognized sequences are as follows:
@@ -179,13 +179,13 @@ BSLS_IDENT("$Id: $")
 // 01-May-2011 at 12:30:00 local time (assuming 'enablePublishInLocalTime' was
 // called).
 //
-/// Log File Rotation
+///Log File Rotation
 ///-----------------
 // A 'ball::FileObserver2' may be configured to perform automatic rotation of
 // log files based on simple file rotation conditions (or rules).
 //
-/// File Rotation Conditions
-///  - - - - - - - - - - - -
+///File Rotation Conditions
+/// - - - - - - - - - - - -
 // Rotation rules may be established based on the size of the log file (i.e., a
 // "rotation-on-size" rule), and a periodic time interval (i.e., a
 // "rotation-on-time-interval" rule).  These rules are independently enabled by
@@ -193,7 +193,7 @@ BSLS_IDENT("$Id: $")
 // both rules are in effect, log file rotation is performed whenever either
 // rule applies.
 //
-/// Rotated File Naming
+///Rotated File Naming
 ///- - - - - - - - - -
 // When a log file is rotated, a new filename is generated using the pattern
 // supplied to 'enableFileLogging'.  If the file having the new name does not
@@ -282,17 +282,17 @@ BSLS_IDENT("$Id: $")
 // the period is one day), then a unique name on each rotation is produced with
 // the (local) time at which file rotation occurred embedded in the filename.
 //
-/// Thread Safety
+///Thread Safety
 ///-------------
 // All methods of 'ball::FileObserver2' are thread-safe, and can be called
 // concurrently by multiple threads.
 //
-/// Usage
+///Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-/// Example: Basic Usage
-///  - - - - - - - - - -
+///Example: Basic Usage
+/// - - - - - - - - - -
 // First, we create a 'ball::LoggerManagerConfiguration' object, 'lmConfig',
 // and set the logging "pass-through" level -- the level at which log records
 // are published to registered observers -- to 'DEBUG':
@@ -369,7 +369,7 @@ BSLS_IDENT("$Id: $")
 #include <bsl_memory.h>
 #include <bsl_string.h>
 
-#include <string> // 'std::string', 'std::experimental::pmr::string'
+#include <string>           // 'std::string', 'std::pmr::string'
 
 namespace BloombergLP {
 namespace ball {
@@ -377,391 +377,398 @@ namespace ball {
 class Context;
 class Record;
 
-// ===================
-// class FileObserver2
-// ===================
+                          // ===================
+                          // class FileObserver2
+                          // ===================
 
 class FileObserver2 : public Observer {
-  // This class implements the 'Observer' protocol.  The 'publish' method of
-  // this class outputs the log records that it receives to a user-specified
-  // file.  This class is thread-safe; different threads can operate on an
-  // object concurrently.  This class is exception-neutral with no guarantee
-  // of rollback.  In no event is memory leaked.
+    // This class implements the 'Observer' protocol.  The 'publish' method of
+    // this class outputs the log records that it receives to a user-specified
+    // file.  This class is thread-safe; different threads can operate on an
+    // object concurrently.  This class is exception-neutral with no guarantee
+    // of rollback.  In no event is memory leaked.
 
-public:
-  // PUBLIC TYPES
-  typedef bsl::function<void(bsl::ostream &, const Record &)> LogRecordFunctor;
-  // 'LogRecordFunctor' is an alias for the type of the functor used for
-  // formatting log records to a stream.
+  public:
+    // PUBLIC TYPES
+    typedef bsl::function<void(bsl::ostream&, const Record&)> LogRecordFunctor;
+        // 'LogRecordFunctor' is an alias for the type of the functor used for
+        // formatting log records to a stream.
 
-  typedef bsl::function<void(int, const bsl::string &)> OnFileRotationCallback;
-  // 'OnFileRotationCallback' is an alias for a user-supplied callback
-  // function that is invoked after the file observer attempts to rotate
-  // its log file.  The callback takes two arguments: (1) an integer
-  // status value where 0 indicates a new log file was successfully
-  // created and a non-zero value indicates an error occurred during
-  // rotation, and (2) a string that provides the name of the rotated log
-  // file if the rotation was successful.  E.g.:
-  //..
-  //  void onLogFileRotation(int                rotationStatus,
-  //                         const bsl::string& rotatedLogFileName);
-  //..
+    typedef bsl::function<void(int, const bsl::string&)>
+                                                        OnFileRotationCallback;
+        // 'OnFileRotationCallback' is an alias for a user-supplied callback
+        // function that is invoked after the file observer attempts to rotate
+        // its log file.  The callback takes two arguments: (1) an integer
+        // status value where 0 indicates a new log file was successfully
+        // created and a non-zero value indicates an error occurred during
+        // rotation, and (2) a string that provides the name of the rotated log
+        // file if the rotation was successful.  E.g.:
+        //..
+        //  void onLogFileRotation(int                rotationStatus,
+        //                         const bsl::string& rotatedLogFileName);
+        //..
 
-private:
-  // DATA
-  bdls::FdStreamBuf d_logStreamBuf; // stream buffer for
-                                    // file logging
+  private:
+    // DATA
+    bdls::FdStreamBuf      d_logStreamBuf;             // stream buffer for
+                                                       // file logging
 
-  bsl::ostream d_logOutStream; // output stream for
-                               // file logging (refers
-                               // to 'd_logStreamBuf')
+    bsl::ostream           d_logOutStream;             // output stream for
+                                                       // file logging (refers
+                                                       // to 'd_logStreamBuf')
 
-  bsl::string d_logFilePattern; // log filename pattern
+    bsl::string            d_logFilePattern;           // log filename pattern
 
-  bsl::string d_logFileName; // current log filename
+    bsl::string            d_logFileName;              // current log filename
 
-  bdlt::Datetime d_logFileTimestampUtc; // modification time of
-                                        // the log file when it
-                                        // was opened (or the
-                                        // creation time if the
-                                        // log file did not
-                                        // already exist)
+    bdlt::Datetime         d_logFileTimestampUtc;      // modification time of
+                                                       // the log file when it
+                                                       // was opened (or the
+                                                       // creation time if the
+                                                       // log file did not
+                                                       // already exist)
 
-  LogRecordFunctor d_logFileFunctor; // formatting functor
-                                     // used when writing to
-                                     // log file
+    LogRecordFunctor       d_logFileFunctor;           // formatting functor
+                                                       // used when writing to
+                                                       // log file
 
-  bool d_publishInLocalTime; // 'true' if timestamps
-                             // of records are output
-                             // in local time,
-                             // otherwise UTC time
+    bool                   d_publishInLocalTime;       // 'true' if timestamps
+                                                       // of records are output
+                                                       // in local time,
+                                                       // otherwise UTC time
 
-  bool d_suppressUniqueFileName; // 'false' if rotated
-                                 // log file has a unique
-                                 // name
+    bool                   d_suppressUniqueFileName;   // 'false' if rotated
+                                                       // log file has a unique
+                                                       // name
 
-  mutable bslmt::Mutex d_mutex; // serialize operations
+    mutable bslmt::Mutex   d_mutex;                    // serialize operations
 
-  int d_rotationSize; // maximum log file size
-                      // before rotation (in
-                      // kilobytes)
+    int                    d_rotationSize;             // maximum log file size
+                                                       // before rotation (in
+                                                       // kilobytes)
 
-  bdlt::Datetime d_rotationReferenceTime; // reference start time
-                                          // (time-zone determined
-                                          // by
-                                          // d_publishInLocalTime)
-                                          // for time-based
-                                          // rotation
+    bdlt::Datetime         d_rotationReferenceTime;    // reference start time
+                                                       // (time-zone determined
+                                                       // by
+                                                       // d_publishInLocalTime)
+                                                       // for time-based
+                                                       // rotation
 
-  bdlt::DatetimeInterval d_rotationInterval; // time interval between
-                                             // two time-based
-                                             // rotations
+    bdlt::DatetimeInterval d_rotationInterval;         // time interval between
+                                                       // two time-based
+                                                       // rotations
 
-  bdlt::Datetime d_nextRotationTimeUtc; // next scheduled time
-                                        // for time-based
-                                        // rotation
+    bdlt::Datetime         d_nextRotationTimeUtc;      // next scheduled time
+                                                       // for time-based
+                                                       // rotation
 
-  OnFileRotationCallback d_onRotationCb; // user callback
-                                         // invoked following
-                                         // file rotation
+    OnFileRotationCallback d_onRotationCb;             // user callback
+                                                       // invoked following
+                                                       // file rotation
 
-  mutable bslmt::Mutex d_rotationCbMutex; // serialize access to
-                                          // 'd_onRotationCb';
-                                          // required because
-                                          // callback must be
-                                          // called with 'd_mutex'
-                                          // unlocked
+    mutable bslmt::Mutex   d_rotationCbMutex;          // serialize access to
+                                                       // 'd_onRotationCb';
+                                                       // required because
+                                                       // callback must be
+                                                       // called with 'd_mutex'
+                                                       // unlocked
 
-private:
-  // NOT IMPLEMENTED
-  FileObserver2(const FileObserver2 &);
-  FileObserver2 &operator=(const FileObserver2 &);
+  private:
+    // NOT IMPLEMENTED
+    FileObserver2(const FileObserver2&);
+    FileObserver2& operator=(const FileObserver2&);
 
-private:
-  // PRIVATE MANIPULATORS
-  void logRecordDefault(bsl::ostream &stream, const Record &record);
-  // Write the specified log 'record' to the specified output 'stream'
-  // using the default record format of this file observer.
+  private:
+    // PRIVATE MANIPULATORS
+    void logRecordDefault(bsl::ostream& stream, const Record& record);
+        // Write the specified log 'record' to the specified output 'stream'
+        // using the default record format of this file observer.
 
-  int rotateFile(bsl::string *rotatedLogFileName);
-  // Perform a log file rotation by closing the current log file of this
-  // file observer, renaming the closed log file if necessary, and
-  // opening a new log file.  Load, into the specified
-  // 'rotatedLogFileName', the name of the rotated log file.  Return 0 on
-  // success, a positive value if logging is not enabled, and a negative
-  // value otherwise.  The existing log file is renamed if the new log
-  // filename, as determined by the 'logFilenamePattern' of the latest
-  // call to 'enableFileLogging', is the same as the old log filename.
+    int rotateFile(bsl::string *rotatedLogFileName);
+        // Perform a log file rotation by closing the current log file of this
+        // file observer, renaming the closed log file if necessary, and
+        // opening a new log file.  Load, into the specified
+        // 'rotatedLogFileName', the name of the rotated log file.  Return 0 on
+        // success, a positive value if logging is not enabled, and a negative
+        // value otherwise.  The existing log file is renamed if the new log
+        // filename, as determined by the 'logFilenamePattern' of the latest
+        // call to 'enableFileLogging', is the same as the old log filename.
 
-  int rotateIfNecessary(bsl::string *rotatedLogFileName,
-                        const bdlt::Datetime &currentLogTimeUtc);
-  // Perform log file rotation if the specified 'currentLogTimeUtc' is
-  // later than the scheduled rotation time of the current log file, or
-  // if the log file is larger than the allowable size, and if a rotation
-  // is performed, load into the specified 'rotatedLogFileName' the name
-  // of the rotated file.  Return 0 if the log file is rotated
-  // successfully, a positive value if a rotation was determined to be
-  // unnecessary, and a negative value otherwise.  The rotation schedule
-  // and the allowable file size are set by the 'rotateOnTimeInterval'
-  // and the 'rotateOnSize' methods, respectively.  The behavior is
-  // undefined unless the caller acquired the lock for this object.
+    int rotateIfNecessary(bsl::string           *rotatedLogFileName,
+                          const bdlt::Datetime&  currentLogTimeUtc);
+        // Perform log file rotation if the specified 'currentLogTimeUtc' is
+        // later than the scheduled rotation time of the current log file, or
+        // if the log file is larger than the allowable size, and if a rotation
+        // is performed, load into the specified 'rotatedLogFileName' the name
+        // of the rotated file.  Return 0 if the log file is rotated
+        // successfully, a positive value if a rotation was determined to be
+        // unnecessary, and a negative value otherwise.  The rotation schedule
+        // and the allowable file size are set by the 'rotateOnTimeInterval'
+        // and the 'rotateOnSize' methods, respectively.  The behavior is
+        // undefined unless the caller acquired the lock for this object.
 
-  // PRIVATE ACCESSORS
-  template <class t_STRING>
-  bool isFileLoggingEnabledImpl(t_STRING *result) const;
-  // Return 'true' if file logging is enabled for this file observer, and
-  // 'false' otherwise.  Load the specified 'result' with the name of the
-  // current log file if file logging is enabled, and leave 'result'
-  // unmodified otherwise.
+    // PRIVATE ACCESSORS
+    template <class t_STRING>
+    bool isFileLoggingEnabledImpl(t_STRING *result) const;
+        // Return 'true' if file logging is enabled for this file observer, and
+        // 'false' otherwise.  Load the specified 'result' with the name of the
+        // current log file if file logging is enabled, and leave 'result'
+        // unmodified otherwise.
 
-public:
-  // TRAITS
-  BSLMF_NESTED_TRAIT_DECLARATION(FileObserver2, bslma::UsesBslmaAllocator);
+  public:
+    // TRAITS
+    BSLMF_NESTED_TRAIT_DECLARATION(FileObserver2, bslma::UsesBslmaAllocator);
 
-  // CREATORS
-  explicit FileObserver2(bslma::Allocator *basicAllocator = 0);
-  // Create a file observer with file logging initially disabled.
-  // Optionally specify a 'basicAllocator' used to supply memory.  If
-  // 'basicAllocator' is 0, the currently installed default allocator is
-  // used.  Note that 'isPublishInLocalTimeEnabled' returns 'false'
-  // following construction indicating that the timestamp attribute of
-  // published records will be written in UTC time (see
-  // 'enablePublishInLocalTime').  Also note that a default record format
-  // is in effect for file logging (see 'setLogFileFunctor').
+    // CREATORS
+    explicit FileObserver2(bslma::Allocator *basicAllocator = 0);
+        // Create a file observer with file logging initially disabled.
+        // Optionally specify a 'basicAllocator' used to supply memory.  If
+        // 'basicAllocator' is 0, the currently installed default allocator is
+        // used.  Note that 'isPublishInLocalTimeEnabled' returns 'false'
+        // following construction indicating that the timestamp attribute of
+        // published records will be written in UTC time (see
+        // 'enablePublishInLocalTime').  Also note that a default record format
+        // is in effect for file logging (see 'setLogFileFunctor').
 
-  ~FileObserver2();
-  // Close the log file of this file observer if file logging is enabled,
-  // and destroy this file observer.
+    ~FileObserver2();
+        // Close the log file of this file observer if file logging is enabled,
+        // and destroy this file observer.
 
-  // MANIPULATORS
-  void disableFileLogging();
-  // Disable file logging for this file observer.  This method has no
-  // effect if file logging is not enabled.  Note that records
-  // subsequently received through the 'publish' method will be dropped
-  // until file logging is re-enabled.
+    // MANIPULATORS
+    void disableFileLogging();
+        // Disable file logging for this file observer.  This method has no
+        // effect if file logging is not enabled.  Note that records
+        // subsequently received through the 'publish' method will be dropped
+        // until file logging is re-enabled.
 
-  void disableLifetimeRotation();
-  // Disable log file rotation based on a periodic time interval for this
-  // file observer.  This method has no effect if
-  // rotation-on-time-interval is not enabled.
-  //
-  // !DEPRECATED!: Use 'disableTimeIntervalRotation' instead.
+    void disableLifetimeRotation();
+        // Disable log file rotation based on a periodic time interval for this
+        // file observer.  This method has no effect if
+        // rotation-on-time-interval is not enabled.
+        //
+        // !DEPRECATED!: Use 'disableTimeIntervalRotation' instead.
 
-  void disablePublishInLocalTime();
-  // Disable publishing of the timestamp attribute of records in local
-  // time by this file observer; henceforth, timestamps will be in UTC
-  // time.  This method has no effect if publishing in local time is not
-  // enabled.  Note that this method also affects log filenames (see {Log
-  // Filename Patterns}).
+    void disablePublishInLocalTime();
+        // Disable publishing of the timestamp attribute of records in local
+        // time by this file observer; henceforth, timestamps will be in UTC
+        // time.  This method has no effect if publishing in local time is not
+        // enabled.  Note that this method also affects log filenames (see {Log
+        // Filename Patterns}).
 
-  void disableSizeRotation();
-  // Disable log file rotation based on log file size for this file
-  // observer.  This method has no effect if rotation-on-size is not
-  // enabled.
+    void disableSizeRotation();
+        // Disable log file rotation based on log file size for this file
+        // observer.  This method has no effect if rotation-on-size is not
+        // enabled.
 
-  void disableTimeIntervalRotation();
-  // Disable log file rotation based on a periodic time interval for this
-  // file observer.  This method has no effect if
-  // rotation-on-time-interval is not enabled.
+    void disableTimeIntervalRotation();
+        // Disable log file rotation based on a periodic time interval for this
+        // file observer.  This method has no effect if
+        // rotation-on-time-interval is not enabled.
 
-  int enableFileLogging(const char *logFilenamePattern);
-  // Enable logging of all records published to this file observer to a
-  // file whose name is derived from the specified 'logFilenamePattern'.
-  // Return 0 on success, a positive value if file logging is already
-  // enabled (with no effect), and a negative value otherwise.  The
-  // basename of 'logFilenamePattern' may contain '%'-escape sequences
-  // that are interpreted as follows:
-  //..
-  //   %Y - current year   (4 digits with leading zeros)
-  //   %M - current month  (2 digits with leading zeros)
-  //   %D - current day    (2 digits with leading zeros)
-  //   %h - current hour   (2 digits with leading zeros)
-  //   %m - current minute (2 digits with leading zeros)
-  //   %s - current second (2 digits with leading zeros)
-  //   %T - current datetime, equivalent to "%Y%M%D_%h%m%s"
-  //   %p - process ID
-  //..
-  // Each time a log file is opened by this file observer (upon a
-  // successful call to this method and following each log file
-  // rotation), the name of the new log file is derived from
-  // 'logFilenamePattern' by interpreting the above recognized '%'-escape
-  // sequences.  If 'isPublishInLocalTimeEnabled' returns 'true', the
-  // '%'-escape sequences related to time will be substituted with local
-  // time values, and UTC time values otherwise.  See {Log Filename
-  // Patterns}.
+    int enableFileLogging(const char *logFilenamePattern);
+        // Enable logging of all records published to this file observer to a
+        // file whose name is derived from the specified 'logFilenamePattern'.
+        // Return 0 on success, a positive value if file logging is already
+        // enabled (with no effect), and a negative value otherwise.  The
+        // basename of 'logFilenamePattern' may contain '%'-escape sequences
+        // that are interpreted as follows:
+        //..
+        //   %Y - current year   (4 digits with leading zeros)
+        //   %M - current month  (2 digits with leading zeros)
+        //   %D - current day    (2 digits with leading zeros)
+        //   %h - current hour   (2 digits with leading zeros)
+        //   %m - current minute (2 digits with leading zeros)
+        //   %s - current second (2 digits with leading zeros)
+        //   %T - current datetime, equivalent to "%Y%M%D_%h%m%s"
+        //   %p - process ID
+        //..
+        // Each time a log file is opened by this file observer (upon a
+        // successful call to this method and following each log file
+        // rotation), the name of the new log file is derived from
+        // 'logFilenamePattern' by interpreting the above recognized '%'-escape
+        // sequences.  If 'isPublishInLocalTimeEnabled' returns 'true', the
+        // '%'-escape sequences related to time will be substituted with local
+        // time values, and UTC time values otherwise.  See {Log Filename
+        // Patterns}.
 
-  int enableFileLogging(const char *logFilenamePattern,
-                        bool appendTimestampFlag);
-  // Enable logging of all records published to this file observer to a
-  // file whose name is derived from the specified 'logFilenamePattern'
-  // and append a timestamp to the log filename if the specified
-  // 'appendTimestampFlag' is 'true'.  Return 0 on success, a positive
-  // value if file logging is already enabled (with no effect), and a
-  // negative value otherwise.  If the 'appendTimestampFlag' is 'true'
-  // and 'logFilenamePattern' does not contain any '%'-escape sequences,
-  // this method behaves as if ".%T" is appended to 'logFilenamePattern'.
-  //
-  // !DEPRECATED!: Use 'enableFileLogging(logFilenamePattern)' instead
-  // (use the ".%T" pattern to replicate 'true == appendTimestampFlag'
-  // behavior).
+    int enableFileLogging(const char *logFilenamePattern,
+                          bool        appendTimestampFlag);
+        // Enable logging of all records published to this file observer to a
+        // file whose name is derived from the specified 'logFilenamePattern'
+        // and append a timestamp to the log filename if the specified
+        // 'appendTimestampFlag' is 'true'.  Return 0 on success, a positive
+        // value if file logging is already enabled (with no effect), and a
+        // negative value otherwise.  If the 'appendTimestampFlag' is 'true'
+        // and 'logFilenamePattern' does not contain any '%'-escape sequences,
+        // this method behaves as if ".%T" is appended to 'logFilenamePattern'.
+        //
+        // !DEPRECATED!: Use 'enableFileLogging(logFilenamePattern)' instead
+        // (use the ".%T" pattern to replicate 'true == appendTimestampFlag'
+        // behavior).
 
-  void enablePublishInLocalTime();
-  // Enable publishing of the timestamp attribute of records in local
-  // time by this file observer.  This method has no effect if publishing
-  // in local time is already enabled.  Note that this method also
-  // affects log filenames (see {Log Filename Patterns}).
+    void enablePublishInLocalTime();
+        // Enable publishing of the timestamp attribute of records in local
+        // time by this file observer.  This method has no effect if publishing
+        // in local time is already enabled.  Note that this method also
+        // affects log filenames (see {Log Filename Patterns}).
 
-  void publish(const Record &record, const Context &context);
-  // Process the specified log 'record' having the specified publishing
-  // 'context' by writing 'record' and 'context' to the current log file
-  // if file logging is enabled for this file observer.  The method has
-  // no effect if file logging is not enabled, in which case 'record' is
-  // dropped.
+    void publish(const Record& record, const Context& context);
+        // Process the specified log 'record' having the specified publishing
+        // 'context' by writing 'record' and 'context' to the current log file
+        // if file logging is enabled for this file observer.  The method has
+        // no effect if file logging is not enabled, in which case 'record' is
+        // dropped.
 
-  void publish(const bsl::shared_ptr<const Record> &record,
-               const Context &context);
-  // Process the record referenced by the specified 'record' shared
-  // pointer having the specified publishing 'context' by writing the
-  // record and 'context' to the current log file if file logging is
-  // enabled for this file observer.  The method has no effect if file
-  // logging is not enabled, in which case 'record' is dropped.
+    void publish(const bsl::shared_ptr<const Record>& record,
+                 const Context&                       context);
+        // Process the record referenced by the specified 'record' shared
+        // pointer having the specified publishing 'context' by writing the
+        // record and 'context' to the current log file if file logging is
+        // enabled for this file observer.  The method has no effect if file
+        // logging is not enabled, in which case 'record' is dropped.
 
-  void releaseRecords();
-  // Discard any shared references to 'Record' objects that were supplied
-  // to the 'publish' method, and are held by this observer.  Note that
-  // this operation should be called if resources underlying the
-  // previously provided shared pointers must be released.
+    void releaseRecords();
+        // Discard any shared references to 'Record' objects that were supplied
+        // to the 'publish' method, and are held by this observer.  Note that
+        // this operation should be called if resources underlying the
+        // previously provided shared pointers must be released.
 
-  void forceRotation();
-  // Forcefully perform a log file rotation by this file observer.  Close
-  // the current log file, rename the log file if necessary, and open a
-  // new log file.  This method has no effect if file logging is not
-  // enabled.  See {Rotated File Naming} for details on filenames of
-  // rotated log files.
+    void forceRotation();
+        // Forcefully perform a log file rotation by this file observer.  Close
+        // the current log file, rename the log file if necessary, and open a
+        // new log file.  This method has no effect if file logging is not
+        // enabled.  See {Rotated File Naming} for details on filenames of
+        // rotated log files.
 
-  void rotateOnSize(int size);
-  // Set this file observer to perform log file rotation when the size of
-  // the file exceeds the specified 'size' (in kilobytes).  This rule
-  // replaces any rotation-on-size rule currently in effect.  The
-  // behavior is undefined unless 'size > 0'.
+    void rotateOnSize(int size);
+        // Set this file observer to perform log file rotation when the size of
+        // the file exceeds the specified 'size' (in kilobytes).  This rule
+        // replaces any rotation-on-size rule currently in effect.  The
+        // behavior is undefined unless 'size > 0'.
 
-  void rotateOnLifetime(const bdlt::DatetimeInterval &timeInterval);
-  // Set this file observer to perform a periodic log file rotation at
-  // multiples of the specified 'timeInterval'.  This rule replaces any
-  // rotation-on-time-interval rule currently in effect.  The behavior is
-  // undefined unless '0 < timeInterval.totalMilliseconds()'.
-  //
-  // !DEPRECATED!: Use 'rotateOnTimeInterval' instead.
+    void rotateOnLifetime(const bdlt::DatetimeInterval& timeInterval);
+        // Set this file observer to perform a periodic log file rotation at
+        // multiples of the specified 'timeInterval'.  This rule replaces any
+        // rotation-on-time-interval rule currently in effect.  The behavior is
+        // undefined unless '0 < timeInterval.totalMilliseconds()'.
+        //
+        // !DEPRECATED!: Use 'rotateOnTimeInterval' instead.
 
-  void rotateOnTimeInterval(const bdlt::DatetimeInterval &interval);
-  void rotateOnTimeInterval(const bdlt::DatetimeInterval &interval,
-                            const bdlt::Datetime &startTime);
-  // Set this file observer to perform a periodic log file rotation at
-  // multiples of the specified 'interval'.  Optionally specify a
-  // 'startTime' indicating the datetime to use as the starting point for
-  // computing the periodic rotation schedule.  If
-  // 'isPublishInLocalTimeEnabled' is 'true', the 'startTime' is
-  // interpreted as local time, and as a UTC time otherwise.  If
-  // 'startTime' is not specified, the current time is used.  This rule
-  // replaces any rotation-on-time-interval rule currently in effect.
-  // The behavior is undefined unless '0 < interval.totalMilliseconds()'.
-  // Note that 'startTime' may be a fixed time in the past; e.g., a
-  // reference time of 'bdlt::Datetime(1, 1, 1)' and an interval of 24
-  // hours would configure a periodic rotation at midnight each day.
+    void rotateOnTimeInterval(const bdlt::DatetimeInterval& interval);
+    void rotateOnTimeInterval(const bdlt::DatetimeInterval& interval,
+                              const bdlt::Datetime&         startTime);
+        // Set this file observer to perform a periodic log file rotation at
+        // multiples of the specified 'interval'.  Optionally specify a
+        // 'startTime' indicating the datetime to use as the starting point for
+        // computing the periodic rotation schedule.  If
+        // 'isPublishInLocalTimeEnabled' is 'true', the 'startTime' is
+        // interpreted as local time, and as a UTC time otherwise.  If
+        // 'startTime' is not specified, the current time is used.  This rule
+        // replaces any rotation-on-time-interval rule currently in effect.
+        // The behavior is undefined unless '0 < interval.totalMilliseconds()'.
+        // Note that 'startTime' may be a fixed time in the past; e.g., a
+        // reference time of 'bdlt::Datetime(1, 1, 1)' and an interval of 24
+        // hours would configure a periodic rotation at midnight each day.
 
-  void setLogFileFunctor(const LogRecordFunctor &logFileFunctor);
-  // Set the formatting functor used when writing records to the log file
-  // of this file observer to the specified 'logFileFunctor'.  Note that
-  // a default format ("\n%d %p:%t %s %f:%l %c %m %u\n") is in effect
-  // until this method is called (see 'ball_recordstringformatter').
-  // Also note that the observer emits newline characters at the
-  // beginning and at the end of a log record by default, so the user
-  // needs to add them explicitly to the format string to preserve this
-  // behavior.
+    void setLogFileFunctor(const LogRecordFunctor& logFileFunctor);
+        // Set the formatting functor used when writing records to the log file
+        // of this file observer to the specified 'logFileFunctor'.  Note that
+        // a default format ("\n%d %p:%t %s %f:%l %c %m %u\n") is in effect
+        // until this method is called (see 'ball_recordstringformatter').
+        // Also note that the observer emits newline characters at the
+        // beginning and at the end of a log record by default, so the user
+        // needs to add them explicitly to the format string to preserve this
+        // behavior.
 
-  void
-  setOnFileRotationCallback(const OnFileRotationCallback &onRotationCallback);
-  // Set the specified 'onRotationCallback' to be invoked after each time
-  // this file observer attempts to perform a log file rotation.  The
-  // behavior is undefined if the supplied function calls either
-  // 'setOnFileRotationCallback', 'forceRotation', or 'publish' on this
-  // file observer (i.e., the supplied callback should *not* attempt to
-  // write to the 'ball' log).
 
-  void suppressUniqueFileNameOnRotation(bool suppress);
-  // Suppress generating a unique log file name upon rotation if the
-  // specified 'suppress' is 'true', and generate a unique filename
-  // otherwise.  See {Rotated File Naming} for details.
+    void setOnFileRotationCallback(
+                             const OnFileRotationCallback& onRotationCallback);
+        // Set the specified 'onRotationCallback' to be invoked after each time
+        // this file observer attempts to perform a log file rotation.  The
+        // behavior is undefined if the supplied function calls either
+        // 'setOnFileRotationCallback', 'forceRotation', or 'publish' on this
+        // file observer (i.e., the supplied callback should *not* attempt to
+        // write to the 'ball' log).
 
-  // ACCESSORS
-  bool isFileLoggingEnabled() const;
-  bool isFileLoggingEnabled(bsl::string *result) const;
-  bool isFileLoggingEnabled(std::string *result) const;
-  // Return 'true' if file logging is enabled for this file observer, and
-  // 'false' otherwise.  Load the optionally specified 'result' with the
-  // name of the current log file if file logging is enabled, and leave
-  // 'result' unmodified otherwise.  Note that records received through
-  // the 'publish' method of this file observer will be dropped when this
-  // method returns 'false'.
+    void suppressUniqueFileNameOnRotation(bool suppress);
+        // Suppress generating a unique log file name upon rotation if the
+        // specified 'suppress' is 'true', and generate a unique filename
+        // otherwise.  See {Rotated File Naming} for details.
+
+    // ACCESSORS
+    bool isFileLoggingEnabled() const;
+    bool isFileLoggingEnabled(bsl::string *result) const;
+    bool isFileLoggingEnabled(std::string *result) const;
+        // Return 'true' if file logging is enabled for this file observer, and
+        // 'false' otherwise.  Load the optionally specified 'result' with the
+        // name of the current log file if file logging is enabled, and leave
+        // 'result' unmodified otherwise.  Note that records received through
+        // the 'publish' method of this file observer will be dropped when this
+        // method returns 'false'.
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-  bool isFileLoggingEnabled(std::experimental::pmr::string *result) const;
-  // Return 'true' if file logging is enabled for this file observer, and
-  // 'false' otherwise.  Load the specified 'result' with the name of the
-  // current log file if file logging is enabled, and leave 'result'
-  // unmodified otherwise.
-#endif // BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
+    bool isFileLoggingEnabled(std::pmr::string *result) const;
+        // Return 'true' if file logging is enabled for this file observer, and
+        // 'false' otherwise.  Load the specified 'result' with the name of the
+        // current log file if file logging is enabled, and leave 'result'
+        // unmodified otherwise.
+#endif  // BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
 
-  bool isPublishInLocalTimeEnabled() const;
-  // Return 'true' if this file observer writes the timestamp attribute
-  // of records that it publishes in local time, and 'false' otherwise
-  // (in which case timestamps are written in UTC time).  Note that the
-  // value returned by this method also affects log filenames (see {Log
-  // Filename Patterns}).
+    bool isPublishInLocalTimeEnabled() const;
+        // Return 'true' if this file observer writes the timestamp attribute
+        // of records that it publishes in local time, and 'false' otherwise
+        // (in which case timestamps are written in UTC time).  Note that the
+        // value returned by this method also affects log filenames (see {Log
+        // Filename Patterns}).
 
-  bool isSuppressUniqueFileNameOnRotation() const;
-  // Return 'true' if the log filename uniqueness check on rotation is
-  // suppressed, and false otherwise.
+    bool isSuppressUniqueFileNameOnRotation() const;
+        // Return 'true' if the log filename uniqueness check on rotation is
+        // suppressed, and false otherwise.
 
-  bdlt::DatetimeInterval rotationLifetime() const;
-  // Return the lifetime of the log file that will trigger a file
-  // rotation by this file observer if rotation-on-lifetime is in effect,
-  // and a 0 time interval otherwise.
+    bdlt::DatetimeInterval rotationLifetime() const;
+        // Return the lifetime of the log file that will trigger a file
+        // rotation by this file observer if rotation-on-lifetime is in effect,
+        // and a 0 time interval otherwise.
 
-  int rotationSize() const;
-  // Return the size (in kilobytes) of the log file that will trigger a
-  // file rotation by this file observer if rotation-on-size is in
-  // effect, and 0 otherwise.
+    int rotationSize() const;
+        // Return the size (in kilobytes) of the log file that will trigger a
+        // file rotation by this file observer if rotation-on-size is in
+        // effect, and 0 otherwise.
 
-  bdlt::DatetimeInterval localTimeOffset() const;
-  // Return the difference between the local time and UTC time in effect
-  // when this file observer was constructed.  Note that this value
-  // remains unchanged during the lifetime of this object and therefore
-  // may become incorrect when the difference between the local time and
-  // UTC time changes (e.g., when transitioning into or out of daylight
-  // savings time).
-  //
-  // !DEPRECATED!: Use 'bdlt::LocalTimeOffset' instead.
+    bdlt::DatetimeInterval localTimeOffset() const;
+        // Return the difference between the local time and UTC time in effect
+        // when this file observer was constructed.  Note that this value
+        // remains unchanged during the lifetime of this object and therefore
+        // may become incorrect when the difference between the local time and
+        // UTC time changes (e.g., when transitioning into or out of daylight
+        // savings time).
+        //
+        // !DEPRECATED!: Use 'bdlt::LocalTimeOffset' instead.
 };
 
 // ============================================================================
 //                              INLINE DEFINITIONS
 // ============================================================================
 
-// -------------------
-// class FileObserver2
-// -------------------
+                          // -------------------
+                          // class FileObserver2
+                          // -------------------
 
 // MANIPULATORS
-inline void FileObserver2::publish(const bsl::shared_ptr<const Record> &record,
-                                   const Context &context) {
-  publish(*record, context);
+inline
+void FileObserver2::publish(const bsl::shared_ptr<const Record>& record,
+                            const Context&                       context)
+{
+    publish(*record, context);
 }
 
-inline void FileObserver2::releaseRecords() {}
+inline
+void FileObserver2::releaseRecords()
+{
+}
 
-} // namespace ball
-} // namespace BloombergLP
+}  // close package namespace
+}  // close enterprise namespace
 
 #endif
 

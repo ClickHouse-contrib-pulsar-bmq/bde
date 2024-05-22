@@ -20,9 +20,9 @@ BSLS_IDENT("$Id: $")
 // This component provides a protocol (pure abstract interface) class,
 // 'bsl::memory_resource', comprising member functions for allocating and
 // deallocating memory.  The 'bsl::memory_resource' interface is identical to
-// that of 'std::experimental::pmr::memory_resource' from the C++17 Standard
-// Library; in fact, the former type is an alias for the latter type when using
-// a C++17 or later library supplied by the platform.
+// that of 'std::pmr::memory_resource' from the C++17 Standard Library; in
+// fact, the former type is an alias for the latter type when using a C++17 or
+// later library supplied by the platform.
 //
 // A concrete class derived from 'bsl::memory_resource' might use pooling or
 // other mechanisms that improve on 'new' and 'delete' in some way, such as
@@ -38,7 +38,7 @@ BSLS_IDENT("$Id: $")
 // allocation mechanism used by 'Obj' by providing it with an appropriate
 // concrete resource whose class overrides 'do_allocate' and 'do_deallocate'.
 //
-/// Thread Safety
+///Thread Safety
 ///-------------
 // Unless otherwise documented, a single memory resource object is not safe for
 // concurrent access by multiple threads.  Classes derived from
@@ -51,7 +51,7 @@ BSLS_IDENT("$Id: $")
 // When used in a concurrent context, the thread safety of the entire chain
 // must be considered.
 //
-/// Usage
+///Usage
 ///-----
 // The 'bsl::memory_resource' protocol provided in this component defines a
 // bilateral contract between suppliers and consumers of raw memory.  The
@@ -59,7 +59,7 @@ BSLS_IDENT("$Id: $")
 // derived from the abstract 'bsl::memory_resource' base class and (2) use of a
 // 'bsl::memory_resource'.
 //
-/// Example 1: a counting memory resource
+///Example 1: a counting memory resource
 ///- - - - - - - - - - - - - - - - - - -
 // In this example, we derive a concrete 'CountingResource' class from
 // 'bsl::memory_resource', overriding and providing concrete implementations
@@ -182,7 +182,7 @@ BSLS_IDENT("$Id: $")
 //  }
 //..
 //
-/// Example 2: A class that allocates memory
+///Example 2: A class that allocates memory
 ///- - - - - - - - - - - - - - - - - - - -
 // In this example, we define a class template, 'Holder<TYPE>', that holds a
 // single instance of 'TYPE' on the heap.  'Holder' is designed such that its
@@ -192,10 +192,10 @@ BSLS_IDENT("$Id: $")
 // (typically the size of 2 pointers), regardless of the size of 'TYPE'.
 //
 // First, we define a simple class template modeled after the C++17 standard
-// library 'std::experimental::pmr::polymorphic_allocator' template, which is a
-// thin wrapper around a 'memory_resource' pointer.  By wrapping the pointer in
-// a class, we avoid some the problems of raw pointers such as accidental use of
-// a null pointer:
+// library 'std::pmr::polymorphic_allocator' template, which is a thin wrapper
+// around a 'memory_resource' pointer.  By wrapping the pointer in a class, we
+// avoid some the problems of raw pointers such as accidental use of a null
+// pointer:
 //..
 //  #include <bsls_alignmentfromtype.h>
 //
@@ -260,8 +260,8 @@ BSLS_IDENT("$Id: $")
 // 'allocator_type' typedef that can be passed to each constructor.
 // Typically, the allocator constructor argument would be optional, but,
 // because our 'PolymorphicAllocator' has no default constructor (unlike the
-// 'std::experimental::pmr::polymorphic_allocator'), the allocator is *required*
-// for all constructors except the move constructor:
+// 'std::pmr::polymorphic_allocator'), the allocator is *required* for all
+// constructors except the move constructor:
 //..
 //    public:
 //      // TYPES
@@ -363,6 +363,7 @@ BSLS_IDENT("$Id: $")
 //  }
 //..
 
+
 #include <bslscm_version.h>
 
 #include <bsls_alignmentutil.h>
@@ -373,144 +374,158 @@ BSLS_IDENT("$Id: $")
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 // Use `memory_resource` from native C++17 library, if available.
 
-#include <experimental/memory_resource>
+# include <memory_resource>
 
 namespace bsl {
 
-using std::experimental::pmr::memory_resource;
+using std::pmr::memory_resource;
 
-} // namespace bsl
+}  // close namespace bsl
 
 #else // If C++17 library is not available
 
 namespace bsl {
 
-// =====================
-// Class memory_resource
-// =====================
+                        // =====================
+                        // Class memory_resource
+                        // =====================
 
 class memory_resource {
-  // A protocol (pure abstract interface) class, comprising member functions
-  // for allocating and deallocating memory.  This class is a pre-C++17
-  // implementation of 'std::experimental::pmr::memory_resource' from the C++17
-  // Standard Library.
+    // A protocol (pure abstract interface) class, comprising member functions
+    // for allocating and deallocating memory.  This class is a pre-C++17
+    // implementation of 'std::pmr::memory_resource' from the C++17 Standard
+    // Library.
 
-  // PRIVATE CONSTANTS
-  enum { k_MAX_ALIGN = BloombergLP::bsls::AlignmentUtil::BSLS_MAX_ALIGNMENT };
+    // PRIVATE CONSTANTS
+    enum {
+        k_MAX_ALIGN = BloombergLP::bsls::AlignmentUtil::BSLS_MAX_ALIGNMENT
+    };
 
-public:
-  // CREATORS
+  public:
+    // CREATORS
 
-  //! memory_resource() BSLS_KEYWORD_DEFAULT;
-  //! memory_resource(const memory_resource&) BSLS_KEYWORD_DEFAULT;
-  // Create this object.  Has no effect other than to begin its lifetime.
+    //! memory_resource() BSLS_KEYWORD_DEFAULT;
+    //! memory_resource(const memory_resource&) BSLS_KEYWORD_DEFAULT;
+        // Create this object.  Has no effect other than to begin its lifetime.
 
-  virtual ~memory_resource();
-  // Destroy this object.  Has no effect other than to end its lifetime.
+    virtual ~memory_resource();
+        // Destroy this object.  Has no effect other than to end its lifetime.
 
-  // MANIPULATORS
+    // MANIPULATORS
 
-  //! memory_resource& operator=(const memory_resource&)
-  //!                                                   BSLS_KEYWORD_DEFAULT;
-  // Return a modifiable reference to this object.
+    //! memory_resource& operator=(const memory_resource&)
+    //!                                                   BSLS_KEYWORD_DEFAULT;
+        // Return a modifiable reference to this object.
 
-  BSLS_ANNOTATION_NODISCARD
-  void *allocate(size_t bytes, size_t alignment = k_MAX_ALIGN);
-  // Return the (non-null) address of a block of memory suitable for
-  // holding an object having at least the specified 'bytes' and
-  // 'alignment'.  If this memory resource is unable to fulfill the
-  // request, i.e., because 'bytes' or 'alignment' is too large, then
-  // throw 'bad_alloc' or other suitable exception.  The behavior is
-  // undefined unless 'alignment' is a power of two.  Note that this
-  // function calls the derived-class implementation of 'do_allocate'.
+    BSLS_ANNOTATION_NODISCARD
+    void *allocate(size_t bytes, size_t alignment = k_MAX_ALIGN);
+        // Return the (non-null) address of a block of memory suitable for
+        // holding an object having at least the specified 'bytes' and
+        // 'alignment'.  If this memory resource is unable to fulfill the
+        // request, i.e., because 'bytes' or 'alignment' is too large, then
+        // throw 'bad_alloc' or other suitable exception.  The behavior is
+        // undefined unless 'alignment' is a power of two.  Note that this
+        // function calls the derived-class implementation of 'do_allocate'.
 
-  void deallocate(void *p, size_t bytes, size_t alignment = k_MAX_ALIGN);
-  // Deallocate the block of memory at the specified address 'p' and
-  // having the specified 'bytes' and 'alignment' by returning it to the
-  // derived-class memory resource.  The behavior is undefined unless 'p'
-  // was allocated from this resource using the same size and alignment
-  // and has not yet been deallocated.  Note that this function calls the
-  // derived-class implementation of 'do_deallocate'.
+    void deallocate(void *p, size_t bytes, size_t alignment = k_MAX_ALIGN);
+        // Deallocate the block of memory at the specified address 'p' and
+        // having the specified 'bytes' and 'alignment' by returning it to the
+        // derived-class memory resource.  The behavior is undefined unless 'p'
+        // was allocated from this resource using the same size and alignment
+        // and has not yet been deallocated.  Note that this function calls the
+        // derived-class implementation of 'do_deallocate'.
 
-  // ACCESSORS
-  bool is_equal(const memory_resource &other) const BSLS_KEYWORD_NOEXCEPT;
-  // Return 'true' if memory allocated from this resource can be
-  // deallocated from the specified 'other' resource and vice-versa;
-  // otherwise return 'false'.  Note that this function calls the
-  // derived-class implementation of 'do_is_equal'.
+    // ACCESSORS
+    bool is_equal(const memory_resource& other) const BSLS_KEYWORD_NOEXCEPT;
+        // Return 'true' if memory allocated from this resource can be
+        // deallocated from the specified 'other' resource and vice-versa;
+        // otherwise return 'false'.  Note that this function calls the
+        // derived-class implementation of 'do_is_equal'.
 
-private:
-  // PRIVATE MANIPULATORS
-  virtual void *do_allocate(size_t bytes, size_t alignment) = 0;
-  // Return a block of memory, allocated from the derived-class resource,
-  // suitable for holding an object having at least the specified 'bytes'
-  // and 'alignment'.  The behavior is undefined unless 'alignment' is a
-  // power of two.
+  private:
+    // PRIVATE MANIPULATORS
+    virtual void* do_allocate(size_t bytes, size_t alignment) = 0;
+        // Return a block of memory, allocated from the derived-class resource,
+        // suitable for holding an object having at least the specified 'bytes'
+        // and 'alignment'.  The behavior is undefined unless 'alignment' is a
+        // power of two.
 
-  virtual void do_deallocate(void *p, size_t bytes, size_t alignment) = 0;
-  // Deallocate the block of memory at the specified address 'p' and
-  // having the specified 'bytes' and 'alignment' by returning it to the
-  // derived-class memory resource.  The behavior is undefined unless 'p'
-  // was allocated from this resource using the same size and alignment
-  // and has not yet been deallocated.
+    virtual void do_deallocate(void* p, size_t bytes, size_t alignment) = 0;
+        // Deallocate the block of memory at the specified address 'p' and
+        // having the specified 'bytes' and 'alignment' by returning it to the
+        // derived-class memory resource.  The behavior is undefined unless 'p'
+        // was allocated from this resource using the same size and alignment
+        // and has not yet been deallocated.
 
-  // PRIVATE ACCESSORS
-  virtual bool
-  do_is_equal(const memory_resource &other) const BSLS_KEYWORD_NOEXCEPT = 0;
-  // Return 'true' if memory allocated from this resource can be
-  // deallocated from the specified 'other' resource and vice-versa;
-  // otherwise return 'false'.
+    // PRIVATE ACCESSORS
+    virtual bool do_is_equal(const memory_resource& other) const
+                                                     BSLS_KEYWORD_NOEXCEPT = 0;
+        // Return 'true' if memory allocated from this resource can be
+        // deallocated from the specified 'other' resource and vice-versa;
+        // otherwise return 'false'.
 };
 
 // FREE OPERATORS
-bool operator==(const memory_resource &a, const memory_resource &b);
-// Return 'true' if memory allocated from the specified 'a' resource can be
-// deallocated from the specified 'b' resource; otherwise return 'false'.
+bool operator==(const memory_resource& a, const memory_resource& b);
+    // Return 'true' if memory allocated from the specified 'a' resource can be
+    // deallocated from the specified 'b' resource; otherwise return 'false'.
 
-bool operator!=(const memory_resource &a, const memory_resource &b);
-// Return 'true' if memory allocated from the specified 'a' resource cannot
-// be deallocated from the specified 'b' resource; otherwise return
-// 'false'.
+bool operator!=(const memory_resource& a, const memory_resource& b);
+    // Return 'true' if memory allocated from the specified 'a' resource cannot
+    // be deallocated from the specified 'b' resource; otherwise return
+    // 'false'.
 
 // ============================================================================
 //                       INLINE FUNCTION IMPLEMENTATIONS
 // ============================================================================
 
 // CREATORS
-inline memory_resource::~memory_resource() {
-  // Implementation note: because 'memory_resource' is a pure abstract class
-  // with a trivial constructor, the virtual destructor can be inlined
-  // without forcing the implementation to generate a vtbl for the class.
+inline
+memory_resource::~memory_resource()
+{
+    // Implementation note: because 'memory_resource' is a pure abstract class
+    // with a trivial constructor, the virtual destructor can be inlined
+    // without forcing the implementation to generate a vtbl for the class.
 }
 
 // MANIPULATORS
-inline void *memory_resource::allocate(size_t bytes, size_t alignment) {
-  return do_allocate(bytes, alignment);
+inline
+void *memory_resource::allocate(size_t bytes, size_t alignment)
+{
+    return do_allocate(bytes, alignment);
 }
 
-inline void memory_resource::deallocate(void *p, size_t bytes,
-                                        size_t alignment) {
-  do_deallocate(p, bytes, alignment);
+inline
+void memory_resource::deallocate(void *p, size_t bytes, size_t alignment)
+{
+    do_deallocate(p, bytes, alignment);
 }
 
 // ACCESSORS
-inline bool memory_resource::is_equal(const memory_resource &other) const
-    BSLS_KEYWORD_NOEXCEPT {
-  return do_is_equal(other);
+inline
+bool memory_resource::is_equal(const memory_resource& other) const
+                                                          BSLS_KEYWORD_NOEXCEPT
+{
+    return do_is_equal(other);
 }
 
-} // namespace bsl
+}  // close namespace bsl
+
 
 // FREE OPERATORS
 
-inline bool bsl::operator==(const bsl::memory_resource &a,
-                            const bsl::memory_resource &b) {
-  return a.is_equal(b);
+inline
+bool bsl::operator==(const bsl::memory_resource& a,
+                     const bsl::memory_resource& b)
+{
+    return a.is_equal(b);
 }
 
-inline bool bsl::operator!=(const bsl::memory_resource &a,
-                            const bsl::memory_resource &b) {
-  return !a.is_equal(b);
+inline
+bool bsl::operator!=(const bsl::memory_resource& a,
+                     const bsl::memory_resource& b)
+{
+    return ! a.is_equal(b);
 }
 
 #endif // ! defined(BSLS_LIBRARYFEATURES_HAS_CPP17_PMR)
