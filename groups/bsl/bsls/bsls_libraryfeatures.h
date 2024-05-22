@@ -40,7 +40,7 @@ BSLS_IDENT("$Id: $")
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV: full '<charconv'> support w floats
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM: '<filesystem>'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS: '<execution>'
-//  BSLS_LIBRARYFEATURES_HAS_CPP17_PMR: '<memory_resource>'
+//  BSLS_LIBRARYFEATURES_HAS_CPP17_PMR: '<experimental/memory_resource>'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING: 'pmr::string'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET: '<ctime>'
 //  BSLS_LIBRARYFEATURES_HAS_CPP17_ALIGNED_ALLOC: '<cstdlib>'
@@ -90,7 +90,7 @@ BSLS_IDENT("$Id: $")
 // that used to build this component and is the source of the symbols found in
 // the 'std' namespace.
 //
-///Guarding Against Mixing C++ Versions
+/// Guarding Against Mixing C++ Versions
 ///------------------------------------
 // This component defines a "link-coercion" symbol that prevents linking a
 // translation unit (that includes this header, possibly indirectly) built
@@ -107,7 +107,7 @@ BSLS_IDENT("$Id: $")
 // users a single, easy-to-comprehend link-time error, rather than having bugs
 // potentially manifest at runtime in ways that are difficult to diagnose.
 //
-///Converse Logic Is Not Symmetric
+/// Converse Logic Is Not Symmetric
 ///-------------------------------
 // The macros defined by this component describe features empirically observed
 // in typical platform/compiler/library combinations used in BDE distributions.
@@ -960,8 +960,8 @@ BSLS_IDENT("$Id: $")
 ///'BSLS_LIBRARYFEATURES_HAS_CPP17_PMR'
 ///------------------------------------
 // The 'BSLS_LIBRARYFEATURES_HAS_CPP17_PMR' macro is defined if the
-// native standard library provides the '<memory_resource>' header and
-// implements all required content with no major issues.
+// native standard library provides the '<experimental/memory_resource>' header
+// and implements all required content with no major issues.
 //
 // This macro is defined first for the following stdlib versions:
 //
@@ -1241,12 +1241,12 @@ BSLS_IDENT("$Id: $")
 // The 'BSLS_LIBRARYFEATURES_STDCPP_STLPORT' macro is defined if the C++
 // standard library implementation is an STLPort implementation.
 //
-///Usage
+/// Usage
 ///-----
 // In this section we show intended usage of this component.
 //
-///Example 1: Managing Library-Dependent Interfaces
-/// - - - - - - - - - - - - - - - - - - - - - - - -
+/// Example 1: Managing Library-Dependent Interfaces
+///  - - - - - - - - - - - - - - - - - - - - - - - -
 // When building software across multiple platforms a programmer may have to
 // deal with different versions of the native standard library, some providing
 // features that the others do not.  The macros defined in this component can
@@ -1302,8 +1302,8 @@ BSLS_IDENT("$Id: $")
 // those that do not.  Of course, in the later case the interface that returns
 
 #include <bsls_compilerfeatures.h>
-#include <bsls_platform.h>
 #include <bsls_linkcoercion.h>
+#include <bsls_platform.h>
 
 // ============================================================================
 //                        STANDARD LIBRARY DETECTION
@@ -1329,78 +1329,78 @@ BSLS_IDENT("$Id: $")
 // '<ciso646>', because '<ciso646>' does not define the required macros prior
 // to version 6.1.  See http://en.cppreference.com/w/cpp/header/ciso646
 
-    #if defined(BSLS_PLATFORM_CMP_CLANG)
-        #if __has_include(<bits/c++config.h>)
-            #define BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP           1
-        #endif
-    #endif
+#if defined(BSLS_PLATFORM_CMP_CLANG)
+#if __has_include(<bits/c++config.h>)
+#define BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP 1
+#endif
+#endif
 
-    #ifdef BSLS_PLATFORM_CMP_MSVC
-        #if !__has_include(<yvals.h>)
-            #error Standard library implementation detection is broken.
-            // The implementation specific header file <yvals.h> we assumed
-            // exists is not found.  This may be the result of either a new
-            // major library version from Microsoft (that breaks with
-            // tradition), or an unexpected standard library implementation
-            // being used with the Microsoft compiler instead of the usual
-            // Microsoft implementation.  This detection logic needs to be
-            // updated to also support this new situation.
-        #endif
+#ifdef BSLS_PLATFORM_CMP_MSVC
+#if !__has_include(<yvals.h>)
+#error Standard library implementation detection is broken.
+// The implementation specific header file <yvals.h> we assumed
+// exists is not found.  This may be the result of either a new
+// major library version from Microsoft (that breaks with
+// tradition), or an unexpected standard library implementation
+// being used with the Microsoft compiler instead of the usual
+// Microsoft implementation.  This detection logic needs to be
+// updated to also support this new situation.
+#endif
 
-    #elif defined(BSLS_PLATFORM_CMP_GNU) || \
-          defined(BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP)
-        #if !__has_include(<bits/c++config.h>)
-            #error Standard library implementation detection is broken.
-            // The implementation specific header file <bits/c++config.h> we
-            // assumed exists is not found.  This may be the result of either
-            // a new major C++ library version from GNU (that breaks with
-            // tradition), or an unexpected standard library implementation
-            // being used with the GNU compiler instead of the usual libstdc++.
-            // This detection logic needs to be updated to also support this
-            // new situation.
-        #endif
+#elif defined(BSLS_PLATFORM_CMP_GNU) ||                                        \
+    defined(BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP)
+#if !__has_include(<bits/c++config.h>)
+#error Standard library implementation detection is broken.
+// The implementation specific header file <bits/c++config.h> we
+// assumed exists is not found.  This may be the result of either
+// a new major C++ library version from GNU (that breaks with
+// tradition), or an unexpected standard library implementation
+// being used with the GNU compiler instead of the usual libstdc++.
+// This detection logic needs to be updated to also support this
+// new situation.
+#endif
 
-    #elif defined(BSLS_PLATFORM_CMP_SUN)
-        #if !__has_include(<valarray>)
-            #error Standard library implementation detection has failed.
-            BSLS_PLATFORM_COMPILER_ERROR;  // Sun ignores '#error'
-            // The implementation specific header file <valarray> we assumed
-            // exists is not found.  Since '<valarray>' is in every ISO C++
-            // standard (library) it is very likely that this error is caused
-            // by a broken build configuration, such as trying to compile C++
-            // source code files as C, or some other reason why the compiler
-            // cannot see the C++ standard library header files.
-        #endif
+#elif defined(BSLS_PLATFORM_CMP_SUN)
+#if !__has_include(<valarray>)
+#error Standard library implementation detection has failed.
+BSLS_PLATFORM_COMPILER_ERROR; // Sun ignores '#error'
+// The implementation specific header file <valarray> we assumed
+// exists is not found.  Since '<valarray>' is in every ISO C++
+// standard (library) it is very likely that this error is caused
+// by a broken build configuration, such as trying to compile C++
+// source code files as C, or some other reason why the compiler
+// cannot see the C++ standard library header files.
+#endif
 
-    #elif BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
-        #if !__has_include(<version>)
-            #error Standard library implementation detection is broken.
-            // The implementation specific header file <version> we assumed
-            // exists is not found.  Since '<version>' is part of ISO C++2020
-            // standard (library) it is very likely that this error is caused
-            // by either a broken build configuration, or this untested
-            // compiler reporting C++20 compatibility that it does not have.
-            // Build configuration issues may be trying to compile a C++
-            // source code files as C, or some other reason why the compiler
-            // cannot see the C++ standard library header files.  If that is
-            // not the case this detection logic has to be extended to support
-            // this failing build platform.
-        #endif
-    #else
-        #if !__has_include(<ciso646>)
-            #error Standard library implementation detection is broken.
-            // The implementation specific header file <ciso646> we assumed
-            // exists is not found.  Since '<ciso646>' part of every ISO C++
-            // standard (library) before C++20 it is very likely that this
-            // error is caused by a broken build configuration, such as trying
-            // to compile C++ source code files as C, or some other reason why
-            // the compiler cannot see the C++ standard library header files.
-            // If that is not the case this detection logic has to be extended
-            // to support this failing build platform.
-        #endif
-    #endif
+#elif BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
+#if !__has_include(<version>)
+#error Standard library implementation detection is broken.
+// The implementation specific header file <version> we assumed
+// exists is not found.  Since '<version>' is part of ISO C++2020
+// standard (library) it is very likely that this error is caused
+// by either a broken build configuration, or this untested
+// compiler reporting C++20 compatibility that it does not have.
+// Build configuration issues may be trying to compile a C++
+// source code files as C, or some other reason why the compiler
+// cannot see the C++ standard library header files.  If that is
+// not the case this detection logic has to be extended to support
+// this failing build platform.
+#endif
+#else
+#if !__has_include(<ciso646>)
+#error Standard library implementation detection is broken.
+// The implementation specific header file <ciso646> we assumed
+// exists is not found.  Since '<ciso646>' part of every ISO C++
+// standard (library) before C++20 it is very likely that this
+// error is caused by a broken build configuration, such as trying
+// to compile C++ source code files as C, or some other reason why
+// the compiler cannot see the C++ standard library header files.
+// If that is not the case this detection logic has to be extended
+// to support this failing build platform.
+#endif
+#endif
 
-#endif  // '__has_include' is supported
+#endif // '__has_include' is supported
 
 // Include a header from the standard library implementation that defines the
 // macros that we use for detection, and is "cheap" either because most headers
@@ -1408,27 +1408,27 @@ BSLS_IDENT("$Id: $")
 // small header.
 
 #ifdef BSLS_PLATFORM_CMP_MSVC
-    #include <cstddef>
-#elif defined(BSLS_PLATFORM_CMP_GNU) || \
-      defined(BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP)
-    #include <cstddef>
-    #if defined(BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP)
-        // Prevent macro pollution
-        #undef BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP
-    #endif
+#include <cstddef>
+#elif defined(BSLS_PLATFORM_CMP_GNU) ||                                        \
+    defined(BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP)
+#include <cstddef>
+#if defined(BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP)
+// Prevent macro pollution
+#undef BSLS_LIBRARYFEATURES_SUSPECT_CLANG_WITH_GLIBCPP
+#endif
 #elif defined(BSLS_PLATFORM_CMP_SUN)
-    // Unfortunately, SUN does *nothing* in its '<ciso646>', or its
-    // '<exception>' headers.  Its '<new>', and '<typeinfo>' headers are
-    // shared between the RogueWave and the STLPort implementations, so they
-    // do not define anything standard  library specific (see
-    // https://docs.oracle.com/cd/E19205-01/819-5267/6n7c46e4p/index.html
-    // 12.7.1), therefore we have to include something that is different
-    // between RogueWave and STLPort implementations.  All such headers are
-    // large, not cheap.  :(
+// Unfortunately, SUN does *nothing* in its '<ciso646>', or its
+// '<exception>' headers.  Its '<new>', and '<typeinfo>' headers are
+// shared between the RogueWave and the STLPort implementations, so they
+// do not define anything standard  library specific (see
+// https://docs.oracle.com/cd/E19205-01/819-5267/6n7c46e4p/index.html
+// 12.7.1), therefore we have to include something that is different
+// between RogueWave and STLPort implementations.  All such headers are
+// large, not cheap.  :(
 
-    #include <valarray>
+#include <valarray>
 #else
-    #include <ciso646>
+#include <ciso646>
 #endif
 #undef BSLS_LIBRARYFEATURES_DETECTION_IN_PROGRESS
 
@@ -1436,22 +1436,22 @@ BSLS_IDENT("$Id: $")
 // the compiler, because the IBM library does not define a specific version
 // macro.
 
-#if defined (__GLIBCPP__) || defined(__GLIBCXX__)
-    #define BSLS_LIBRARYFEATURES_STDCPP_GNU                                   1
+#if defined(__GLIBCPP__) || defined(__GLIBCXX__)
+#define BSLS_LIBRARYFEATURES_STDCPP_GNU 1
 #elif defined(_CPPLIB_VER) || (defined(_YVALS) && !defined(__IBMCPP__))
-    #define BSLS_LIBRARYFEATURES_STDCPP_MSVC                                  1
+#define BSLS_LIBRARYFEATURES_STDCPP_MSVC 1
 #elif defined(_LIBCPP_VERSION)
-    #define BSLS_LIBRARYFEATURES_STDCPP_LLVM                                  1
+#define BSLS_LIBRARYFEATURES_STDCPP_LLVM 1
 #elif defined(__STD_RWCOMPILER_H__) || defined(_RWSTD_VER)
-    #define BSLS_LIBRARYFEATURES_STDCPP_LIBCSTD                               1
+#define BSLS_LIBRARYFEATURES_STDCPP_LIBCSTD 1
 #elif defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
-    #define BSLS_LIBRARYFEATURES_STDCPP_STLPORT                               1
+#define BSLS_LIBRARYFEATURES_STDCPP_STLPORT 1
 #elif defined(__IBMCPP__)
-    #define BSLS_LIBRARYFEATURES_STDCPP_IBM                                   1
+#define BSLS_LIBRARYFEATURES_STDCPP_IBM 1
 #elif defined(__INTELLISENSE__)
-    #define BSLS_LIBRARYFEATURES_STDCPP_INTELLISENSE                          1
+#define BSLS_LIBRARYFEATURES_STDCPP_INTELLISENSE 1
 #else
-    #error Could not determine standard library platform.
+#error Could not determine standard library platform.
 #endif
 
 // ============================================================================
@@ -1462,33 +1462,33 @@ BSLS_IDENT("$Id: $")
 // standards.  All removed libraries will have their macros undefined in a
 // consistent manner at the end of this header
 
-#define BSLS_LIBRARYFEATURES_HAS_C90_GETS                                     1
-    // Set unconditionally for compilers supporting an earlier standard than
-    // C++14; this feature macro will be undefined for those platforms with
-    // partial support for C++14, implementing the removal of this dangerous
-    // function.
+#define BSLS_LIBRARYFEATURES_HAS_C90_GETS 1
+// Set unconditionally for compilers supporting an earlier standard than
+// C++14; this feature macro will be undefined for those platforms with
+// partial support for C++14, implementing the removal of this dangerous
+// function.
 
-#define BSLS_LIBRARYFEATURES_HAS_CPP98_AUTO_PTR                               1
-    // Set unconditionally.  This features is found on each compiler
-    // version/platform combination tested.  Assume universally available until
-    // the day tool chains start removing this deprecated class template.
+#define BSLS_LIBRARYFEATURES_HAS_CPP98_AUTO_PTR 1
+// Set unconditionally.  This features is found on each compiler
+// version/platform combination tested.  Assume universally available until
+// the day tool chains start removing this deprecated class template.
 
 #if BSLS_COMPILERFEATURES_CPLUSPLUS < 202002L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP98_BINDERS_API                        1
-        // These APIs should be removed in C++20.  Undefined conditionally
-        // later in this file for implementations that still have it.
+#define BSLS_LIBRARYFEATURES_HAS_CPP98_BINDERS_API 1
+// These APIs should be removed in C++20.  Undefined conditionally
+// later in this file for implementations that still have it.
 #endif
 
 #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 201703L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED                 1
-        // These APIs should be removed in C++17.  Undefined conditionally
-        // later in this file for implementations that still have it.
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED 1
+// These APIs should be removed in C++17.  Undefined conditionally
+// later in this file for implementations that still have it.
 #endif
 
 #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED                 1
-        // These APIs should be removed in C++20.  Undefined conditionally
-        // later in this file for implementations that still have it.
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED 1
+// These APIs should be removed in C++20.  Undefined conditionally
+// later in this file for implementations that still have it.
 #endif
 
 // ============================================================================
@@ -1496,525 +1496,521 @@ BSLS_IDENT("$Id: $")
 // ----------------------------------------------------------------------------
 
 #if defined(BSLS_PLATFORM_CMP_GNU)
-    #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY                          1
-    #if (__cplusplus >= 201103L) ||                \
-           (defined(__GXX_EXPERIMENTAL_CXX0X__) && \
-            BSLS_PLATFORM_CMP_VERSION >= 40800)
-        // C99 functions are available in C++11 builds.
-        #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY                          1
-    #endif
-    #if (__cplusplus >= 201103L) ||                \
-           (defined(__GXX_EXPERIMENTAL_CXX0X__) && \
-            BSLS_PLATFORM_CMP_VERSION >= 40800) || \
-            (defined(_GLIBCXX_USE_C99) && _GLIBCXX_USE_C99 == 1)
-        // snprintf is also available in C++03 builds with new gcc versions
+#define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY 1
+#if (__cplusplus >= 201103L) || (defined(__GXX_EXPERIMENTAL_CXX0X__) &&        \
+                                 BSLS_PLATFORM_CMP_VERSION >= 40800)
+// C99 functions are available in C++11 builds.
+#define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY 1
+#endif
+#if (__cplusplus >= 201103L) ||                                                \
+    (defined(__GXX_EXPERIMENTAL_CXX0X__) &&                                    \
+     BSLS_PLATFORM_CMP_VERSION >= 40800) ||                                    \
+    (defined(_GLIBCXX_USE_C99) && _GLIBCXX_USE_C99 == 1)
+// snprintf is also available in C++03 builds with new gcc versions
 
-        #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF                         1
-    #endif
-    #if defined(__GXX_EXPERIMENTAL_CXX0X__) && (__cplusplus >= 201103L)
-        #if BSLS_PLATFORM_CMP_VERSION >= 40600
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS            1
-        #endif
+#define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF 1
+#endif
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) && (__cplusplus >= 201103L)
+#if BSLS_PLATFORM_CMP_VERSION >= 40600
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS 1
+#endif
 
-        #if BSLS_PLATFORM_CMP_VERSION >= 40800
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING         1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE                      1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR                 1
-            #if defined(_GLIBCXX_HAVE_AT_QUICK_EXIT) && \
-                defined(_GLIBCXX_HAVE_QUICK_EXIT)
-                // This feature depends on GLIBC exposing support by defining
-                // the above two pre-processor definitions.
-                #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION    1
-            #endif
-        #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 40800
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR 1
+#if defined(_GLIBCXX_HAVE_AT_QUICK_EXIT) && defined(_GLIBCXX_HAVE_QUICK_EXIT)
+// This feature depends on GLIBC exposing support by defining
+// the above two pre-processor definitions.
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION 1
+#endif
+#endif
 
-        #if BSLS_PLATFORM_CMP_VERSION >= 50000
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES    1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE                1
-        #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 50000
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE 1
+#endif
 
-        #if BSLS_PLATFORM_CMP_VERSION >= 60000
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API     1
-        #endif
-    #endif
-    #if __cplusplus > 201103L
-        #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY               1
-        #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS                1
-    #endif
-    #if __cplusplus > 201402L  // > C++14
-        #if BSLS_PLATFORM_CMP_VERSION >= 70301
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD            1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS            1
-        #endif
-    #endif
-    #if __cplusplus >= 201703L  // At least C++17
-        #if BSLS_PLATFORM_CMP_VERSION >= 70000
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS            1
-        #endif
-        #if BSLS_PLATFORM_CMP_VERSION >= 80000
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV               1
-        #endif
-        #if BSLS_PLATFORM_CMP_VERSION >= 90000
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM                 1
-            #ifdef BSLS_COMPILERFEATURES_SUPPORT_HAS_INCLUDE
-              #if __has_include(<tbb/blocked-range.h>)
-                // GCC 9 needs at least 2018 Intel Thread Building Blocks (TBB)
-                // installed for full C++17 parallel algorithm support.
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS    1
-              #endif
-            #endif
-        #endif
-        #if _GLIBCXX_RELEASE >= 9
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR                        1
-            // Using production flag to temporary disable generic PMR support.
-            #if _GLIBCXX_USE_CXX11_ABI
-                // GNU libstdc++: no 'pmr::string' when pre-C++11 ABI is used
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING             1
-            #endif
-        #endif
-        #if BSLS_PLATFORM_CMP_VERSION >= 120000
-            // GCC 11 ships FP <charconv> but slow and very buggy
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV                   1
-        #endif
-        #ifdef _GLIBCXX_HAVE_TIMESPEC_GET
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET               1
-        #endif
-        #ifdef _GLIBCXX_HAVE_ALIGNED_ALLOC
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17__ALIGNED_ALLOC             1
-        #endif
-        #define BSLS_LIBRARYFEATURES_HAS_CPP17_SPECIAL_MATH_FUNCTIONS         1
-    #endif
-    #if __cplusplus >= 202002L  // At least C++20
-        #if BSLS_PLATFORM_CMP_VERSION >= 90000
-            #define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION                    1
-        #endif
-        #if BSLS_PLATFORM_CMP_VERSION >= 110100
-            #define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY           1
-        #endif
-    #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 60000
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API 1
+#endif
+#endif
+#if __cplusplus > 201103L
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS 1
+#endif
+#if __cplusplus > 201402L // > C++14
+#if BSLS_PLATFORM_CMP_VERSION >= 70301
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS 1
+#endif
+#endif
+#if __cplusplus >= 201703L // At least C++17
+#if BSLS_PLATFORM_CMP_VERSION >= 70000
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS 1
+#endif
+#if BSLS_PLATFORM_CMP_VERSION >= 80000
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV 1
+#endif
+#if BSLS_PLATFORM_CMP_VERSION >= 90000
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM 1
+#ifdef BSLS_COMPILERFEATURES_SUPPORT_HAS_INCLUDE
+#if __has_include(<tbb/blocked-range.h>)
+// GCC 9 needs at least 2018 Intel Thread Building Blocks (TBB)
+// installed for full C++17 parallel algorithm support.
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS 1
+#endif
+#endif
+#endif
+#if _GLIBCXX_RELEASE >= 9
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR 1
+// Using production flag to temporary disable generic PMR support.
+#if _GLIBCXX_USE_CXX11_ABI
+// GNU libstdc++: no 'pmr::string' when pre-C++11 ABI is used
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING 1
+#endif
+#endif
+#if BSLS_PLATFORM_CMP_VERSION >= 120000
+// GCC 11 ships FP <charconv> but slow and very buggy
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV 1
+#endif
+#ifdef _GLIBCXX_HAVE_TIMESPEC_GET
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET 1
+#endif
+#ifdef _GLIBCXX_HAVE_ALIGNED_ALLOC
+#define BSLS_LIBRARYFEATURES_HAS_CPP17__ALIGNED_ALLOC 1
+#endif
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SPECIAL_MATH_FUNCTIONS 1
+#endif
+#if __cplusplus >= 202002L // At least C++20
+#if BSLS_PLATFORM_CMP_VERSION >= 90000
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION 1
+#endif
+#if BSLS_PLATFORM_CMP_VERSION >= 110100
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY 1
+#endif
+#endif
 
-    // '__cpp_lib_atomic_is_always_lock_free' is defined in the '<version>'
-    // header, and the '<atomic>' header.  We prefer to include the '<version>'
-    // header if it exists as it's not only a lot smaller and less complicated,
-    // but also very likely to (already) be included anyway.
-    #if __has_include(<version>)
-      #include <version>
-    #elif __has_include(<atomic>)
-      #include <atomic>
-    #endif
-    #if defined(__cpp_lib_atomic_is_always_lock_free)
-        // There is no pre-processor define declared in libstdc++ to indicate
-        // that precise bitwidth atomics exist, but the libstdc++ shipping with
-        // GCC 7 also includes lock-free support in C++17 mode.  That feature
-        // does include a pre-processor definition, so use it as a stand-in for
-        // detecting precise bitwidth atomics.  This pre-processor definition
-        // will already only be defined when compiling in at least C++17
-        // standard mode, so there is no need for an additional check.
-        #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS       1
-    #endif
-    #if _GLIBCXX_USE_DEPRECATED
-        #undef BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
-        #undef BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED
-    #endif
+// '__cpp_lib_atomic_is_always_lock_free' is defined in the '<version>'
+// header, and the '<atomic>' header.  We prefer to include the '<version>'
+// header if it exists as it's not only a lot smaller and less complicated,
+// but also very likely to (already) be included anyway.
+#if __has_include(<version>)
+#include <version>
+#elif __has_include(<atomic>)
+#include <atomic>
+#endif
+#if defined(__cpp_lib_atomic_is_always_lock_free)
+// There is no pre-processor define declared in libstdc++ to indicate
+// that precise bitwidth atomics exist, but the libstdc++ shipping with
+// GCC 7 also includes lock-free support in C++17 mode.  That feature
+// does include a pre-processor definition, so use it as a stand-in for
+// detecting precise bitwidth atomics.  This pre-processor definition
+// will already only be defined when compiling in at least C++17
+// standard mode, so there is no need for an additional check.
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS 1
+#endif
+#if _GLIBCXX_USE_DEPRECATED
+#undef BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
+#undef BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED
+#endif
 #endif
 
 #if defined(BSLS_PLATFORM_CMP_IBM)
-    // #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY
-    // #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY
-    // #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
+// #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY
+// #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY
+// #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR
+// #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY
+// #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
 #endif
 
 #if defined(BSLS_PLATFORM_CMP_SUN)
-    #if __cplusplus >= 201103L
-        // It would be simpler if we could simply identify as the corresponding
-        // gcc library version: CC CMP_VERSION libstdc++ version
-        // 12.4     0x5130          4.8.4
-        // 12.5     0x5140          5.1.0
-        // 12.6     0x5150          5.4.0
-        #if BSLS_PLATFORM_CMP_VERSION >= 0x5130
-            #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY                  1
-            #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY                      1
-            #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF                     1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING         1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS            1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE                1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE                      1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR                 1
-        #endif
+#if __cplusplus >= 201103L
+// It would be simpler if we could simply identify as the corresponding
+// gcc library version: CC CMP_VERSION libstdc++ version
+// 12.4     0x5130          4.8.4
+// 12.5     0x5140          5.1.0
+// 12.6     0x5150          5.4.0
+#if BSLS_PLATFORM_CMP_VERSION >= 0x5130
+#define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY 1
+#define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR 1
+#endif
 
-        #if BSLS_PLATFORM_CMP_VERSION >= 0x5140
-             #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES   1
-        #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 0x5140
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES 1
+#endif
 
-        #if BSLS_PLATFORM_CMP_VERSION >= 0x5150
-            // Currently have an issue with rvalue-references on the CC 12.6
-            // (beta) compiler, so undefining library feature macros that rely
-            // on that language feature being marked as available
-            #undef BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR
-            #undef BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE
-            #undef BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR
-        #endif
-    #endif
-    #if __cplusplus > 201103L
-        #if BSLS_PLATFORM_CMP_VERSION >= 0x5140
-            #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS            1
-        #endif
-    #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 0x5150
+// Currently have an issue with rvalue-references on the CC 12.6
+// (beta) compiler, so undefining library feature macros that rely
+// on that language feature being marked as available
+#undef BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR
+#undef BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE
+#undef BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR
+#endif
+#endif
+#if __cplusplus > 201103L
+#if BSLS_PLATFORM_CMP_VERSION >= 0x5140
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS 1
+#endif
+#endif
 
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
 #endif
 
 #if defined(BSLS_LIBRARYFEATURES_STDCPP_STLPORT)
-    // #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY
-    // #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY
-    // #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
+// #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY
+// #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY
+// #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR
+// #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD
+// #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
 #endif
 
 #if defined(BSLS_PLATFORM_CMP_CLANG)
 
-    #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY                          1
+#define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY 1
 
-    #if defined(__APPLE_CC__) && (__APPLE_CC__ >= 6000)
+#if defined(__APPLE_CC__) && (__APPLE_CC__ >= 6000)
 
-        #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS                1
-            // libc++ provides this C++11 feature as a C++98 extension.
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS 1
+// libc++ provides this C++11 feature as a C++98 extension.
 
-        #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (_LIBCPP_STD_VER >= 11)
-            #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY                      1
-            #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF                     1
-        #endif
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (_LIBCPP_STD_VER >= 11)
+#define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF 1
+#endif
 
-        #if (defined(__GXX_EXPERIMENTAL_CXX0X__) || (_LIBCPP_STD_VER >= 11)) \
-          && (__cplusplus >= 201103L)
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING         1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE                      1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR                 1
-        #endif
+#if (defined(__GXX_EXPERIMENTAL_CXX0X__) || (_LIBCPP_STD_VER >= 11)) &&        \
+    (__cplusplus >= 201103L)
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR 1
+#endif
 
-        #if __cplusplus > 201103L
-            #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY           1
-        #endif
+#if __cplusplus > 201103L
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY 1
+#endif
 
-        #if __cplusplus >= 201402L
-            #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS            1
-        #endif
+#if __cplusplus >= 201402L
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS 1
+#endif
 
-        #if __cplusplus >= 201703L
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD            1
+#if __cplusplus >= 201703L
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD 1
 
-            #if BSLS_PLATFORM_CMP_VERSION >= 140000
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY       1
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS        1
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM             1
-            #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 140000
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM 1
+#endif
 
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_SPECIAL_MATH_FUNCTIONS
-        #endif
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_SPECIAL_MATH_FUNCTIONS
+#endif
 
-        #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
-            #if BSLS_PLATFORM_CMP_VERSION >= 100000
-                #define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION                1
-            #endif
+#if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
+#if BSLS_PLATFORM_CMP_VERSION >= 100000
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION 1
+#endif
 
-            #if BSLS_PLATFORM_CMP_VERSION >= 150000
-                #define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY       1
-            #endif
-        #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 150000
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY 1
+#endif
+#endif
 
-    #elif BSLS_PLATFORM_CMP_VERSION >= 30000
+#elif BSLS_PLATFORM_CMP_VERSION >= 30000
 
-        #if defined(__GXX_EXPERIMENTAL_CXX0X__)
-            #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY                      1
-            #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF                     1
-        #endif
+#if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF 1
+#endif
 
-        #if defined(__GXX_EXPERIMENTAL_CXX0X__) && (__cplusplus >= 201103L)
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS            1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING         1
-            #if __cplusplus >= 201703L
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM             1
-            #endif
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE                1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE                      1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR                 1
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) && (__cplusplus >= 201103L)
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING 1
+#if __cplusplus >= 201703L
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM 1
+#endif
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR 1
 
-            #if defined(_GLIBCXX_HAVE_AT_QUICK_EXIT) && \
-                defined(_GLIBCXX_HAVE_QUICK_EXIT)
-                // Assume a minimum of a GCC 4.8 toolchain and check for GLIBC
-                // support for the feature.
-                #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION    1
-            #endif
-        #endif
+#if defined(_GLIBCXX_HAVE_AT_QUICK_EXIT) && defined(_GLIBCXX_HAVE_QUICK_EXIT)
+// Assume a minimum of a GCC 4.8 toolchain and check for GLIBC
+// support for the feature.
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION 1
+#endif
+#endif
 
+// '__cpp_lib_atomic_is_always_lock_free' is defined in the '<version>'
+// header, and the '<atomic>' header.  We prefer to include the
+// '<version>' header if it exists as it is not just a lot smaller and
+// less complicated, but also very likely to be included anyway.
+#if __has_include(<version>)
+#include <version>
+#elif __has_include(<atomic>)
+#include <atomic>
+#endif
+#if defined(__cpp_lib_atomic_is_always_lock_free)
+// There is no pre-processor define declared in libstdc++ to
+// indicate that precise bitwidth atomics exist, but the libstdc++
+// shipping with GCC 7 also includes lock-free support in C++17
+// mode.  That feature does include a pre-processor definition, so
+// use it as a stand-in for detecting precise bitwidth atomics.
+// This pre-processor definition will already only be defined when
+// compiling in at least C++17 standard mode, so there is no need
+// for an additional check.
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS 1
+#endif
 
-        // '__cpp_lib_atomic_is_always_lock_free' is defined in the '<version>'
-        // header, and the '<atomic>' header.  We prefer to include the
-        // '<version>' header if it exists as it is not just a lot smaller and
-        // less complicated, but also very likely to be included anyway.
-        #if __has_include(<version>)
-          #include <version>
-        #elif __has_include(<atomic>)
-          #include <atomic>
-        #endif
-        #if defined(__cpp_lib_atomic_is_always_lock_free)
-            // There is no pre-processor define declared in libstdc++ to
-            // indicate that precise bitwidth atomics exist, but the libstdc++
-            // shipping with GCC 7 also includes lock-free support in C++17
-            // mode.  That feature does include a pre-processor definition, so
-            // use it as a stand-in for detecting precise bitwidth atomics.
-            // This pre-processor definition will already only be defined when
-            // compiling in at least C++17 standard mode, so there is no need
-            // for an additional check.
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS   1
-        #endif
+#if __cplusplus > 201103L
+#if BSLS_PLATFORM_CMP_VERSION >= 30400
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS 1
+#endif
+#endif
 
-        #if __cplusplus > 201103L
-            #if BSLS_PLATFORM_CMP_VERSION >= 30400
-                #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY       1
-                #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS        1
-            #endif
-        #endif
+#if __cplusplus >= 201703L
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS 1
+#if defined(BSLS_LIBRARYFEATURES_STDCPP_GNU)
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS 1
 
-        #if __cplusplus >= 201703L
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS            1
-            #if defined(BSLS_LIBRARYFEATURES_STDCPP_GNU)
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD        1
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS        1
+#if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 8
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV 1
+#endif
+#if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 12
+// The FP <charconv> in GCC 11 is slow and buggy
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV 1
+#endif
+#elif defined(BSLS_LIBRARYFEATURES_STDCPP_LLVM)
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD 1
+#ifdef _LIBCPP_HAS_TIMESPEC_GET
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET 1
+#endif
+#ifdef _LIBCPP_HAS_ALIGNED_ALLOC
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_ALIGNED_ALLOC 1
+#endif
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV
+#else
+#error Unsupported standard library for g++
+#endif
 
-                #if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 8
-                    #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV       1
-                #endif
-                #if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 12
-                    // The FP <charconv> in GCC 11 is slow and buggy
-                    #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV           1
-                #endif
-            #elif defined(BSLS_LIBRARYFEATURES_STDCPP_LLVM)
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD        1
-                #ifdef _LIBCPP_HAS_TIMESPEC_GET
-                    #define BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET       1
-                #endif
-                #ifdef _LIBCPP_HAS_ALIGNED_ALLOC
-                    #define BSLS_LIBRARYFEATURES_HAS_CPP17_ALIGNED_ALLOC      1
-                #endif
-                //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV
-                //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV
-            #else
-                #error Unsupported standard library for g++
-            #endif
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS
+#endif
 
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS
-        #endif
+#if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
+#if BSLS_PLATFORM_CMP_VERSION >= 90000
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION 1
+#endif
 
-        #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
-            #if BSLS_PLATFORM_CMP_VERSION >= 90000
-                #define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION                1
-            #endif
+#if BSLS_PLATFORM_CMP_VERSION >= 150000
+#if defined(BSLS_LIBRARYFEATURES_STDCPP_GNU) && defined(_GLIBCXX_RELEASE) &&   \
+    _GLIBCXX_RELEASE >= 11
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY 1
+#elif defined(BSLS_LIBRARYFEATURES_STDCPP_LLVM) && defined(_LIBCPP_VERSION) && \
+    _LIBCPP_VERSION >= 15
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY 1
+#endif
+#endif
+#endif
+#endif
 
-            #if BSLS_PLATFORM_CMP_VERSION >= 150000
-                #if defined(BSLS_LIBRARYFEATURES_STDCPP_GNU) &&               \
-                    defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 11
-                    #define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY   1
-                #elif defined(BSLS_LIBRARYFEATURES_STDCPP_LLVM) &&            \
-                      defined(_LIBCPP_VERSION) && _LIBCPP_VERSION >= 15
-                    #define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY   1
-                #endif
-            #endif
-        #endif
-    #endif
+#if BSLS_COMPILERFEATURES_CPLUSPLUS >= 201703L &&                              \
+    (_GLIBCXX_RELEASE >= 9 || _LIBCPP_VERSION >= 16)
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR 1
+#if defined(_GLIBCXX_RELEASE)
+// GLIB logic as above for GNU
+#if _GLIBCXX_USE_CXX11_ABI
+// GNU libstdc++: no 'pmr::string' when pre-C++11 ABI is used
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING 1
+#endif
+#else
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING 1
+#endif
+#endif
 
-    #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 201703L &&                         \
-        (_GLIBCXX_RELEASE >= 9 || _LIBCPP_VERSION >= 16)
-        #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR                            1
-        #if defined(_GLIBCXX_RELEASE)
-        // GLIB logic as above for GNU
-            #if _GLIBCXX_USE_CXX11_ABI
-                // GNU libstdc++: no 'pmr::string' when pre-C++11 ABI is used
-                #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING             1
-            #endif
-        #else
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING                 1
-        #endif
-    #endif
+// Do not define these until there is a pre-processor definition given by
+// the build system to indicate at least the major version number of the
+// GCC toolchain used by Clang.
+//
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES
+// #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
 
-    // Do not define these until there is a pre-processor definition given by
-    // the build system to indicate at least the major version number of the
-    // GCC toolchain used by Clang.
-    //
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES
-    // #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
-
-    #if _GLIBCXX_USE_DEPRECATED
-        #undef BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
-        #undef BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED
-    #endif
+#if _GLIBCXX_USE_DEPRECATED
+#undef BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
+#undef BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED
+#endif
 #endif
 
 #if defined(BSLS_PLATFORM_CMP_MSVC)
 
-    // Visual Studio feature detection code is based on
-    // https://docs.microsoft.com/en-us/cpp/overview/ ->
-    // visual-cpp-language-conformance
+// Visual Studio feature detection code is based on
+// https://docs.microsoft.com/en-us/cpp/overview/ ->
+// visual-cpp-language-conformance
 
-    // We assume at least Visual Studio 2015
-    #define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY                          1
-    #define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY                              1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY                   1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE                        1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES            1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS                    1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS                    1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR                         1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS           1
-    #define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF                             1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING                 1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API             1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR         1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION                1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE                              1
-        // Note that earlier versions have 'tuple' but this macro also
-        // requires the definition of the
-        // 'BSLS_COMPILER_FEATURES_HAS_VARIADIC_TEMPLATES' macro.
-    #define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY                   1
-    #define BSLS_LIBRARYFEATURES_HAS_CPP17_BOOL_CONSTANT                      1
-        // Early access to C++17 features
+// We assume at least Visual Studio 2015
+#define BSLS_LIBRARYFEATURES_HAS_C99_FP_CLASSIFY 1
+#define BSLS_LIBRARYFEATURES_HAS_C99_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_STREAM_MOVE 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_MISCELLANEOUS_UTILITIES 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_RANGE_FUNCTIONS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_RANGE_FUNCTIONS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_UNIQUE_PTR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PRECISE_BITWIDTH_ATOMICS 1
+#define BSLS_LIBRARYFEATURES_HAS_C99_SNPRINTF 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_EXCEPTION_HANDLING 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PAIR_PIECEWISE_CONSTRUCTOR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_PROGRAM_TERMINATION 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP11_TUPLE 1
+// Note that earlier versions have 'tuple' but this macro also
+// requires the definition of the
+// 'BSLS_COMPILER_FEATURES_HAS_VARIADIC_TEMPLATES' macro.
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_BOOL_CONSTANT 1
+// Early access to C++17 features
 
-    #undef BSLS_LIBRARYFEATURES_HAS_C90_GETS
+#undef BSLS_LIBRARYFEATURES_HAS_C90_GETS
 
-    // C++14 support reported
-    #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 201402L
+// C++14 support reported
+#if BSLS_COMPILERFEATURES_CPLUSPLUS >= 201402L
 
-        // C++14 library features introduced in Visual Studio 2017
+// C++14 library features introduced in Visual Studio 2017
 
-        // VS 2017 15.0
-        #if BSLS_PLATFORM_CMP_VERSION >= 1910
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD            1
-        #endif
-    #endif  //  At least C++14
+// VS 2017 15.0
+#if BSLS_PLATFORM_CMP_VERSION >= 1910
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_OVERLOAD 1
+#endif
+#endif //  At least C++14
 
-    // Possible C++17 support reported
-    #if BSLS_COMPILERFEATURES_CPLUSPLUS > 201402L
+// Possible C++17 support reported
+#if BSLS_COMPILERFEATURES_CPLUSPLUS > 201402L
 
-        // C++17 library features introduced in Visual Studio 2017
+// C++17 library features introduced in Visual Studio 2017
 
-        // VS 2017 15.6
-        #if BSLS_PLATFORM_CMP_VERSION >= 1913
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR                        1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING                 1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS            1
-        #endif
+// VS 2017 15.6
+#if BSLS_PLATFORM_CMP_VERSION >= 1913
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_RANGE_FUNCTIONS 1
+#endif
 
-        // VS 2017 15.7
-        #if BSLS_PLATFORM_CMP_VERSION >= 1914
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV               1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM                 1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS        1
-        #endif
+// VS 2017 15.7
+#if BSLS_PLATFORM_CMP_VERSION >= 1914
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_INT_CHARCONV 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_FILESYSTEM 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_PARALLEL_ALGORITHMS 1
+#endif
 
-        // VS 2017 15.8
-        #if BSLS_PLATFORM_CMP_VERSION >= 1915
-            // MSVC 19.15 has the floating point <charconv>' functions but they
-            // do not report under and overflow properly.
+// VS 2017 15.8
+#if BSLS_PLATFORM_CMP_VERSION >= 1915
+// MSVC 19.15 has the floating point <charconv>' functions but they
+// do not report under and overflow properly.
 
-            //  #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV
-        #endif
+//  #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV
+#endif
 
-        // C++17 library features introduced in Visual Studio 2019
+// C++17 library features introduced in Visual Studio 2019
 
-        // VS 2019 16.0
-        #if BSLS_PLATFORM_CMP_VERSION >= 1920
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY           1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV                   1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS            1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_SPECIAL_MATH_FUNCTIONS     1
-            #define BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET               1
-        #endif
-    #endif  // More than C++14 (there are C++17 features)
+// VS 2019 16.0
+#if BSLS_PLATFORM_CMP_VERSION >= 1920
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_BASELINE_LIBRARY 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_CHARCONV 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SEARCH_FUNCTORS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_SPECIAL_MATH_FUNCTIONS 1
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_TIMESPEC_GET 1
+#endif
+#endif // More than C++14 (there are C++17 features)
 
-    // C++20 support reported
+// C++20 support reported
 
-    #if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
+#if BSLS_COMPILERFEATURES_CPLUSPLUS >= 202002L
 
-        // C++20 library features introduced in Visual Studio 2019
+// C++20 library features introduced in Visual Studio 2019
 
-        // VS 2019 16.2
-        #if BSLS_PLATFORM_CMP_VERSION >= 1922
-            #define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION                    1
-        #endif
+// VS 2019 16.2
+#if BSLS_PLATFORM_CMP_VERSION >= 1922
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION 1
+#endif
 
-        // C++20 library features introduced in Visual Studio 2022
+// C++20 library features introduced in Visual Studio 2022
 
-        // VS 2022 17.0.1
-        #if BSLS_PLATFORM_CMP_VERSION >= 1930
-            #define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY           1
-        #endif
-    #endif  // At least C++20
+// VS 2022 17.0.1
+#if BSLS_PLATFORM_CMP_VERSION >= 1930
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY 1
+#endif
+#endif // At least C++20
 
-    // If _HAS_AUTO_PTR_ETC is defined, use its value as the deciding one for
-    // whether the C++17 deprecated names are gone.
-    #if defined _HAS_AUTO_PTR_ETC
-        #if _HAS_AUTO_PTR_ETC
-          #undef BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
-        #else
-          #define BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED           1
-        #endif
-    #endif
+// If _HAS_AUTO_PTR_ETC is defined, use its value as the deciding one for
+// whether the C++17 deprecated names are gone.
+#if defined _HAS_AUTO_PTR_ETC
+#if _HAS_AUTO_PTR_ETC
+#undef BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
+#else
+#define BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED 1
+#endif
+#endif
 
-    // If _HAS_FEATURES_REMOVED_IN_CXX20 is defined, use its value as the
-    // deciding one for whether the C++20 deprecated names are gone.
-    #if defined _HAS_FEATURES_REMOVED_IN_CXX20
-        #if _HAS_FEATURES_REMOVED_IN_CXX20
-          #undef BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED
-        #else
-          #define BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED           1
-        #endif
-    #endif
+// If _HAS_FEATURES_REMOVED_IN_CXX20 is defined, use its value as the
+// deciding one for whether the C++20 deprecated names are gone.
+#if defined _HAS_FEATURES_REMOVED_IN_CXX20
+#if _HAS_FEATURES_REMOVED_IN_CXX20
+#undef BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED
+#else
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_DEPRECATED_REMOVED 1
+#endif
+#endif
 #endif
 
 // ============================================================================
@@ -2025,24 +2021,24 @@ BSLS_IDENT("$Id: $")
 // that have been removed from later standards.
 
 #if BSLS_COMPILERFEATURES_CPLUSPLUS > 201103L
-    // 'gets' is removed immediately from C++14, so undefine for any standard
-    // version identifier greater than that of C++11.
-    #undef BSLS_LIBRARYFEATURES_HAS_C90_GETS
+// 'gets' is removed immediately from C++14, so undefine for any standard
+// version identifier greater than that of C++11.
+#undef BSLS_LIBRARYFEATURES_HAS_C90_GETS
 #endif
 
 #if defined BSLS_LIBRARYFEATURES_HAS_CPP17_DEPRECATED_REMOVED
-    // 'auto_ptr' is removed from C++17, so undefine for any standard version
-    // identifier greater than that of C++14.
-    #undef BSLS_LIBRARYFEATURES_HAS_CPP98_AUTO_PTR
+// 'auto_ptr' is removed from C++17, so undefine for any standard version
+// identifier greater than that of C++14.
+#undef BSLS_LIBRARYFEATURES_HAS_CPP98_AUTO_PTR
 #endif
 
 #if BSLS_COMPILERFEATURES_CPLUSPLUS > 202002L
-    // The garbage collection support API is removed from C++23, so undefine
-    // for any standard version identifier greater than that of C++20.  Note
-    // that some C++23 preview toolchains removed this API before the final
-    // __cplusplus macro value for that standard was known, so we need to test
-    // for "later standard than 2020".
-    #undef BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
+// The garbage collection support API is removed from C++23, so undefine
+// for any standard version identifier greater than that of C++20.  Note
+// that some C++23 preview toolchains removed this API before the final
+// __cplusplus macro value for that standard was known, so we need to test
+// for "later standard than 2020".
+#undef BSLS_LIBRARYFEATURES_HAS_CPP11_GARBAGE_COLLECTION_API
 #endif
 
 // ============================================================================
@@ -2052,11 +2048,11 @@ BSLS_IDENT("$Id: $")
 // Now that we have detected and fixed up all features we may determine the
 // presence of those that we know exist when their required features exist.
 
-#if defined(BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY)  && \
-    defined(BSLS_COMPILERFEATURES_SUPPORT_VARIADIC_TEMPLATES) && \
+#if defined(BSLS_LIBRARYFEATURES_HAS_CPP11_BASELINE_LIBRARY) &&                \
+    defined(BSLS_COMPILERFEATURES_SUPPORT_VARIADIC_TEMPLATES) &&               \
     defined(BSLS_COMPILERFEATURES_SUPPORT_ALIAS_TEMPLATES)
 
-    #define BSLS_LIBRARYFEATURES_HAS_CPP14_INTEGER_SEQUENCE                   1
+#define BSLS_LIBRARYFEATURES_HAS_CPP14_INTEGER_SEQUENCE 1
 #endif
 
 // ============================================================================
@@ -2076,92 +2072,89 @@ BSLS_IDENT("$Id: $")
 // and/or safe use within the BDE libraries.
 
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION
-  #include <version>
+#include <version>
 #endif
 
-#if defined(BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION) &&                       \
+#if defined(BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION) &&                         \
     defined(BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY)
-  // Feature macros are defined by the '<version>' header, we do not test for
-  // their existence unless the header exists.  We make individual, additional
-  // features available only when we claim to support the baseline c++20
-  // standard library functionality.  We have separated the actual inclusion of
-  // '<version>' into its own, preceding, '#ifdef' block (and not embedded the
-  // 'BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY' conditional block in it)
-  // to avoid adding yet another level of indentation.  The c++20 feature macro
-  // names are long to be descriptive, which can result in crowded and hard to
-  // read code even just with 2 spaces indentation.
+// Feature macros are defined by the '<version>' header, we do not test for
+// their existence unless the header exists.  We make individual, additional
+// features available only when we claim to support the baseline c++20
+// standard library functionality.  We have separated the actual inclusion of
+// '<version>' into its own, preceding, '#ifdef' block (and not embedded the
+// 'BSLS_LIBRARYFEATURES_HAS_CPP20_BASELINE_LIBRARY' conditional block in it)
+// to avoid adding yet another level of indentation.  The c++20 feature macro
+// names are long to be descriptive, which can result in crowded and hard to
+// read code even just with 2 spaces indentation.
 
-  #if defined(__cpp_lib_concepts) && __cpp_lib_concepts >= 202002L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_CONCEPTS                           1
-  #endif
+#if defined(__cpp_lib_concepts) && __cpp_lib_concepts >= 202002L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_CONCEPTS 1
+#endif
 
-  #if defined(__cpp_lib_ranges) && __cpp_lib_ranges >= 202110L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_RANGES                             1
-  #endif
+#if defined(__cpp_lib_ranges) && __cpp_lib_ranges >= 202110L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_RANGES 1
+#endif
 
-  #if defined(__cpp_lib_source_location) &&                                   \
-      __cpp_lib_source_location >= 201907L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_SOURCE_LOCATION                    1
-  #endif
+#if defined(__cpp_lib_source_location) && __cpp_lib_source_location >= 201907L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_SOURCE_LOCATION 1
+#endif
 
-  #if defined(__cpp_lib_atomic_ref) &&                                        \
-      __cpp_lib_atomic_ref >= 201806L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_REF                         1
-  #endif
+#if defined(__cpp_lib_atomic_ref) && __cpp_lib_atomic_ref >= 201806L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_REF 1
+#endif
 
-  #if defined(__cpp_lib_atomic_lock_free_type_aliases) &&                     \
-      __cpp_lib_atomic_lock_free_type_aliases >= 201907L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_LOCK_FREE_TYPE_ALIASES      1
-  #endif
+#if defined(__cpp_lib_atomic_lock_free_type_aliases) &&                        \
+    __cpp_lib_atomic_lock_free_type_aliases >= 201907L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_LOCK_FREE_TYPE_ALIASES 1
+#endif
 
+#if defined(__cpp_lib_atomic_wait) && __cpp_lib_atomic_wait >= 201907L &&      \
+    !defined(BSLS_LIBRARYFEATURES_STDCPP_GNU)
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_WAIT_FREE_FUNCTIONS 1
+#endif
 
-  #if defined(__cpp_lib_atomic_wait) && __cpp_lib_atomic_wait >= 201907L &&   \
-      !defined(BSLS_LIBRARYFEATURES_STDCPP_GNU)
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_WAIT_FREE_FUNCTIONS         1
-  #endif
+#if defined(__cpp_lib_atomic_flag_test) &&                                     \
+    __cpp_lib_atomic_flag_test >= 201907L &&                                   \
+    !defined(BSLS_LIBRARYFEATURES_STDCPP_GNU)
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_FLAG_TEST_FREE_FUNCTIONS 1
+#endif
 
-  #if defined(__cpp_lib_atomic_flag_test) &&                                  \
-      __cpp_lib_atomic_flag_test >= 201907L &&                                \
-      !defined(BSLS_LIBRARYFEATURES_STDCPP_GNU)
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_ATOMIC_FLAG_TEST_FREE_FUNCTIONS    1
-  #endif
+#if (defined(__cpp_lib_smart_ptr_for_overwrite) &&                             \
+     __cpp_lib_smart_ptr_for_overwrite >= 202002L) ||                          \
+    (defined(BSLS_LIBRARYFEATURES_STDCPP_GNU) &&                               \
+     (_GLIBCXX_RELEASE == 11 || _GLIBCXX_RELEASE == 12))
+// GNU libstdc++ 11 & 12 don't define the macro but define the functions.
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_MAKE_UNIQUE_FOR_OVERWRITE 1
+#endif
 
-  #if (defined(__cpp_lib_smart_ptr_for_overwrite) &&                          \
-               __cpp_lib_smart_ptr_for_overwrite >= 202002L) ||               \
-      (defined(BSLS_LIBRARYFEATURES_STDCPP_GNU) &&                            \
-              (_GLIBCXX_RELEASE == 11 || _GLIBCXX_RELEASE == 12))
-    // GNU libstdc++ 11 & 12 don't define the macro but define the functions.
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_MAKE_UNIQUE_FOR_OVERWRITE          1
-  #endif
+#if defined(__cpp_lib_chrono) && __cpp_lib_chrono >= 201907L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_CALENDAR 1
+#endif
 
-  #if defined(__cpp_lib_chrono) && __cpp_lib_chrono >= 201907L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_CALENDAR                           1
-  #endif
+// The following macro is not defined as it is not covered by any C++20
+// standard feature test macro and the feature it represents not supported by
+// any current compilers.
+// #define BSLS_LIBRARYFEATURES_HAS_CPP20_CHAR8_MB_CONV
 
-  // The following macro is not defined as it is not covered by any C++20
-  // standard feature test macro and the feature it represents not supported by
-  // any current compilers.
-  //#define BSLS_LIBRARYFEATURES_HAS_CPP20_CHAR8_MB_CONV
+#if defined(__cpp_lib_is_layout_compatible) &&                                 \
+    __cpp_lib_is_layout_compatible >= 201907L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_IS_LAYOUT_COMPATIBLE 1
+#endif
 
-  #if defined(__cpp_lib_is_layout_compatible) &&                              \
-              __cpp_lib_is_layout_compatible >= 201907L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_IS_LAYOUT_COMPATIBLE               1
-  #endif
+// Per the final sentence of 'P0466R5', the availability of
+// 'std::is_corresponding_member' is linked to the availability of
+// 'std::is_layout_compatible.
+#if defined(__cpp_lib_is_layout_compatible) &&                                 \
+    __cpp_lib_is_layout_compatible >= 201907L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_IS_CORRESPONDING_MEMBER 1
+#endif
 
-  // Per the final sentence of 'P0466R5', the availability of
-  // 'std::is_corresponding_member' is linked to the availability of
-  // 'std::is_layout_compatible.
-  #if defined(__cpp_lib_is_layout_compatible) &&                              \
-              __cpp_lib_is_layout_compatible >= 201907L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_IS_CORRESPONDING_MEMBER            1
-  #endif
+#if defined(__cpp_lib_is_pointer_interconvertible) &&                          \
+    __cpp_lib_is_pointer_interconvertible >= 201907L
+#define BSLS_LIBRARYFEATURES_HAS_CPP20_IS_POINTER_INTERCONVERTIBLE 1
+#endif
 
-  #if defined(__cpp_lib_is_pointer_interconvertible) &&                       \
-              __cpp_lib_is_pointer_interconvertible >= 201907L
-    #define BSLS_LIBRARYFEATURES_HAS_CPP20_IS_POINTER_INTERCONVERTIBLE        1
-  #endif
-
-#endif  // BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION && _CPP20_BASELINE_LIBRARY
+#endif // BSLS_LIBRARYFEATURES_HAS_CPP20_VERSION && _CPP20_BASELINE_LIBRARY
 
 // ============================================================================
 //                       DEFINE LINK-COERCION SYMBOL
@@ -2187,11 +2180,10 @@ namespace BloombergLP {
 
 extern const char *BSLS_LIBRARYFEATURES_LINKER_CHECK_NAME;
 BSLS_LINKCOERCION_FORCE_SYMBOL_DEPENDENCY(
-                           const char *,
-                           bsls_libraryfeatures_assertion,
-                           BloombergLP::BSLS_LIBRARYFEATURES_LINKER_CHECK_NAME)
+    const char *, bsls_libraryfeatures_assertion,
+    BloombergLP::BSLS_LIBRARYFEATURES_LINKER_CHECK_NAME)
 
-}  // close enterprise namespace
+} // namespace BloombergLP
 
 #endif // INCLUDED_BSLS_LIBRARYFEATURES
 
