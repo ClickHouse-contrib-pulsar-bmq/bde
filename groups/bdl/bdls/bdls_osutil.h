@@ -24,11 +24,11 @@ BSLS_IDENT("$Id: $")
 // containing utility functions for retrieving information at runtime about the
 // operating system in which this task is running.
 //
-///Usage
+/// Usage
 ///-----
 // This section illustrates intended use of this component.
 //
-///Example 1: Display OS Name, Version and Patch Level
+/// Example 1: Display OS Name, Version and Patch Level
 ///- - - - - - - - - - - - - - - - - - - - - - - - - -
 // The following example demonstrates using 'getOsInfo' to obtain information
 // about the operating system at runtime and writing it to the console.
@@ -71,44 +71,42 @@ BSLS_IDENT("$Id: $")
 
 #include <bsls_libraryfeatures.h>
 
-#include <string>           // 'std::string', 'std::pmr::string'
+#include <string> // 'std::string', 'std::experimental::pmr::string'
 
 namespace BloombergLP {
 
 namespace bdls {
-                               // =============
-                               // struct OsUtil
-                               // =============
+// =============
+// struct OsUtil
+// =============
 
 struct OsUtil {
-    // This 'struct' provides a namespace for utility functions retrieving
-    // information about the operating system.
+  // This 'struct' provides a namespace for utility functions retrieving
+  // information about the operating system.
 
-    // CLASS METHODS
-    static int getOsInfo(bsl::string *osName,
-                         bsl::string *osVersion,
-                         bsl::string *osPatch);
-    static int getOsInfo(std::string *osName,
-                         std::string *osVersion,
-                         std::string *osPatch);
+  // CLASS METHODS
+  static int getOsInfo(bsl::string *osName, bsl::string *osVersion,
+                       bsl::string *osPatch);
+  static int getOsInfo(std::string *osName, std::string *osVersion,
+                       std::string *osPatch);
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR_STRING
-    static int getOsInfo(std::pmr::string *osName,
-                         std::pmr::string *osVersion,
-                         std::pmr::string *osPatch);
+  static int getOsInfo(std::experimental::pmr::string *osName,
+                       std::experimental::pmr::string *osVersion,
+                       std::experimental::pmr::string *osPatch);
 #endif
-        // Load the operating system name, version name and patch name into the
-        // specified 'osName', 'osVersion' and 'osPatch' respectively.  Return
-        // 0 on success and a non-zero value otherwise.  The loaded values may
-        // represent an emulation provided for the current process (see
-        // "manifest-based behavior" in Windows programming documentation for
-        // an example) and therefore are not suitable for determining supported
-        // features or the real environment/version.  If you need to determine
-        // the presence of certain features please consult the documentation of
-        // the operating systems you need to support.
+  // Load the operating system name, version name and patch name into the
+  // specified 'osName', 'osVersion' and 'osPatch' respectively.  Return
+  // 0 on success and a non-zero value otherwise.  The loaded values may
+  // represent an emulation provided for the current process (see
+  // "manifest-based behavior" in Windows programming documentation for
+  // an example) and therefore are not suitable for determining supported
+  // features or the real environment/version.  If you need to determine
+  // the presence of certain features please consult the documentation of
+  // the operating systems you need to support.
 };
 
-}  // close package namespace
-}  // close enterprise namespace
+} // namespace bdls
+} // namespace BloombergLP
 
 #endif
 

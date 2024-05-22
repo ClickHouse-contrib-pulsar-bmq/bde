@@ -17,9 +17,9 @@ BSLS_IDENT("$Id: $")
 //@DESCRIPTION: This component provides an STL-compatible proxy for any
 // resource class derived from 'bsl::memory_resource'.  The
 // 'bsl::polymorphic_allocator' interface is identical to that of
-// 'std::pmr::polymorphic_allocator' from the C++17 Standard Library; in fact,
-// the former type is an alias for the latter type when using a C++17 or later
-// library supplied by the platform.
+// 'std::experimental::pmr::polymorphic_allocator' from the C++17 Standard
+// Library; in fact, the former type is an alias for the latter type when using
+// a C++17 or later library supplied by the platform.
 //
 // The proxy class, 'bsl::polymorphic_allocator' is a template that adheres to
 // the allocator requirements defined in section [allocator.requirements] of
@@ -303,7 +303,8 @@ namespace bsl {
 
 // Import 'polymorphic_allocator' into the 'bsl' namespace.
 template <class TYPE = std::byte>
-using polymorphic_allocator = std::pmr::polymorphic_allocator<TYPE>;
+using polymorphic_allocator =
+    std::experimental::pmr::polymorphic_allocator<TYPE>;
 
 } // namespace bsl
 
@@ -318,8 +319,8 @@ using polymorphic_allocator = std::pmr::polymorphic_allocator<TYPE>;
 // the library class itself.  This workaround does not depend on C++20
 // automatic generation of multiple 'operator==' and 'operator!=' from a single
 // declaration of 'operator=='.  Because 'bsl::polymorphic_allocator' is an
-// alias for 'std::pmr::polymorphic_allocator', these operators must be defined
-// in namespace 'std::pmr' to be found by ADL.
+// alias for 'std::experimental::pmr::polymorphic_allocator', these operators
+// must be defined in namespace 'std::experimental::pmr' to be found by ADL.
 
 namespace BloombergLP::bslma {
 
@@ -344,19 +345,20 @@ struct PolymorphicAllocator_Unique {
 };
 
 #define BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(VAL_T)                           \
-  std::pmr::polymorphic_allocator<                                             \
+  std::experimental::pmr::polymorphic_allocator<                               \
       BloombergLP::bslma::PolymorphicAllocator_Unique>
 
 #else // Not MSVC compiler
 
 #define BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(VAL_T)                           \
-  typename bsl::type_identity<std::pmr::polymorphic_allocator<VAL_T>>::type
+  typename bsl::type_identity<                                                 \
+      std::experimental::pmr::polymorphic_allocator<VAL_T>>::type
 
 #endif
 
 } // namespace BloombergLP::bslma
 
-namespace std::pmr {
+namespace std::experimental::pmr {
 
 template <class TYPE>
 bool operator==(const polymorphic_allocator<TYPE> &a,
@@ -384,7 +386,7 @@ bool operator!=(const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) & a,
 // Return 'false' if the specified 'a' and specified 'b' polymorphic
 // allocators have equal memory resources; otherwise 'true'.
 
-} // namespace std::pmr
+} // namespace std::experimental::pmr
 
 #else // If C++17 library is not available
 
@@ -397,8 +399,8 @@ namespace bsl {
 template <class TYPE = unsigned char> class polymorphic_allocator {
   // An STL-compatible proxy for any resource class derived from
   // 'bsl::memory_resource'.  This class template is a pre-C++17
-  // implementation of 'std::pmr::polymorphic_allocator' from the C++17
-  // Standard Library.  Note that there are a number of methods (e.g.,
+  // implementation of 'std::experimental::pmr::polymorphic_allocator' from the
+  // C++17 Standard Library.  Note that there are a number of methods (e.g.,
   // 'max_size') that are not in the C++17 version of this class.  These
   // members exist for compatibility with C++03 versions of the standard
   // library, which don't use 'allocator_traits'.
@@ -488,8 +490,8 @@ public:
   // memory resource held by this allocator, ignoring the specified
   // 'hint', which is used by other allocators as a locality hint.  Note
   // that this overload is not part of C++17
-  // 'std::pmr::polymorphic_allocator' but it is a requirement for all
-  // C++03 allocators.
+  // 'std::experimental::pmr::polymorphic_allocator' but it is a requirement for
+  // all C++03 allocators.
 #endif
 
   void deallocate(TYPE *p, std::size_t n);
@@ -760,39 +762,42 @@ struct IsBitwiseEqualityComparable<::bsl::polymorphic_allocator<TYPE>>
 #ifdef BSLS_LIBRARYFEATURES_HAS_CPP17_PMR
 
 // ----------------------------------------------
-// class template std::pmr::polymorphic_allocator
+// class template std::experimental::pmr::polymorphic_allocator
 // ----------------------------------------------
 
 // FREE FUNCTIONS
 
-// Put extra operators in the 'std::pmr' namespace, not 'bsl' namespace.
+// Put extra operators in the 'std::experimental::pmr' namespace, not 'bsl'
+// namespace.
 template <class TYPE>
-inline bool
-std::pmr::operator==(const std::pmr::polymorphic_allocator<TYPE> &a,
-                     const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) &
-                         b) BSLS_KEYWORD_NOEXCEPT {
+inline bool std::experimental::pmr::operator==(
+    const std::experimental::pmr::polymorphic_allocator<TYPE> &a,
+    const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) &
+        b) BSLS_KEYWORD_NOEXCEPT {
   return a.resource() == b.resource() || *a.resource() == *b.resource();
 }
 
 template <class TYPE>
-inline bool std::pmr::operator==(
+inline bool std::experimental::pmr::operator==(
     const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) & a,
-    const std::pmr::polymorphic_allocator<TYPE> &b) BSLS_KEYWORD_NOEXCEPT {
+    const std::experimental::pmr::polymorphic_allocator<TYPE> &b)
+    BSLS_KEYWORD_NOEXCEPT {
   return a.resource() == b.resource() || *a.resource() == *b.resource();
 }
 
 template <class TYPE>
-inline bool
-std::pmr::operator!=(const std::pmr::polymorphic_allocator<TYPE> &a,
-                     const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) &
-                         b) BSLS_KEYWORD_NOEXCEPT {
+inline bool std::experimental::pmr::operator!=(
+    const std::experimental::pmr::polymorphic_allocator<TYPE> &a,
+    const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) &
+        b) BSLS_KEYWORD_NOEXCEPT {
   return a.resource() != b.resource() && *a.resource() != *b.resource();
 }
 
 template <class TYPE>
-inline bool std::pmr::operator!=(
+inline bool std::experimental::pmr::operator!=(
     const BSLMF_POLYMORPHICALLOCATOR_NODEDUCE_T(TYPE) & a,
-    const std::pmr::polymorphic_allocator<TYPE> &b) BSLS_KEYWORD_NOEXCEPT {
+    const std::experimental::pmr::polymorphic_allocator<TYPE> &b)
+    BSLS_KEYWORD_NOEXCEPT {
   return a.resource() != b.resource() && *a.resource() != *b.resource();
 }
 
